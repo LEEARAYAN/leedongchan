@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEGA-AX 프로그램 — 이동찬 포트폴리오</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#eef1f0;
+    --surface:#ffffff;
+    --ink:#161d1c;
+    --ink-soft:#4b5754;
+    --ink-faint:#828d8a;
+    --line:#d7dedb;
+    --accent:#1f6e5c;
+    --accent-ink:#ffffff;
+    --accent-soft:#dcece6;
+    --shadow: 0 1px 2px rgba(22,29,28,.07), 0 18px 40px -18px rgba(22,29,28,.4);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0f1513; --surface:#182220; --ink:#e9efec; --ink-soft:#b7c4bf;
+      --ink-faint:#7c8b86; --line:#2c3733; --accent:#5fd3b3; --accent-ink:#0f1513;
+      --accent-soft:#1f332c; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0f1513; --surface:#182220; --ink:#e9efec; --ink-soft:#b7c4bf;
+    --ink-faint:#7c8b86; --line:#2c3733; --accent:#5fd3b3; --accent-ink:#0f1513;
+    --accent-soft:#1f332c; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, sans-serif;
+    word-break:keep-all; overflow-wrap:break-word; line-break:strict;
+  }
+  main{ max-width:960px; margin:0 auto; padding:40px 20px 64px; }
+
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace; font-size:.74rem; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-faint);
+  }
+  h1{
+    font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700;
+    font-size:clamp(1.7rem, 5vw, 2.4rem); line-height:1.15; margin:6px 0 0; text-wrap:balance;
+  }
+
+  .badges{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0; }
+  .badge{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:"IBM Plex Mono", monospace; font-size:.72rem; font-weight:600;
+    padding:4px 10px; border-radius:12px; letter-spacing:.02em;
+    background:var(--accent-soft); color:var(--accent);
+  }
+  .badge.status::before{ content:"●"; font-size:.6rem; }
+  .badge.muted{ background:var(--surface); color:var(--ink-soft); border:1px solid var(--line); }
+
+  .lede{ font-size:1rem; line-height:1.68; color:var(--ink-soft); margin:20px 0 0; max-width:64ch; }
+  .lede b{ color:var(--ink); font-weight:600; }
+
+  .skills{ display:flex; flex-wrap:wrap; gap:6px; margin:18px 0 0; }
+  .skill{
+    font-family:"IBM Plex Mono", monospace; font-size:.72rem; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:3px 8px;
+  }
+
+  .course-wrap{ margin:28px 0 0; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:var(--surface); }
+  table.course{ width:100%; border-collapse:collapse; font-size:.86rem; }
+  table.course th, table.course td{ padding:10px 14px; text-align:left; border-bottom:1px solid var(--line); line-height:1.5; }
+  table.course th{
+    font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:.78rem;
+    letter-spacing:.02em; background:var(--accent-soft); color:var(--ink);
+  }
+  table.course td.dur{ font-family:"IBM Plex Mono", monospace; color:var(--ink-faint); white-space:nowrap; }
+  table.course tr:last-child td{ border-bottom:none; }
+
+  .divider{ height:1px; background:var(--line); margin:48px 0 36px; }
+
+  .projects-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+  .projects-head h2{
+    font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:1.4rem; margin:0;
+  }
+  .projects-hint{ font-family:"IBM Plex Mono", monospace; font-size:.7rem; color:var(--ink-faint); }
+
+  .project{ margin:40px 0 0; }
+  .project-kicker{ display:flex; align-items:baseline; gap:10px; margin-bottom:6px; }
+  .project-num{
+    font-family:"IBM Plex Mono", monospace; font-weight:600; font-size:.8rem; color:var(--accent);
+  }
+  .project h3{
+    font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:1.15rem; margin:0;
+  }
+  .project .tag{
+    font-family:"IBM Plex Mono", monospace; font-size:.62rem; font-weight:600; color:var(--accent);
+    background:var(--accent-soft); padding:2px 7px; border-radius:9px; letter-spacing:.02em;
+  }
+  .project p.desc{ font-size:.88rem; line-height:1.6; color:var(--ink-soft); margin:6px 0 14px; max-width:70ch; }
+
+  .frame{
+    border:1px solid var(--line); border-radius:10px; overflow:hidden;
+    background:var(--surface); box-shadow:var(--shadow);
+  }
+  .frame iframe{ display:block; width:100%; height:900px; border:0; background:var(--paper); }
+
+  footer{
+    margin-top:56px; padding-top:20px; border-top:1px solid var(--line);
+    font-family:"IBM Plex Mono", monospace; font-size:.68rem; color:var(--ink-faint);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  @media (max-width:640px){
+    .frame iframe{ height:820px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="eyebrow">2026 부·울·경 광역이음프로젝트 · 초광역 제조산업 핵심인재양성</div>
+  <h1>MEGA-AX 프로그램</h1>
+
+  <div class="badges">
+    <span class="badge status">진행 중</span>
+    <span class="badge muted">주관 · kfq 한국품질재단</span>
+    <span class="badge muted">이동찬</span>
+  </div>
+
+  <p class="lede">
+    조선산업반으로 참여해 공통과정·직무전문과정·AX 과정·선도기업 현장실습으로 이어지는
+    <b>MEGA-AX 핵심인재 양성 과정</b>을 진행하고 있습니다. 이 페이지는 과정에서 실제로
+    다룬 도구와 프로젝트를 한 페이지에서 바로 볼 수 있도록 정리한 기록입니다.
+  </p>
+
+  <div class="skills">
+    <span class="skill">ISO 14001/45001</span>
+    <span class="skill">ISO 9001</span>
+    <span class="skill">6-Sigma GB</span>
+    <span class="skill">노코드 자동화 관리사</span>
+  </div>
+
+  <div class="course-wrap">
+    <table class="course">
+      <thead><tr><th>과정</th><th>시간</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>공통과정</td><td class="dur">95hr</td><td>생산·품질 직무 이해, ISO 인증심사원 등</td></tr>
+        <tr><td>직무전문과정</td><td class="dur">91hr</td><td>산업별 실무(공정관리·품질관리), 6-Sigma GB, 노코드 자동화 관리사</td></tr>
+        <tr><td>AX 과정</td><td class="dur">147hr</td><td>AX-PBL 프로젝트(진행중)</td></tr>
+        <tr><td>현장 실습</td><td class="dur">4주</td><td>선도기업 현장 실습</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="projects-head">
+    <h2>프로젝트</h2>
+    <span class="projects-hint">각 카드는 ← → 또는 스와이프로 넘길 수 있습니다</span>
+  </div>
+
+  <div class="project">
+    <div class="project-kicker">
+      <span class="project-num">1</span>
+      <h3>나사·볼트 주조공정 경도 품질 분석</h3>
+    </div>
+    <p class="desc">Minitab의 정규성·평균/중위수·첨도·왜도 분석으로 요일별 공정 안정성을 진단한 프로젝트</p>
+    <div class="frame"><iframe src="group-report.html" title="나사·볼트 주조공정 경도 품질 분석" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="project">
+    <div class="project-kicker">
+      <span class="project-num">2</span>
+      <h3>품질검사 자동화 파이프라인</h3>
+    </div>
+    <p class="desc">KAMP 머신비전 AI 데이터셋을 활용해 Excel 실시간 입력 → Power Automate Desktop 감지·처리 → Power BI 대시보드로 이어지는 No-Code 자동화 파이프라인을 직접 설계·구현한 개인 프로젝트</p>
+    <div class="frame"><iframe src="automation-project.html" title="품질검사 자동화 파이프라인" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="project">
+    <div class="project-kicker">
+      <span class="project-num">3</span>
+      <h3>AX-PBL 분석기준서</h3>
+      <span class="tag">진행 중</span>
+    </div>
+    <p class="desc">AIAG-VDA FMEA 및 SPC 메뉴얼을 기반으로 만든 AX-PBL 프로젝트의 분석기준서</p>
+    <div class="frame"><iframe src="axpbl-project.html" title="AX-PBL 분석기준서" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="project">
+    <div class="project-kicker">
+      <span class="project-num">4</span>
+      <h3>AX-PBL — P-FMEA 이슈별 분석 결과</h3>
+      <span class="tag">진행 중</span>
+    </div>
+    <p class="desc">분석기준서의 FMEA 단계를 실제로 적용해, 열처리 라인 13개 고장원인의 심각도·발생도·검출도와 조치 우선순위(AP), 데이터 착수 가능 여부를 정리한 P-FMEA 분석 결과</p>
+    <div class="frame"><iframe src="pfmea-result.html" title="P-FMEA 이슈별 분석 결과" loading="lazy"></iframe></div>
+  </div>
+
+  <footer>
+    <span>이동찬 · MEGA-AX / AX-PBL</span>
+    <span>kfq 한국품질재단</span>
+  </footer>
+
+</main>
+</body>
+</html>

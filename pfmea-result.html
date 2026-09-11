@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P-FMEA 분석 결과</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#eef1f0;
+    --surface:#ffffff;
+    --ink:#161d1c;
+    --ink-soft:#4b5754;
+    --ink-faint:#828d8a;
+    --line:#d7dedb;
+    --accent:#1f6e5c;
+    --accent-ink:#ffffff;
+    --accent-soft:#dcece6;
+    --alert:#c1443c;
+    --alert-soft:#f7e3e1;
+    --warn:#b8862f;
+    --warn-soft:#f3ead3;
+    --good:#2f7a4f;
+    --good-soft:#e2f0e6;
+    --tag-bg:#161d1c;
+    --tag-ink:#eef1f0;
+    --shadow: 0 1px 2px rgba(22,29,28,.07), 0 18px 40px -18px rgba(22,29,28,.4);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0f1513;
+      --surface:#182220;
+      --ink:#e9efec;
+      --ink-soft:#b7c4bf;
+      --ink-faint:#7c8b86;
+      --line:#2c3733;
+      --accent:#5fd3b3;
+      --accent-ink:#0f1513;
+      --accent-soft:#1f332c;
+      --alert:#e2857f;
+      --alert-soft:#3a2422;
+      --warn:#e0b45f;
+      --warn-soft:#3a2e18;
+      --good:#87c294;
+      --good-soft:#1e2c20;
+      --tag-bg:#e9efec;
+      --tag-ink:#0f1513;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0f1513;
+    --surface:#182220;
+    --ink:#e9efec;
+    --ink-soft:#b7c4bf;
+    --ink-faint:#7c8b86;
+    --line:#2c3733;
+    --accent:#5fd3b3;
+    --accent-ink:#0f1513;
+    --accent-soft:#1f332c;
+    --alert:#e2857f;
+    --alert-soft:#3a2422;
+    --warn:#e0b45f;
+    --warn-soft:#3a2e18;
+    --good:#87c294;
+    --good-soft:#1e2c20;
+    --tag-bg:#e9efec;
+    --tag-ink:#0f1513;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, sans-serif;
+    margin:0;
+    padding-block:28px;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+    line-break:strict;
+  }
+  .deck-head{
+    width:min(100% - 32px, 1100px);
+    padding-inline:16px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .deck-eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .deck-title{
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    color:var(--ink);
+  }
+
+  .stage{ position:relative; width:100%; display:flex; justify-content:center; }
+
+  .rail{
+    display:flex;
+    gap:22px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    padding:6px 12vw 28px;
+    width:100%;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .rail::-webkit-scrollbar{display:none;}
+
+  .card{
+    --card-h: min(76svh, 900px, calc((100vw - 64px) * 297 / 210));
+    flex:none;
+    scroll-snap-align:center;
+    height:var(--card-h);
+    aspect-ratio:210 / 297;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:var(--shadow);
+    padding:clamp(20px,3.4cqh,34px) clamp(18px,3cqh,30px) clamp(18px,2.6cqh,26px);
+    display:flex;
+    flex-direction:column;
+    gap:clamp(9px,1.4cqh,14px);
+    container-type:inline-size;
+  }
+
+  .card-kicker{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .step-tag{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.66rem;
+    font-weight:600;
+    letter-spacing:.09em;
+    color:var(--tag-ink);
+    background:var(--tag-bg);
+    padding:4px 9px;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  .step-tag.b{ background:var(--accent); color:var(--accent-ink); }
+  .step-of{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.68rem;
+    color:var(--ink-faint);
+    letter-spacing:.06em;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .card h2{
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:clamp(1.05rem, 3.4cqw, 1.36rem);
+    margin:0;
+    line-height:1.18;
+    text-wrap:balance;
+    color:var(--ink);
+  }
+  .card .lede{
+    margin:0;
+    font-size:clamp(.72rem, 1.9cqw, .82rem);
+    line-height:1.5;
+    color:var(--ink-soft);
+  }
+  .card .lede b{ color:var(--ink); font-weight:600; }
+
+  .spec-strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .spec-strip div{ background:var(--surface); padding:8px 7px; display:flex; flex-direction:column; gap:2px; }
+  .spec-strip .k{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.56rem;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .spec-strip .v{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:clamp(.66rem,2cqw,.78rem);
+    font-weight:600;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .spec-strip .v.alert{ color:var(--alert); }
+  .spec-strip .v.good{ color:var(--good); }
+
+  /* ---- flow diagram components ---- */
+  .flow-row{ display:flex; align-items:stretch; gap:6px; flex-wrap:wrap; }
+  .flow-arrow{ display:flex; align-items:center; justify-content:center; color:var(--ink-faint); font-size:.9rem; flex:none; padding:0 1px; }
+  .flow-box{
+    flex:1; min-width:0;
+    border:1px solid var(--line); border-radius:4px; padding:7px 8px;
+    display:flex; flex-direction:column; gap:2px;
+    background:var(--paper); text-align:center;
+  }
+  .flow-box .ftag{ font-family:"IBM Plex Mono", monospace; font-size:.58rem; letter-spacing:.04em; color:var(--ink-faint); }
+  .flow-box .fmain{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:clamp(.72rem,2.2cqw,.86rem); color:var(--ink); }
+  .flow-box .fsub{ font-size:.62rem; color:var(--ink-soft); line-height:1.4; }
+  .flow-box.dark{ background:var(--tag-bg); border-color:var(--tag-bg); }
+  .flow-box.dark .ftag, .flow-box.dark .fsub{ color:var(--tag-ink); opacity:.72; }
+  .flow-box.dark .fmain{ color:var(--tag-ink); }
+  .flow-box.accent{ background:var(--accent); border-color:var(--accent); }
+  .flow-box.accent .ftag, .flow-box.accent .fsub{ color:var(--accent-ink); opacity:.8; }
+  .flow-box.accent .fmain{ color:var(--accent-ink); }
+  .flow-box.soft{ background:var(--accent-soft); border-color:var(--accent-soft); }
+  .flow-box.soft .fmain{ color:var(--accent); }
+
+  .stage-block{ border:1px solid var(--line); border-radius:5px; padding:8px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .stage-block .slabel{ font-family:"IBM Plex Mono", monospace; font-size:.6rem; font-weight:600; letter-spacing:.05em; color:var(--accent); }
+
+  /* ---- generic data table ---- */
+  .dtable-wrap{ flex:1; min-height:0; overflow:auto; border:1px solid var(--line); border-radius:4px; }
+  table.dtable{ width:100%; border-collapse:collapse; font-size:clamp(.6rem,1.7cqw,.7rem); }
+  table.dtable th, table.dtable td{ padding:5px 7px; border-bottom:1px solid var(--line); text-align:left; line-height:1.4; }
+  table.dtable th{
+    background:var(--accent-soft); color:var(--ink);
+    font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:.64rem;
+    letter-spacing:.01em; position:sticky; top:0;
+  }
+  table.dtable td.num, table.dtable th.num{ font-family:"IBM Plex Mono", monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  table.dtable tr:last-child td{ border-bottom:none; }
+  table.dtable td.dim{ color:var(--ink-faint); }
+
+  .badge{ display:inline-block; font-family:"IBM Plex Mono", monospace; font-size:.6rem; font-weight:600; padding:1px 6px; border-radius:3px; letter-spacing:.03em; white-space:nowrap; }
+  .badge.h{ background:var(--alert-soft); color:var(--alert); }
+  .badge.m{ background:var(--warn-soft); color:var(--warn); }
+  .badge.l{ background:var(--good-soft); color:var(--good); }
+
+  .avail{ display:inline-block; font-family:"IBM Plex Mono", monospace; font-size:.58rem; font-weight:600; padding:1px 6px; border-radius:3px; letter-spacing:.01em; white-space:nowrap; }
+  .avail.go{ background:var(--good-soft); color:var(--good); }
+  .avail.mid{ background:var(--warn-soft); color:var(--warn); }
+  .avail.no{ background:var(--line); color:var(--ink-faint); }
+
+  .pick-note{ border:1px solid var(--accent-soft); background:var(--accent-soft); border-radius:4px; padding:8px 9px; display:flex; flex-direction:column; gap:3px; }
+  .pick-note .ptag{ font-family:"IBM Plex Mono", monospace; font-size:.6rem; font-weight:600; color:var(--accent); letter-spacing:.03em; }
+  .pick-note .ptext{ font-size:.7rem; color:var(--ink); line-height:1.5; }
+  .pick-note .ptext b{ font-weight:700; }
+
+  .insight-list{ display:flex; flex-direction:column; gap:8px; flex:1; min-height:0; overflow:auto; }
+  .insight-item{ border:1px solid var(--line); border-radius:4px; padding:9px 10px; background:var(--paper); display:flex; flex-direction:column; gap:3px; }
+  .insight-item .itag{ font-family:"IBM Plex Mono", monospace; font-size:.62rem; font-weight:600; color:var(--accent); }
+  .insight-item p{ margin:0; font-size:.72rem; line-height:1.52; color:var(--ink-soft); }
+  .insight-item p b{ color:var(--ink); font-weight:600; }
+
+  .foot-note{ font-family:"IBM Plex Mono", monospace; font-size:.6rem; color:var(--ink-faint); line-height:1.55; border-top:1px solid var(--line); padding-top:7px; }
+
+  .cover .cover-mark{ font-family:"IBM Plex Mono", monospace; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); }
+  .cover h1{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:clamp(1.24rem,5.6cqw,1.78rem); line-height:1.16; margin:2px 0 0; text-wrap:balance; color:var(--ink); }
+  .cover .sub{ font-size:clamp(.74rem,2cqw,.84rem); line-height:1.56; color:var(--ink-soft); margin:0; }
+  .cover .sub b{ color:var(--ink); font-weight:600; }
+  .cover-divider{ height:1px; background:var(--line); margin:2px 0; }
+  .cover-flow-label{ font-family:"IBM Plex Mono", monospace; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); }
+  .cover-agenda{ display:flex; flex-direction:column; gap:3px; }
+  .cover-agenda .row{ display:flex; align-items:baseline; gap:8px; font-size:.72rem; color:var(--ink-soft); }
+  .cover-agenda .row .n{ font-family:"IBM Plex Mono", monospace; color:var(--ink-faint); font-size:.66rem; width:1.4em; flex:none; }
+  .cover-footer{
+    margin-top:auto; display:flex; justify-content:space-between; align-items:flex-end; gap:8px;
+    font-family:"IBM Plex Mono", monospace; font-size:.64rem; color:var(--ink-faint); letter-spacing:.02em;
+  }
+  .cover-footer .who{ color:var(--ink-soft); }
+  .status-pill{
+    font-family:"IBM Plex Mono", monospace; font-size:.6rem; font-weight:600; color:var(--accent);
+    background:var(--accent-soft); padding:2px 8px; border-radius:10px; letter-spacing:.03em; align-self:flex-start;
+  }
+
+  .nav-btn{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:var(--shadow); font-size:1rem; z-index:5;
+  }
+  .nav-btn:hover{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .nav-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .nav-btn.prev{ left:6px; }
+  .nav-btn.next{ right:6px; }
+  @media (max-width:640px){ .nav-btn{ display:none; } }
+
+  .dots{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:center; max-width:90vw; }
+  .dots button{ width:7px; height:7px; padding:0; border-radius:50%; border:none; background:var(--line); cursor:pointer; }
+  .dots button[aria-current="true"]{ background:var(--accent); width:20px; border-radius:4px; }
+  .dots button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  .hint{ font-family:"IBM Plex Mono", monospace; font-size:.66rem; color:var(--ink-faint); letter-spacing:.02em; }
+</style>
+</head>
+<body>
+<div class="deck-head">
+  <div>
+    <div class="deck-eyebrow">GITHUB PORTFOLIO · AX-PBL PROJECT DECK</div>
+    <div class="deck-title">P-FMEA 이슈별 분석 결과 — 열처리 공정 13개 고장원인</div>
+  </div>
+  <div class="hint">← → 또는 스와이프로 이동</div>
+</div>
+
+<div class="stage">
+  <button class="nav-btn prev" id="prevBtn" aria-label="이전 카드">‹</button>
+  <button class="nav-btn next" id="nextBtn" aria-label="다음 카드">›</button>
+
+  <div class="rail" id="rail">
+
+    <!-- COVER -->
+    <section class="card cover" data-card>
+      <div class="cover-mark">P-FMEA · 이슈별 분석 결과 v0.1.3</div>
+      <h1>P-FMEA 이슈별<br>분석 결과</h1>
+      <span class="status-pill">● 13개 이슈 분석 완료 · 26.09.09</span>
+      <div class="cover-divider"></div>
+      <div class="cover-flow-label">CONTENTS</div>
+      <div class="cover-agenda">
+        <div class="row"><span class="n">01</span>이 문서를 읽는 법</div>
+        <div class="row"><span class="n">02</span>13개 이슈 총괄표</div>
+        <div class="row"><span class="n">03</span>총괄 하이라이트</div>
+        <div class="row"><span class="n">04</span>소입로 공정 (이슈 1~4)</div>
+        <div class="row"><span class="n">05</span>솔트조 공정 (이슈 5~6)</div>
+        <div class="row"><span class="n">06</span>솔트 컨베이어 공정 (이슈 7~8)</div>
+        <div class="row"><span class="n">07</span>세정·건조 공정 (이슈 9~11)</div>
+        <div class="row"><span class="n">08</span>배출부·전공정 (이슈 12~13)</div>
+      </div>
+      <div class="cover-footer">
+        <span class="who">AX-PBL - P-FMEA</span>
+        <span>1 / 9</span>
+      </div>
+    </section>
+
+    <!-- 01 : 읽는 법 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">01 · 안내</span>
+        <span class="step-of">2 / 9</span>
+      </div>
+      <h2>이 문서를 읽는 법</h2>
+      <p class="lede">P-FMEA는 "이 공정에서 무엇이 잘못될 수 있고, 잘못되면 얼마나 큰일이며,
+        지금 그걸 막거나 잡아낼 수 있는지"를 한 줄씩 따져보는 문서다. 각 이슈는 아래 여섯 가지를
+        순서대로 설명한다.</p>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th>구분</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td>한 줄 요약</td><td>이 이슈가 무슨 얘기인지 한 문장으로</td></tr>
+            <tr><td>무슨 일을 하는 공정인가</td><td>정상일 때 여기서 무슨 일이 일어나는지</td></tr>
+            <tr><td>뭐가 잘못되나</td><td>고장의 원인. "이래서 이렇게 됐다"</td></tr>
+            <tr><td>무슨 피해가 생기나</td><td>우리 공장 → 납품처 → 최종사용자 순으로</td></tr>
+            <tr><td>점수를 왜 그렇게 줬나</td><td>심각도·발생도·검출도와 그 근거</td></tr>
+            <tr><td>우리가 할 조치</td><td>그리고 지금 데이터로 실제 할 수 있는지</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stage-block">
+        <span class="slabel">점수 세 가지의 뜻</span>
+        <p class="lede" style="font-size:.68rem;">
+          <b>심각도(S)</b> 사고가 나면 얼마나 큰일인가. 클수록 심각하며, 조치로는 낮출 수 없다(이미 벌어진 결과값).<br>
+          <b>발생도(O)</b> 그 원인이 얼마나 자주 생길 것 같은가. 지금 막는 수단이 얼마나 튼튼한지로 판단한다.<br>
+          <b>검출도(D)</b> 생겼을 때 잡아낼 수 있는가. 클수록 못 잡는다는 뜻이라 헷갈리기 쉽다.<br>
+          <b>조치우선순위(AP)</b> 위 셋을 조합해 High/Medium/Low로 나온다. 위험의 크기 순위가 아니라 "조치가 얼마나 급한가"의 순위다.
+        </p>
+      </div>
+    </section>
+
+    <!-- 02 : 총괄표 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">02 · 총괄</span>
+        <span class="step-of">3 / 9</span>
+      </div>
+      <h2>13개 이슈 총괄표</h2>
+      <p class="lede">공정 5단계(소입로~건조)에서 4M(Man·Machine·Material·Measurement) 기준으로
+        식별한 13개 고장원인의 S·O·D·AP와 데이터 가용성이다.</p>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th class="num">#</th><th>공정·4M</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>AP</th><th>데이터</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td class="dim">소입로·Machine</td><td>가열 온도가 설정 구간을 벗어남</td><td class="num">10·6·8</td><td><span class="badge h">High</span></td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">2</td><td class="dim">소입로·Machine</td><td>침탄 CP값이 유지되지 않음</td><td class="num">8·6·8</td><td><span class="badge h">High</span></td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">3</td><td class="dim">소입로·Man</td><td>품목에 맞지 않는 조건으로 세팅</td><td class="num">10·6·7</td><td><span class="badge h">High</span></td><td><span class="avail mid">부분가능</span></td></tr>
+            <tr><td class="num">4</td><td class="dim">소입로·Measurement</td><td>센서 지시값이 실제와 다름</td><td class="num">8·5·9</td><td><span class="badge h">High</span></td><td><span class="avail mid">부분가능</span></td></tr>
+            <tr><td class="num">5</td><td class="dim">솔트조·Machine</td><td>염욕 항온 구간을 벗어남</td><td class="num">10·5·8</td><td><span class="badge h">High</span></td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">6</td><td class="dim">솔트조·Material</td><td>염욕제가 열화된 상태로 사용</td><td class="num">8·4·7</td><td><span class="badge h">High</span></td><td><span class="avail no">불가</span></td></tr>
+            <tr><td class="num">7</td><td class="dim">컨베이어·Machine</td><td>이송 구간 온도 편차로 변형 발생</td><td class="num">7·7·6</td><td><span class="badge h">High</span></td><td><span class="avail go">착수(1순위)</span></td></tr>
+            <tr><td class="num">8</td><td class="dim">컨베이어·Machine</td><td>이송속도 변동으로 유지시간 편차</td><td class="num">7·5·7</td><td><span class="badge h">High</span></td><td><span class="avail no">불가</span></td></tr>
+            <tr><td class="num">9</td><td class="dim">세정·Machine</td><td>세정 온도가 낮아 염분 잔류</td><td class="num">5·4·6</td><td><span class="badge l">Low</span></td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">10</td><td class="dim">세정·Material</td><td>세정액이 열화된 상태로 사용</td><td class="num">5·4·7</td><td><span class="badge m">Medium</span></td><td><span class="avail no">불가</span></td></tr>
+            <tr><td class="num">11</td><td class="dim">건조·Machine</td><td>건조 부족으로 수분 잔류</td><td class="num">5·5·6</td><td><span class="badge l">Low</span></td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">12</td><td class="dim">건조(배출)·Man</td><td>육안 검사에서 불량을 놓침</td><td class="num">9·6·8</td><td><span class="badge h">High</span></td><td><span class="avail mid">부분가능</span></td></tr>
+            <tr><td class="num">13</td><td class="dim">전공정·Measurement</td><td>공정 데이터 수집 누락</td><td class="num">5·6·7</td><td><span class="badge m">Medium</span></td><td><span class="avail go">착수가능</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 03 : 하이라이트 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">02 · 총괄</span>
+        <span class="step-of">4 / 9</span>
+      </div>
+      <h2>이 표에서 먼저 눈에 담아둘 것</h2>
+      <div class="insight-list">
+        <div class="insight-item">
+          <span class="itag">01</span>
+          <p><b>AP High가 13개 중 8개</b>다. 많아 보이지만 정상이다. 심각도가 높은 항목이 많고,
+            지금 검출 수단이 대부분 "공정이 끝난 뒤 육안 또는 샘플 검사"뿐이기 때문이다.</p>
+        </div>
+        <div class="insight-item">
+          <span class="itag">02</span>
+          <p><b>발생도 최고는 7번(솔트 컨베이어 온도)</b>이고, 마침 데이터도 충분하다.
+            개선 <b>1순위</b>다.</p>
+        </div>
+        <div class="insight-item">
+          <span class="itag">03</span>
+          <p><b>8번은 AP가 High인데 지금 데이터로는 손을 못 댄다.</b> 이 조합이 이 문서에서
+            가장 중요한 지점이라 맺음말에서 따로 다룬다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 : 소입로 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">03 · 이슈그룹</span>
+        <span class="step-of">5 / 9</span>
+      </div>
+      <h2>소입로 공정 (이슈 1~4)</h2>
+      <p class="lede">부품을 860℃까지 올려 침탄·경화 조건을 잡는 첫 구간으로, 4개 이슈 모두
+        AP High다.</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>가열 온도가 설정 구간을 벗어남</td><td class="num">10·6·8</td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">2</td><td>침탄 CP값이 유지되지 않음</td><td class="num">8·6·8</td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">3</td><td>품목에 맞지 않는 조건으로 세팅</td><td class="num">10·6·7</td><td><span class="avail mid">부분가능</span></td></tr>
+            <tr><td class="num">4</td><td>센서 지시값이 실제와 다름</td><td class="num">8·5·9</td><td><span class="avail mid">부분가능</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pick-note">
+        <span class="ptag">이 그룹에서 눈여겨볼 것</span>
+        <p class="ptext">설비 쪽(1·2)은 무너지면 잘 보이지만, <b>사람의 판단(3)</b>은 설비가 멀쩡해도
+          배치 전량이 잘못 만들어져 오히려 영향 범위가 넓다. <b>4번(센서 계측계)</b>은 13개 이슈 중
+          검출도가 가장 높아(9) 교정 이력 연계가 최우선 개선 대상이다.</p>
+      </div>
+    </section>
+
+    <!-- 05 : 솔트조 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">03 · 이슈그룹</span>
+        <span class="step-of">6 / 9</span>
+      </div>
+      <h2>솔트조 공정 (이슈 5~6)</h2>
+      <p class="lede">250~450℃ 염욕에 급랭해 항온 유지하며 베이나이트 조직(인성)을 만드는 구간이다.</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <tbody>
+            <tr><td class="num">5</td><td>염욕 항온 구간을 벗어남</td><td class="num">10·5·8</td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">6</td><td>염욕제가 열화된 상태로 사용</td><td class="num">8·4·7</td><td><span class="avail no">불가</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pick-note">
+        <span class="ptag">이 그룹에서 눈여겨볼 것</span>
+        <p class="ptext">5번(온도)은 착수 가능하지만, <b>6번(염욕제 열화)</b>은 판단 기준이 데이터가
+          아니라 작업자의 경험이라 지금 데이터로는 다룰 수 없는 대표 사례다. 염욕 농도·청정도
+          계측 추가가 선행 과제다.</p>
+      </div>
+    </section>
+
+    <!-- 06 : 솔트 컨베이어 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">03 · 이슈그룹</span>
+        <span class="step-of">7 / 9</span>
+      </div>
+      <h2>솔트 컨베이어 공정 (이슈 7~8) ★</h2>
+      <p class="lede">변태가 끝날 때까지 부품을 실어 나르는 구간으로, 13개 이슈 중 가장 중요한
+        대비가 여기서 나온다.</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <tbody>
+            <tr><td class="num">7</td><td>이송 구간 온도 편차로 변형 발생</td><td class="num">7·7·6</td><td><span class="avail go">착수(1순위)</span></td></tr>
+            <tr><td class="num">8</td><td>이송속도 변동으로 유지시간 편차</td><td class="num">7·5·7</td><td><span class="avail no">불가</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pick-note">
+        <span class="ptag">이 그룹에서 눈여겨볼 것</span>
+        <p class="ptext"><b>7번</b>은 13개 이슈 중 발생도가 가장 높고(7) 데이터도 충분해 개선
+          <b>1순위</b>다. <b>8번</b>은 AP가 High인데도 벨트 속도 태그가 데이터셋에 없어 손을 대지
+          못한다. 속도 태그 수집이 선행 과제로 남는다.</p>
+      </div>
+    </section>
+
+    <!-- 07 : 세정·건조 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">03 · 이슈그룹</span>
+        <span class="step-of">8 / 9</span>
+      </div>
+      <h2>세정·건조 공정 (이슈 9~11)</h2>
+      <p class="lede">염욕 후 소금기를 씻어내고 물기를 말리는 후처리 구간으로, AP가 상대적으로
+        낮은 이슈들이 모여 있다.</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <tbody>
+            <tr><td class="num">9</td><td>세정 온도가 낮아 염분 잔류</td><td class="num">5·4·6</td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">10</td><td>세정액이 열화된 상태로 사용</td><td class="num">5·4·7</td><td><span class="avail no">불가</span></td></tr>
+            <tr><td class="num">11</td><td>건조 부족으로 수분 잔류</td><td class="num">5·5·6</td><td><span class="avail go">착수가능</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pick-note">
+        <span class="ptag">이 그룹에서 눈여겨볼 것</span>
+        <p class="ptext">9·11번은 AP <b>Low</b>지만 "무시해도 된다"는 뜻이 아니라 "조치를 검토할 수
+          있다"는 뜻 — 데이터가 이미 있어 큰 비용 없이 같이 처리 가능하다. <b>10번(세정액)</b>은
+          6번과 같은 구조로, 농도·오염도 계측이 없어 지금은 누적 처리량 기반 주기 관리만 가능하다.</p>
+      </div>
+    </section>
+
+    <!-- 08 : 배출부·전공정 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">03 · 이슈그룹</span>
+        <span class="step-of">9 / 9</span>
+      </div>
+      <h2>배출부·전공정 (이슈 12~13) ★</h2>
+      <p class="lede">앞선 11개 공정을 모두 떠받치는 마지막 관문과 기반 데이터층이다.</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <tbody>
+            <tr><td class="num">12</td><td>육안 검사에서 불량을 놓침</td><td class="num">9·6·8</td><td><span class="avail mid">부분가능</span></td></tr>
+            <tr><td class="num">13</td><td>공정 데이터 수집 누락</td><td class="num">5·6·7</td><td><span class="avail go">착수가능</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pick-note">
+        <span class="ptag">이 그룹에서 눈여겨볼 것</span>
+        <p class="ptext"><b>12번(배출부 육안검사)</b>이 본 과제 전체의 핵심 논거다 — 검사 시점
+          자체가 문제이므로, 공정 데이터로 불량을 미리 판정해 검사에 이르기 전에 설비가 조건을
+          자율 보정하게 한다. <b>13번</b>은 AP가 Medium이지만 나머지 12개 조치가 전부 이 데이터
+          위에서 동작하므로 실행 순서는 가장 먼저다.</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<script>
+(function(){
+  var rail = document.getElementById('rail');
+  var cards = Array.prototype.slice.call(document.querySelectorAll('[data-card]'));
+  var dotsWrap = document.getElementById('dots');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var current = 0;
+
+  cards.forEach(function(_, i){
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', (i+1) + '번째 카드로 이동');
+    b.addEventListener('click', function(){ scrollToCard(i); });
+    dotsWrap.appendChild(b);
+  });
+  var dotEls = Array.prototype.slice.call(dotsWrap.children);
+
+  function setCurrent(i){
+    current = Math.max(0, Math.min(cards.length - 1, i));
+    dotEls.forEach(function(d, idx){
+      d.setAttribute('aria-current', idx === current ? 'true' : 'false');
+    });
+  }
+
+  function scrollToCard(i){
+    var target = cards[Math.max(0, Math.min(cards.length - 1, i))];
+    target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting && e.intersectionRatio > 0.6){
+        setCurrent(cards.indexOf(e.target));
+      }
+    });
+  }, { root: rail, threshold: [0.6] });
+  cards.forEach(function(c){ io.observe(c); });
+
+  prevBtn.addEventListener('click', function(){ scrollToCard(current - 1); });
+  nextBtn.addEventListener('click', function(){ scrollToCard(current + 1); });
+
+  window.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight'){ scrollToCard(current + 1); }
+    else if (e.key === 'ArrowLeft'){ scrollToCard(current - 1); }
+  });
+
+  setCurrent(0);
+})();
+</script>
+</body>
+</html>
