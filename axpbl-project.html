@@ -469,28 +469,31 @@
 
     <!-- COVER -->
     <section class="card cover" data-card>
-      <div class="cover-mark">AX-PBL · 분석기준서 v0.1</div>
+      <div class="cover-mark">AX-PBL · 분석기준서 v0.2.1</div>
       <h1>열처리 공정 데이터 기반<br>이상 탐지 및 설정값 자동 보정</h1>
       <span class="status-pill">● 진행 중 · 26.08.31 ~ 26.10.09</span>
       <div class="cover-divider"></div>
       <div class="cover-flow-label">CONTENTS</div>
       <div class="cover-agenda">
         <div class="row"><span class="n">01</span>추진 배경</div>
-        <div class="row"><span class="n">02</span>공정 요약</div>
-        <div class="row"><span class="n">03</span>분석 기준 원칙 (FMEA·SPC)</div>
-        <div class="row"><span class="n">04</span>FMEA 작성기준 — 절차</div>
-        <div class="row"><span class="n">05</span>FMEA 작성기준 — 평가 척도</div>
-        <div class="row"><span class="n">06</span>FMEA 작성기준 — AP 산정·활용</div>
-        <div class="row"><span class="n">07</span>SPC 분석기준 — 관리도 선정</div>
-        <div class="row"><span class="n">08</span>SPC 분석기준 — 관리도 보정</div>
-        <div class="row"><span class="n">09</span>SPC 분석기준 — 공정능력지수</div>
-        <div class="row"><span class="n">10</span>SPC 분석기준 — 안정성 판정</div>
-        <div class="row"><span class="n">11</span>OCAP 연계</div>
-        <div class="row"><span class="n">12</span>관리계획서 연계</div>
+        <div class="row"><span class="n">02</span>분석 대상 설비·부품</div>
+        <div class="row"><span class="n">03</span>공정 요약</div>
+        <div class="row"><span class="n">04</span>분석 기준 원칙 (FMEA·SPC)</div>
+        <div class="row"><span class="n">05</span>FMEA 작성기준 — 절차</div>
+        <div class="row"><span class="n">06</span>FMEA 작성기준 — 평가 척도</div>
+        <div class="row"><span class="n">07</span>FMEA 작성기준 — AP 산정·활용</div>
+        <div class="row"><span class="n">08</span>SPC 분석기준 — 관리도 선정</div>
+        <div class="row"><span class="n">09</span>SPC 분석기준 — 관리도 보정</div>
+        <div class="row"><span class="n">10</span>SPC 분석기준 — 공정능력지수</div>
+        <div class="row"><span class="n">11</span>SPC 분석기준 — 안정성 판정</div>
+        <div class="row"><span class="n">12</span>OCAP 연계</div>
+        <div class="row"><span class="n">13</span>예측 모델링 — 위치·역할·데이터셋 설계</div>
+        <div class="row"><span class="n">14</span>예측 모델링 — 모델 채택·성능평가·XAI</div>
+        <div class="row"><span class="n">15</span>관리계획서 연계</div>
       </div>
       <div class="cover-footer">
         <span class="who">AX-PBL - 분석기준서</span>
-        <span>1 / 13</span>
+        <span>1 / 16</span>
       </div>
     </section>
 
@@ -498,7 +501,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">2 / 13</span>
+        <span class="step-of">2 / 16</span>
       </div>
       <h2>추진 배경</h2>
       <p class="lede">
@@ -520,11 +523,65 @@
       </div>
     </section>
 
+    <!-- 02 : 분석 대상 설비·부품 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">01 · 개요</span>
+        <span class="step-of">3 / 16</span>
+      </div>
+      <h2>분석 대상 설비·부품</h2>
+      <p class="lede">분석 범위는 오스템퍼링 연속식 열처리 라인(소입로~건조)과, 그 라인에서 처리되는
+        EV 구동모터 감속기 기어·샤프트 1개 부품(스플라인 축 구간)으로 한정한다. 장비명·부품명은
+        학습용 과제를 위해 임의로 부여한 명칭이다.</p>
+      <div class="dtable-wrap" style="flex:1;">
+        <table class="dtable">
+          <thead><tr><th colspan="2">설비 요약</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">장비명</td><td>KFQ-062822 <span class="badge m">학습용 명칭</span></td></tr>
+            <tr><td class="dim">생산자</td><td>KFQ 중공업 <span class="badge m">학습용 명칭</span></td></tr>
+            <tr><td class="dim">설비 설명</td><td>오스템퍼링 연속식 열처리 라인</td></tr>
+            <tr><td class="dim">가열 방식</td><td>전기 가열식</td></tr>
+            <tr><td class="dim">장입 방식</td><td>입구 PUSHER를 통한 자동 장입</td></tr>
+            <tr><td class="dim">열처리 원리</td><td>약 860℃ 오스테나이트화 → 250~450℃ 염욕 급랭 → 베이나이트 조직 형성</td></tr>
+            <tr><td class="dim">도입연도</td><td>2022년</td></tr>
+            <tr><td class="dim">주요 구성</td><td>소입로 – 솔트조(염욕) – 솔트컨베이어 – 세정기 – 건조로</td></tr>
+            <tr><td class="dim">제어·수집 방식</td><td>PLC 기반 존별 자동 제어, MES 기반 1초 주기 데이터 수집, 중앙서버 연동</td></tr>
+            <tr><td class="dim">일일 처리량</td><td class="num">약 28,900개/일</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="dtable-wrap" style="flex:1;">
+        <table class="dtable">
+          <thead><tr><th colspan="2">부품 요약</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">부품명</td><td>KFQ-SPL-EV-09 <span class="badge m">학습용 명칭</span></td></tr>
+            <tr><td class="dim">생산자</td><td>KFQ 중공업 <span class="badge m">학습용 명칭</span></td></tr>
+            <tr><td class="dim">부품 설명</td><td>EV 모터용 구동 모터축</td></tr>
+            <tr><td class="dim">재질</td><td>SCM415</td></tr>
+            <tr><td class="dim">치형 가공 방식</td><td>호빙(Hobbing) 가공 후 연삭(Grinding) 마무리</td></tr>
+            <tr><td class="dim">모듈 / 압력각</td><td>2 / 30°</td></tr>
+            <tr><td class="dim">공차 등급 / 끼워맞춤</td><td>5급 / e(side fit)</td></tr>
+            <tr><td class="dim">관리 대상</td><td>치형 내폭 및 외폭</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="spec-strip">
+        <div><span class="k">내폭 LSL</span><span class="v num">24.987</span></div>
+        <div><span class="k">내폭 기준값</span><span class="v num">25.000</span></div>
+        <div><span class="k">내폭 USL</span><span class="v num">25.013</span></div>
+        <div><span class="k">단위</span><span class="v">mm</span></div>
+        <div><span class="k">외폭 LSL</span><span class="v num">29.987</span></div>
+        <div><span class="k">외폭 기준값</span><span class="v num">30.000</span></div>
+        <div><span class="k">외폭 USL</span><span class="v num">30.013</span></div>
+        <div><span class="k">준용 규격</span><span class="v">KS B ISO 4156</span></div>
+      </div>
+    </section>
+
     <!-- 02 : 공정 요약 -->
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">3 / 13</span>
+        <span class="step-of">4 / 16</span>
       </div>
       <h2>공정 요약 · 규격 개요</h2>
       <p class="lede">
@@ -572,7 +629,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">02 · 분석기준</span>
-        <span class="step-of">4 / 13</span>
+        <span class="step-of">5 / 16</span>
       </div>
       <h2>분석 기준 원칙</h2>
       <p class="lede"><b>FMEA는 발단, SPC는 근거</b>로 사용합니다. FMEA는 잠재 고장을 식별하고
@@ -614,7 +671,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">5 / 13</span>
+        <span class="step-of">6 / 16</span>
       </div>
       <h2>FMEA 작성기준 — 절차</h2>
       <p class="lede">FMEA는 준비부터 결과 문서화까지 7단계 절차를 따르며, 최적화(3.6) 단계에서는
@@ -647,7 +704,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">6 / 13</span>
+        <span class="step-of">7 / 16</span>
       </div>
       <h2>FMEA 작성기준 — 평가 척도</h2>
       <p class="lede">AIAG-VDA 핸드북 부록 C2의 Severity·Occurrence·Detection 기준을 본 과제
@@ -680,7 +737,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">7 / 13</span>
+        <span class="step-of">8 / 16</span>
       </div>
       <h2>FMEA 작성기준 — AP 산정·활용</h2>
       <p class="lede">Action Priority(AP)는 S→O→D 순으로 가중해 1,000가지 S·O·D 조합을
@@ -710,7 +767,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">8 / 13</span>
+        <span class="step-of">9 / 16</span>
       </div>
       <h2>SPC 분석기준 — 관리도 선정</h2>
       <p class="lede">수집 데이터를 공정 센서 데이터와 로트 실적 데이터로 나누고, 서브그룹
@@ -740,7 +797,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">9 / 13</span>
+        <span class="step-of">10 / 16</span>
       </div>
       <h2>SPC 분석기준 — 관리도 보정</h2>
       <p class="lede">1차 선정된 관리도 계열 안에서도 아래 6가지 판단축에 따라 세부 조정이 필요할 수 있다.</p>
@@ -765,7 +822,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">10 / 13</span>
+        <span class="step-of">11 / 16</span>
       </div>
       <h2>SPC 분석기준 — 공정능력지수</h2>
       <p class="lede">특성 등급은 P-FMEA의 AP 등급에서 변환되며, 등급별로 계량형(Cp/Cpk)과
@@ -783,22 +840,23 @@
       </div>
       <div class="dtable-wrap" style="flex:none;">
         <table class="dtable">
-          <thead><tr><th>등급</th><th class="num">계량형 Cp/Cpk</th><th class="num">내폭 목표 ppm</th></tr></thead>
+          <thead><tr><th>등급</th><th class="num">P_p/P_pk</th><th class="num">C_p/C_pk</th><th class="num">내폭 목표 ppm</th></tr></thead>
           <tbody>
-            <tr><td>Critical</td><td class="num">2.00 / 1.67 → 1.67</td><td class="num">63</td></tr>
-            <tr><td>Major</td><td class="num">1.67 / 1.33 → 1.33</td><td class="num">200</td></tr>
-            <tr><td>Minor / Others</td><td class="num">1.33 / 1.00 → 1.00</td><td class="num">450</td></tr>
+            <tr><td>Critical</td><td class="num">1.45</td><td class="num">1.35</td><td class="num">63</td></tr>
+            <tr><td>Major</td><td class="num">1.35</td><td class="num">1.25</td><td class="num">200</td></tr>
+            <tr><td>Minor</td><td class="num">1.10</td><td class="num">1.00</td><td class="num" rowspan="2" style="vertical-align:middle;">450</td></tr>
+            <tr><td>Others</td><td class="num">1.00</td><td class="num">1.00</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="foot-note">외폭은 등급 미적용 — 발생 즉시 이상으로 보고 Rule 1을 준용해 즉시 원인조사한다. AIAG-VDA SPC Manual은 계수형 특성의 정량적 능력지수 산출식을 제공하지 않아, 계수형 목표치는 실측 데이터('22.01~07)의 로트별 불량률 백분위수를 근거로 정했다.</p>
+      <p class="foot-note">외폭은 등급 미적용 — 발생 즉시 이상으로 보고 Rule 1을 준용해 즉시 원인조사한다. AIAG-VDA SPC Manual은 계수형 특성의 정량적 능력지수 산출식을 제공하지 않아, 계수형 목표치는 실측 데이터('22.01~07)의 로트별 불량률 백분위수를 근거로 정했다. 본 프로젝트는 General Geometric Method(G)를 산출식으로 채택하며, 데이터가 정규분포로 확인된 특성은 z-Score/Bothe Method(Z)와 결과가 동일하므로 병행 표기가 가능하다. 자연하한이 0인 편측공차 특성(변형량·경화층깊이 등)도 C_p/P_p는 함께 산출하되 별도 목표치는 부여하지 않는다.</p>
     </section>
 
     <!-- 10 : 안정성 판정 -->
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">11 / 13</span>
+        <span class="step-of">12 / 16</span>
       </div>
       <h2>SPC 분석기준 — 안정성 판정</h2>
       <p class="lede">안정성 기준을 이상탐지 로직의 1차 판정 기준으로 채택하며, Rule 1~5는
@@ -834,7 +892,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">12 / 13</span>
+        <span class="step-of">13 / 16</span>
       </div>
       <h2>OCAP 연계</h2>
       <p class="lede">규격 내 6.6 OCAP 개념을 "설정값 자동 보정" 로직의 조정 매트릭스 설계 근거로 삼아,
@@ -870,11 +928,95 @@
       <p class="foot-note">운영자·감독자는 본 OCAP 매트릭스를 사전 숙지해야 하며, 숙지 여부는 SPC 역량 매트릭스로 관리한다.</p>
     </section>
 
+    <!-- 13 : 예측 모델링 1 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">05 · 예측모델링</span>
+        <span class="step-of">14 / 16</span>
+      </div>
+      <h2>예측 모델링 — 위치·역할·데이터셋 설계</h2>
+      <p class="lede">예측 모델링은 머신러닝을 통해 이뤄지며, SPC보다 한 단계 앞서 위험을 미리
+        알려주는 "사전 예측 계층"으로 둔다. 무엇을 예측할지·어떤 모델까지 쓸지만 정하며,
+        설정값을 얼마나 보정할지는 다루지 않는다(OCAP 규칙 기반 체계를 그대로 따름).</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th>위치</th><th>수행 주체 / 방식</th><th>역할 및 권한</th></tr></thead>
+          <tbody>
+            <tr><td>1차 예측</td><td>예측 모델링 / 배정번호 단위 위험도 점수 산출</td><td>관리한계를 벗어나지 않아도 과거 패턴을 학습해 로트의 불량 위험을 미리 점수로 알림 — <b>실행 권한 없음</b></td></tr>
+            <tr><td>2차 감지</td><td>SPC 관리도 / Rule 1~5 이탈 판정</td><td>이미 측정된 데이터가 관리한계를 벗어난 순간을 감지 — 이탈 시 자동 보정 트리거(OCAP 매트릭스 기반)</td></tr>
+            <tr><td>최종 실행</td><td>담당 엔지니어 승인</td><td>실제 설정값 조정 실행</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(9px,1.4cqh,14px);">
+        <p class="foot-note" style="border-top:none; padding-top:0;">예측 모델링의 결과는 참고용 신호일 뿐 자동 실행의 근거로 쓰지 않는다.</p>
+        <div class="stage-block">
+          <span class="slabel">데이터셋 설계 원칙</span>
+          <p class="lede" style="font-size:.72rem;"><b>지도학습(Supervised Learning)</b> 과거 로트의
+            공정 기록(특징, X)과 그 로트가 실제 불량이었는지 여부(정답, y)를 함께 학습.
+            <b>교차검증</b> 데이터를 여러 조각으로 나눠 돌아가며 학습·검증을 반복(k-fold, 데이터가
+            매우 적을 경우 LOOCV)하여 신뢰도 있는 성능을 확인한다.</p>
+        </div>
+        <div class="dtable-wrap" style="flex:none;">
+          <table class="dtable">
+            <thead><tr><th>구분</th><th>정의 원칙</th><th>본 프로젝트 데이터 출처</th></tr></thead>
+            <tbody>
+              <tr><td>목적변수(y)</td><td>판정하고자 하는 결과를 이진(양품/불량) 또는 범주형으로 정의</td><td>불량 유형 항목(예: 내폭·외폭 등 실측값이 있는 항목)</td></tr>
+              <tr><td>입력변수(X)</td><td>목적변수 발생 이전 시점의 공정 조건 요약값으로 구성</td><td>배정번호별 집계표의 Zone별 Avg·Std</td></tr>
+              <tr><td>데이터 단위</td><td>배정번호(로트) 단위로 통일</td><td>배정번호 별 집계(세부 집계표는 확정 전)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 : 예측 모델링 2 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">05 · 예측모델링</span>
+        <span class="step-of">15 / 16</span>
+      </div>
+      <h2>예측 모델링 — 모델 채택·성능평가·XAI</h2>
+      <p class="lede">가장 단순하고 해석하기 쉬운 모델을 기준선(baseline)으로 먼저 채택하고, 그보다
+        나은 성능이 실제로 확인될 때만 다음 단계로 확장한다.</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th>모델</th><th>설명가능성</th><th>장단점 요약</th><th>채택 순위</th></tr></thead>
+          <tbody>
+            <tr><td>로지스틱 회귀</td><td>매우 높음</td><td>단순·해석 쉬움, 복잡한 패턴은 못 잡음</td><td>1순위(baseline)</td></tr>
+            <tr><td>결정트리</td><td>매우 높음</td><td>순서도로 바로 설명 가능, 과적합 위험 있어 깊이 제한 필요</td><td>1순위(baseline)</td></tr>
+            <tr><td>랜덤포레스트</td><td>중간</td><td>결정트리보다 안정적이나 표본 적으면 이점 작음</td><td>2순위(확장 후보)</td></tr>
+            <tr><td>XGBoost</td><td>낮음</td><td>성능은 최고 수준이나 표본 적은 상태에선 과적합 우려 큼</td><td>3순위(참고·비교용)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(9px,1.4cqh,14px);">
+        <div class="stage-block">
+          <span class="slabel">성능 평가 기준</span>
+          <p class="lede" style="font-size:.72rem;"><b>재현율(Recall)</b> 실제 불량 중 모델이 불량이라고
+            맞춘 비율. <b>정밀도(Precision)</b> 모델이 불량이라고 한 것 중 실제 불량이었던 비율.
+            <b>정확도(Accuracy)</b>는 참고 보조지표로만 병기하고 단독 기준으로 쓰지 않는다(정상 로트가
+            대부분인 구조에서는 무조건 정상 답변도 정확도가 높게 나올 수 있음).</p>
+        </div>
+        <div class="dtable-wrap" style="flex:none;">
+          <table class="dtable">
+            <thead><tr><th>SPC 특성 등급</th><th>우선 지표</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr><td>Critical (S≥9)</td><td>재현율 우선</td><td>불량을 놓치는 것이 가장 위험 — 오탐이 있어도 반드시 잡아야 함</td></tr>
+              <tr><td>Major / Minor</td><td>정밀도·재현율 균형</td><td>과도한 오탐이 현장 업무 부담을 늘림</td></tr>
+              <tr><td>Others</td><td>정밀도 우선</td><td>영향도가 낮아 불필요한 알람을 줄이는 것이 더 중요</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="foot-note">설명가능성(XAI) 요구사항 — 모든 예측 결과에는 상위 2~3개 기여 변수(어느 Zone의 Avg/Std인지)를 함께 산출한다. 담당자 알람 문구에는 예측 점수와 함께 "주요 원인: OO존 온도 산포 상승" 형태의 근거를 포함한다. XGBoost 등 설명이 어려운 모델을 쓸 경우 SHAP 계산을 반드시 병행해야만 채택 후보에 포함한다.</p>
+      </div>
+    </section>
+
     <!-- 12 : 관리계획서 연계 -->
     <section class="card" data-card>
       <div class="card-kicker">
-        <span class="step-tag">05 · 연계</span>
-        <span class="step-of">13 / 13</span>
+        <span class="step-tag">06 · 연계</span>
+        <span class="step-of">16 / 16</span>
       </div>
       <h2>관리계획서 연계</h2>
       <p class="lede">FMEA에서 도출된 특별특성을 관리계획서의 관리 항목으로 지정해,
