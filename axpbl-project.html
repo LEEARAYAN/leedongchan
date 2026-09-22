@@ -469,7 +469,7 @@
 
     <!-- COVER -->
     <section class="card cover" data-card>
-      <div class="cover-mark">AX-PBL · 분석기준서 v0.2.1</div>
+      <div class="cover-mark">AX-PBL · 분석기준서 v0.2.7</div>
       <h1>열처리 공정 데이터 기반<br>이상 탐지 및 설정값 자동 보정</h1>
       <span class="status-pill">● 진행 중 · 26.08.31 ~ 26.10.09</span>
       <div class="cover-divider"></div>
@@ -482,18 +482,19 @@
         <div class="row"><span class="n">05</span>FMEA 작성기준 — 절차</div>
         <div class="row"><span class="n">06</span>FMEA 작성기준 — 평가 척도</div>
         <div class="row"><span class="n">07</span>FMEA 작성기준 — AP 산정·활용</div>
-        <div class="row"><span class="n">08</span>SPC 분석기준 — 관리도 선정</div>
-        <div class="row"><span class="n">09</span>SPC 분석기준 — 관리도 보정</div>
-        <div class="row"><span class="n">10</span>SPC 분석기준 — 공정능력지수</div>
-        <div class="row"><span class="n">11</span>SPC 분석기준 — 안정성 판정</div>
-        <div class="row"><span class="n">12</span>OCAP 연계</div>
-        <div class="row"><span class="n">13</span>예측 모델링 — 위치·역할·데이터셋 설계</div>
-        <div class="row"><span class="n">14</span>예측 모델링 — 모델 채택·성능평가·XAI</div>
-        <div class="row"><span class="n">15</span>관리계획서 연계</div>
+        <div class="row"><span class="n">08</span>FMEA 작성기준 — 조치상태 정의</div>
+        <div class="row"><span class="n">09</span>SPC 분석기준 — 관리도 선정</div>
+        <div class="row"><span class="n">10</span>SPC 분석기준 — 관리도 보정</div>
+        <div class="row"><span class="n">11</span>SPC 분석기준 — 공정능력지수</div>
+        <div class="row"><span class="n">12</span>SPC 분석기준 — 안정성 판정</div>
+        <div class="row"><span class="n">13</span>OCAP 연계</div>
+        <div class="row"><span class="n">14</span>예측 모델링 — 위치·역할·데이터셋 설계</div>
+        <div class="row"><span class="n">15</span>예측 모델링 — 모델 채택·성능평가·XAI</div>
+        <div class="row"><span class="n">16</span>관리계획서 연계</div>
       </div>
       <div class="cover-footer">
         <span class="who">AX-PBL - 분석기준서</span>
-        <span>1 / 16</span>
+        <span>1 / 17</span>
       </div>
     </section>
 
@@ -501,19 +502,19 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">2 / 16</span>
+        <span class="step-of">2 / 17</span>
       </div>
       <h2>추진 배경</h2>
       <p class="lede">
         전기차 구동계는 감속기 기어의 정밀도와 소음(NVH) 요구가 내연기관 대비 훨씬 가혹하며,
-        이 요구를 공통으로 결정하는 것이 <b>열처리 변형</b>입니다. 그러나 열처리는 특별공정으로
+        이 요구를 공통으로 결정하는 것이 <b>열처리 변형</b>이다. 그러나 열처리는 특별공정으로
         분류되어 내부 특성(경도·경화층 깊이)은 <b>파괴검사로만</b> 확인할 수 있어 전수검사가
-        원천적으로 불가능합니다.
+        원천적으로 불가능하다.
       </p>
       <p class="lede">
-        반면 외부 특성(<b>내폭·외폭</b>)은 비파괴 검사로 로트 전량 확인이 가능합니다. 이에 본
+        반면 외부 특성(<b>내폭·외폭</b>)은 비파괴 검사로 로트 전량 확인이 가능하다. 이에 본
         프로젝트는 이 치수 특성을 대상으로 공정 데이터를 자동 분석해 이상을 탐지하고
-        설정값을 자동 보정하는 체계를 먼저 구축·검증한 뒤, 향후 파괴검사 특성으로 확장합니다.
+        설정값을 자동 보정하는 체계를 먼저 구축·검증한 뒤, 향후 파괴검사 특성으로 확장한다.
       </p>
       <div class="spec-strip">
         <div><span class="k">분석 대상</span><span class="v">내폭 · 외폭</span></div>
@@ -527,7 +528,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">3 / 16</span>
+        <span class="step-of">3 / 17</span>
       </div>
       <h2>분석 대상 설비·부품</h2>
       <p class="lede">분석 범위는 오스템퍼링 연속식 열처리 라인(소입로~건조)과, 그 라인에서 처리되는
@@ -581,12 +582,12 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">4 / 16</span>
+        <span class="step-of">4 / 17</span>
       </div>
       <h2>공정 요약 · 규격 개요</h2>
       <p class="lede">
         오스템퍼링은 약 <b>860℃ 오스테나이트화</b> 후 <b>250~450℃ 염욕</b>에 급랭하여 베이나이트
-        조직을 얻는 열처리로, Q/T 대비 인성이 우수하고 균열·변형이 감소합니다.
+        조직을 얻는 열처리로, Q/T 대비 인성이 우수하고 균열·변형이 감소한다.
       </p>
       <div class="flow-row tight">
         <div class="flow-box"><span class="fmain">공급기</span></div>
@@ -606,7 +607,7 @@
         <div class="flow-arrow"></div>
         <div class="flow-box" style="visibility:hidden"></div>
       </div>
-      <p class="lede" style="font-size:.66rem;">※ 진한 배경 구간(소입로~건조로)이 센서 데이터가 존재하는 <b>분석 범위</b>이며, 소려로·방청은 데이터 미수집으로 제외됩니다.</p>
+      <p class="lede" style="font-size:.66rem;">※ 진한 배경 구간(소입로~건조로)이 센서 데이터가 존재하는 <b>분석 범위</b>이며, 소려로·방청은 데이터 미수집으로 제외한다.</p>
       <div class="spec-strip">
         <div><span class="k">데이터 기간</span><span class="v">'22.01~07</span></div>
         <div><span class="k">공정 센서</span><span class="v num">293만행×20열</span></div>
@@ -629,12 +630,12 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">02 · 분석기준</span>
-        <span class="step-of">5 / 16</span>
+        <span class="step-of">5 / 17</span>
       </div>
       <h2>분석 기준 원칙</h2>
-      <p class="lede"><b>FMEA는 발단, SPC는 근거</b>로 사용합니다. FMEA는 잠재 고장을 식별하고
+      <p class="lede"><b>FMEA는 발단, SPC는 근거</b>로 사용한다. FMEA는 잠재 고장을 식별하고
         개선 필요성을 확인하는 "문제 제기" 단계까지만 활용하며, 이상탐지 로직·근본원인
-        규명·자동 보정 기준은 SPC 데이터 분석 결과로 수립합니다.</p>
+        규명·자동 보정 기준은 SPC 데이터 분석 결과로 수립한다.</p>
       <div class="flow-row">
         <div class="flow-box dark">
           <span class="ftag">FMEA</span>
@@ -671,7 +672,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">6 / 16</span>
+        <span class="step-of">6 / 17</span>
       </div>
       <h2>FMEA 작성기준 — 절차</h2>
       <p class="lede">FMEA는 준비부터 결과 문서화까지 7단계 절차를 따르며, 최적화(3.6) 단계에서는
@@ -704,7 +705,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">7 / 16</span>
+        <span class="step-of">7 / 17</span>
       </div>
       <h2>FMEA 작성기준 — 평가 척도</h2>
       <p class="lede">AIAG-VDA 핸드북 부록 C2의 Severity·Occurrence·Detection 기준을 본 과제
@@ -737,7 +738,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">8 / 16</span>
+        <span class="step-of">8 / 17</span>
       </div>
       <h2>FMEA 작성기준 — AP 산정·활용</h2>
       <p class="lede">Action Priority(AP)는 S→O→D 순으로 가중해 1,000가지 S·O·D 조합을
@@ -763,11 +764,37 @@
       </div>
     </section>
 
+    <!-- 06b : 조치상태 정의 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">03 · FMEA</span>
+        <span class="step-of">9 / 17</span>
+      </div>
+      <h2>FMEA 작성기준 — 조치상태 정의</h2>
+      <p class="lede">P-FMEA Report의 조치 요약(표 8 구성 항목 5)에 적을 조치상태는 5단계로
+        표준화한다. 조치가 완료되어 O·D가 재평가된 직후라도, 곧바로 "완료"로 적지 않는다.</p>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th>영문</th><th>국문 표기</th><th>정의</th></tr></thead>
+          <tbody>
+            <tr><td>Open</td><td>미착수</td><td>조치가 정의되지 않은 상태</td></tr>
+            <tr><td>Decision Pending</td><td>결정대기</td><td>조치는 정의됐으나 시행 여부가 아직 결정되지 않음</td></tr>
+            <tr><td>Implementation Pending</td><td>실행대기</td><td>시행이 결정됐으나 아직 시행되지 않음, 또는 시행됐으나 효과성 검증이 끝나지 않음</td></tr>
+            <tr><td>Completed</td><td>완료</td><td>시행이 완료되고 효과성이 입증·문서화됨</td></tr>
+            <tr><td>Not Implemented</td><td>미실행</td><td>현재 여건(계측 미비 등)상 한계로 시행하지 않기로 결정됨</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot-note">새로 산정된 AP는 효과성이 시험으로 검증되기 전까지는 잠정(예측) 등급이며,
+        검증·문서화 이후에야 "완료"로 바뀐다. 다만 본 프로젝트는 학습용 과제 특성상 설계 완료
+        시점을 완료로 간주한다.</p>
+    </section>
+
     <!-- 07 : 관리도 선정 -->
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">9 / 16</span>
+        <span class="step-of">10 / 17</span>
       </div>
       <h2>SPC 분석기준 — 관리도 선정</h2>
       <p class="lede">수집 데이터를 공정 센서 데이터와 로트 실적 데이터로 나누고, 서브그룹
@@ -797,7 +824,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">10 / 16</span>
+        <span class="step-of">11 / 17</span>
       </div>
       <h2>SPC 분석기준 — 관리도 보정</h2>
       <p class="lede">1차 선정된 관리도 계열 안에서도 아래 6가지 판단축에 따라 세부 조정이 필요할 수 있다.</p>
@@ -822,7 +849,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">11 / 16</span>
+        <span class="step-of">12 / 17</span>
       </div>
       <h2>SPC 분석기준 — 공정능력지수</h2>
       <p class="lede">특성 등급은 P-FMEA의 AP 등급에서 변환되며, 등급별로 계량형(Cp/Cpk)과
@@ -856,7 +883,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">12 / 16</span>
+        <span class="step-of">13 / 17</span>
       </div>
       <h2>SPC 분석기준 — 안정성 판정</h2>
       <p class="lede">안정성 기준을 이상탐지 로직의 1차 판정 기준으로 채택하며, Rule 1~5는
@@ -892,7 +919,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">13 / 16</span>
+        <span class="step-of">14 / 17</span>
       </div>
       <h2>OCAP 연계</h2>
       <p class="lede">규격 내 6.6 OCAP 개념을 "설정값 자동 보정" 로직의 조정 매트릭스 설계 근거로 삼아,
@@ -932,7 +959,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">05 · 예측모델링</span>
-        <span class="step-of">14 / 16</span>
+        <span class="step-of">15 / 17</span>
       </div>
       <h2>예측 모델링 — 위치·역할·데이터셋 설계</h2>
       <p class="lede">예측 모델링은 머신러닝을 통해 이뤄지며, SPC보다 한 단계 앞서 위험을 미리
@@ -974,7 +1001,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">05 · 예측모델링</span>
-        <span class="step-of">15 / 16</span>
+        <span class="step-of">16 / 17</span>
       </div>
       <h2>예측 모델링 — 모델 채택·성능평가·XAI</h2>
       <p class="lede">가장 단순하고 해석하기 쉬운 모델을 기준선(baseline)으로 먼저 채택하고, 그보다
@@ -1016,7 +1043,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">06 · 연계</span>
-        <span class="step-of">16 / 16</span>
+        <span class="step-of">17 / 17</span>
       </div>
       <h2>관리계획서 연계</h2>
       <p class="lede">FMEA에서 도출된 특별특성을 관리계획서의 관리 항목으로 지정해,
@@ -1038,7 +1065,7 @@
         <div class="flow-arrow">▶</div>
         <div class="flow-box"><span class="fsub">관리계획서</span></div>
       </div>
-      <p class="foot-note">SPC 근본원인분석 결과(안정성 판정 5단계)는 반대 방향으로 P-FMEA 개정 및 관리계획서 갱신의 입력자료로 환류한다. ※ 본 문서는 분석 방법론 기준서이며, 실제 분석 결과(P-FMEA 판정·SPC 분석)는 프로젝트 진행에 따라 별도로 공개될 예정입니다.</p>
+      <p class="foot-note">SPC 근본원인분석 결과(안정성 판정 5단계)는 반대 방향으로 P-FMEA 개정 및 관리계획서 갱신의 입력자료로 환류한다. ※ 본 문서는 분석 방법론 기준서이며, 실제 P-FMEA 판정·조치 결과는 별도 문서 「P-FMEA 결과 보고서 v0.2.8」로 발행되었다(14개 이슈 중 9건 완료·5건 실행대기). SPC 분석 결과는 프로젝트 진행에 따라 추후 별도 공개될 예정이다.</p>
     </section>
 
   </div>

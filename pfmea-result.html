@@ -303,13 +303,32 @@
   .dots button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
 
   .hint{ font-family:"IBM Plex Mono", monospace; font-size:.66rem; color:var(--ink-faint); letter-spacing:.02em; }
+
+  .spc{ display:inline-block; font-family:"IBM Plex Mono", monospace; font-size:.58rem; font-weight:600; padding:1px 6px; border-radius:3px; letter-spacing:.01em; white-space:nowrap; }
+  .spc.crit{ background:var(--alert-soft); color:var(--alert); }
+  .spc.maj{ background:var(--warn-soft); color:var(--ink-soft); }
+  .spc.oth{ background:var(--line); color:var(--ink-faint); }
+
+  .avail.done{ background:var(--good-soft); color:var(--good); }
+  .avail.wait{ background:var(--warn-soft); color:var(--warn); }
+
+  .odshift{ font-family:"IBM Plex Mono", monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .odshift .arrow{ color:var(--ink-faint); padding:0 1px; }
+  .odshift .better{ color:var(--good); font-weight:600; }
+
+  .stat-strip{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .stat-strip div{ background:var(--surface); padding:9px 8px; display:flex; flex-direction:column; gap:2px; align-items:center; text-align:center; }
+  .stat-strip .k{ font-family:"IBM Plex Mono", monospace; font-size:.56rem; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-faint); }
+  .stat-strip .v{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:1.15rem; color:var(--ink); }
+  .stat-strip .v.good{ color:var(--good); }
+  .stat-strip .v.warn{ color:var(--warn); }
 </style>
 </head>
 <body>
 <div class="deck-head">
   <div>
     <div class="deck-eyebrow">GITHUB PORTFOLIO · AX-PBL PROJECT DECK</div>
-    <div class="deck-title">P-FMEA 이슈별 분석 결과 — 열처리 공정 13개 고장원인</div>
+    <div class="deck-title">P-FMEA 판정 및 조치 결과 — 열처리 공정 14개 고장원인</div>
   </div>
   <div class="hint">← → 또는 스와이프로 이동</div>
 </div>
@@ -322,9 +341,9 @@
 
     <!-- COVER -->
     <section class="card cover" data-card>
-      <div class="cover-mark">P-FMEA · 이슈별 분석 결과 v0.1.5</div>
-      <h1>P-FMEA 이슈별<br>분석 결과</h1>
-      <span class="status-pill">● 14개 이슈 분석 완료 · 26.09.23</span>
+      <div class="cover-mark">P-FMEA · 결과 보고서 v0.2.8</div>
+      <h1>P-FMEA 판정 및<br>조치 결과</h1>
+      <span class="status-pill">● 14개 이슈 조치 완료 9 · 실행대기 5 · 26.09.23</span>
       <div class="cover-divider"></div>
       <div class="cover-flow-label">CONTENTS</div>
       <div class="cover-agenda">
@@ -334,12 +353,14 @@
         <div class="row"><span class="n">04</span>소입로 공정 (이슈 1~4)</div>
         <div class="row"><span class="n">05</span>솔트조 공정 (이슈 5~6)</div>
         <div class="row"><span class="n">06</span>솔트 컨베이어 공정 (이슈 7~8)</div>
-        <div class="row"><span class="n">07</span>세정·건조 공정 (이슈 9~11)</div>
+        <div class="row"><span class="n">07</span>세정·건조 공정 (이슈 9~11, 14)</div>
         <div class="row"><span class="n">08</span>배출부·전공정 (이슈 12~13)</div>
+        <div class="row"><span class="n">09</span>조치 시스템 구성</div>
+        <div class="row"><span class="n">10</span>향후 계획</div>
       </div>
       <div class="cover-footer">
         <span class="who">AX-PBL - P-FMEA</span>
-        <span>1 / 9</span>
+        <span>1 / 11</span>
       </div>
     </section>
 
@@ -347,32 +368,31 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 안내</span>
-        <span class="step-of">2 / 9</span>
+        <span class="step-of">2 / 11</span>
       </div>
       <h2>이 문서를 읽는 법</h2>
-      <p class="lede">P-FMEA는 "이 공정에서 무엇이 잘못될 수 있고, 잘못되면 얼마나 큰일이며,
-        지금 그걸 막거나 잡아낼 수 있는지"를 한 줄씩 따져보는 문서다. 각 이슈는 아래 여섯 가지를
-        순서대로 설명한다.</p>
+      <p class="lede">이전 버전은 "무엇이 위험한가"까지만 다뤘다. 이번 v0.2.8은 그 14개 이슈에
+        실제로 <b>어떤 조치를 했고, 그 결과 O·D가 얼마나 좋아졌으며, 지금 상태가 무엇인지</b>까지
+        더한 최종 결과다.</p>
       <div class="dtable-wrap">
         <table class="dtable">
           <thead><tr><th>구분</th><th>설명</th></tr></thead>
           <tbody>
-            <tr><td>한 줄 요약</td><td>이 이슈가 무슨 얘기인지 한 문장으로</td></tr>
-            <tr><td>무슨 일을 하는 공정인가</td><td>정상일 때 여기서 무슨 일이 일어나는지</td></tr>
-            <tr><td>뭐가 잘못되나</td><td>고장의 원인. "이래서 이렇게 됐다"</td></tr>
-            <tr><td>무슨 피해가 생기나</td><td>우리 공장 → 납품처 → 최종사용자 순으로</td></tr>
-            <tr><td>점수를 왜 그렇게 줬나</td><td>심각도·발생도·검출도와 그 근거</td></tr>
-            <tr><td>우리가 할 조치</td><td>그리고 지금 데이터로 실제 할 수 있는지</td></tr>
+            <tr><td>S·O·D (조치 전)</td><td>최초 판정값. 심각도(S)는 조치로 낮아지지 않는다</td></tr>
+            <tr><td>O·D 변동</td><td>조치 이후 재평가한 발생도·검출도 — "6→4"처럼 표기</td></tr>
+            <tr><td>AP 변동</td><td>S는 그대로이므로 AP는 O·D가 좋아져도 High에 머물 수 있다</td></tr>
+            <tr><td>조치상태</td><td>완료 / 실행대기 / 불가(제외) 세 갈래로 최종 정리</td></tr>
           </tbody>
         </table>
       </div>
       <div class="stage-block">
-        <span class="slabel">점수 세 가지의 뜻</span>
+        <span class="slabel">조치상태 5단계 정의 (분석기준서 4.3.2)</span>
         <p class="lede" style="font-size:.68rem;">
-          <b>심각도(S)</b> 사고가 나면 얼마나 큰일인가. 클수록 심각하며, 조치로는 낮출 수 없다(이미 벌어진 결과값).<br>
-          <b>발생도(O)</b> 그 원인이 얼마나 자주 생길 것 같은가. 지금 막는 수단이 얼마나 튼튼한지로 판단한다.<br>
-          <b>검출도(D)</b> 생겼을 때 잡아낼 수 있는가. 클수록 못 잡는다는 뜻이라 헷갈리기 쉽다.<br>
-          <b>조치우선순위(AP)</b> 위 셋을 조합해 High/Medium/Low로 나온다. 위험의 크기 순위가 아니라 "조치가 얼마나 급한가"의 순위다.
+          <b>완료</b> 시행이 끝나고 효과성까지 입증·문서화됨. <b>실행대기</b> 시행은 결정됐지만
+          아직 안 됐거나, 됐어도 효과성 검증이 안 끝남. <b>미실행</b> 계측 미비 등 현재 여건상
+          하지 않기로 결정. 본 프로젝트는 학습 과제 특성상 설계 완료 시점을 "완료"로 간주한다.<br>
+          <b>불가(제외)</b>는 이 문서에서 "SPC 관리도로 다룰 데이터가 없어 제외"라는 뜻으로,
+          위 5단계와는 별개의 데이터 가용성 표기다.
         </p>
       </div>
     </section>
@@ -381,30 +401,30 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">02 · 총괄</span>
-        <span class="step-of">3 / 9</span>
+        <span class="step-of">3 / 11</span>
       </div>
       <h2>14개 이슈 총괄표</h2>
-      <p class="lede">공정 5단계(소입로~건조)에서 4M(Man·Machine·Material·Measurement) 기준으로
-        식별한 14개 고장원인의 S·O·D·AP와 데이터 가용성이다. 이슈14는 분석 중 신규 식별되어
-        2026-09-15 별도 센서로 데이터가 추가 확보되었다.</p>
+      <p class="lede">공정 5단계(소입로~건조)에서 4M 기준으로 식별한 14개 고장원인의 최종
+        판정과 조치상태다. 이슈14는 분석 중 신규 식별되어 2026-09-15 별도 센서로 데이터가
+        추가 확보되었다.</p>
       <div class="dtable-wrap">
         <table class="dtable">
-          <thead><tr><th class="num">#</th><th>공정·4M</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>AP</th><th>데이터</th></tr></thead>
+          <thead><tr><th class="num">#</th><th>공정·4M</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>AP</th><th>조치상태</th></tr></thead>
           <tbody>
-            <tr><td class="num">1</td><td class="dim">소입로·Machine</td><td>가열 온도가 설정 구간을 벗어남</td><td class="num">10·6·8</td><td><span class="badge h">High</span></td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">2</td><td class="dim">소입로·Machine</td><td>침탄 CP값이 유지되지 않음</td><td class="num">8·6·8</td><td><span class="badge h">High</span></td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">3</td><td class="dim">소입로·Man</td><td>품목에 맞지 않는 조건으로 세팅</td><td class="num">10·6·7</td><td><span class="badge h">High</span></td><td><span class="avail mid">부분가능</span></td></tr>
-            <tr><td class="num">4</td><td class="dim">소입로·Measurement</td><td>센서 지시값이 실제와 다름</td><td class="num">8·5·9</td><td><span class="badge h">High</span></td><td><span class="avail mid">부분가능</span></td></tr>
-            <tr><td class="num">5</td><td class="dim">솔트조·Machine</td><td>염욕 항온 구간을 벗어남</td><td class="num">10·5·8</td><td><span class="badge h">High</span></td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">6</td><td class="dim">솔트조·Material</td><td>염욕제가 열화된 상태로 사용</td><td class="num">8·4·7</td><td><span class="badge h">High</span></td><td><span class="avail no">불가</span></td></tr>
-            <tr><td class="num">7</td><td class="dim">컨베이어·Machine</td><td>이송 구간 온도 편차로 변형 발생</td><td class="num">7·7·6</td><td><span class="badge h">High</span></td><td><span class="avail go">착수(1순위)</span></td></tr>
-            <tr><td class="num">8</td><td class="dim">컨베이어·Machine</td><td>이송속도 변동으로 유지시간 편차</td><td class="num">7·5·7</td><td><span class="badge h">High</span></td><td><span class="avail no">불가</span></td></tr>
-            <tr><td class="num">9</td><td class="dim">세정·Machine</td><td>세정 온도가 낮아 염분 잔류</td><td class="num">5·4·6</td><td><span class="badge l">Low</span></td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">10</td><td class="dim">세정·Material</td><td>세정액이 열화된 상태로 사용</td><td class="num">5·4·7</td><td><span class="badge m">Medium</span></td><td><span class="avail no">불가</span></td></tr>
-            <tr><td class="num">11</td><td class="dim">건조·Machine</td><td>건조 부족으로 수분 잔류</td><td class="num">5·5·6</td><td><span class="badge l">Low</span></td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">12</td><td class="dim">건조(배출)·Man</td><td>육안 검사에서 불량을 놓침</td><td class="num">9·6·8</td><td><span class="badge h">High</span></td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">13</td><td class="dim">전공정·Measurement</td><td>공정 데이터 수집 누락</td><td class="num">5·6·7</td><td><span class="badge m">Medium</span></td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">14</td><td class="dim">건조·Machine</td><td>메시벨트 속도 변동으로 건조 체류시간 편차</td><td class="num">5·4·6</td><td><span class="badge l">Low</span></td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">1</td><td class="dim">소입로·Machine</td><td>가열 온도가 설정 구간을 벗어남</td><td class="num">10·6·8</td><td><span class="badge h">High</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">2</td><td class="dim">소입로·Machine</td><td>침탄 CP값이 유지되지 않음</td><td class="num">8·6·8</td><td><span class="badge h">High</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">3</td><td class="dim">소입로·Man</td><td>품목에 맞지 않는 조건으로 세팅</td><td class="num">10·6·7</td><td><span class="badge h">High</span></td><td><span class="avail wait">실행대기</span></td></tr>
+            <tr><td class="num">4</td><td class="dim">소입로·Measurement</td><td>센서 지시값이 실제와 다름</td><td class="num">8·5·9</td><td><span class="badge h">High</span></td><td><span class="avail wait">실행대기</span></td></tr>
+            <tr><td class="num">5</td><td class="dim">솔트조·Machine</td><td>염욕 항온 구간을 벗어남</td><td class="num">10·5·8</td><td><span class="badge h">High</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">6</td><td class="dim">솔트조·Material</td><td>염욕제가 열화된 상태로 사용</td><td class="num">8·4·7</td><td><span class="badge h">High</span></td><td><span class="avail wait">실행대기</span></td></tr>
+            <tr><td class="num">7</td><td class="dim">컨베이어·Machine</td><td>이송 구간 온도 편차로 변형 발생</td><td class="num">7·7·6</td><td><span class="badge h">High</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">8</td><td class="dim">컨베이어·Machine</td><td>이송속도 변동으로 유지시간 편차</td><td class="num">7·5·7</td><td><span class="badge h">High</span></td><td><span class="avail wait">실행대기</span></td></tr>
+            <tr><td class="num">9</td><td class="dim">세정·Machine</td><td>세정 온도가 낮아 염분 잔류</td><td class="num">5·4·6</td><td><span class="badge l">Low</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">10</td><td class="dim">세정·Material</td><td>세정액이 열화된 상태로 사용</td><td class="num">5·4·7</td><td><span class="badge m">Medium</span></td><td><span class="avail wait">실행대기</span></td></tr>
+            <tr><td class="num">11</td><td class="dim">건조·Machine</td><td>건조 부족으로 수분 잔류</td><td class="num">5·5·6</td><td><span class="badge l">Low</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">12</td><td class="dim">건조(배출)·Man</td><td>육안 검사에서 불량을 놓침</td><td class="num">9·6·8</td><td><span class="badge h">High</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">13</td><td class="dim">전공정·Measurement</td><td>공정 데이터 수집 누락</td><td class="num">5·6·7</td><td><span class="badge m">Medium</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">14</td><td class="dim">건조·Machine</td><td>메시벨트 속도 변동으로 건조 체류시간 편차</td><td class="num">5·4·6</td><td><span class="badge l">Low</span></td><td><span class="avail done">완료</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -414,24 +434,32 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">02 · 총괄</span>
-        <span class="step-of">4 / 9</span>
+        <span class="step-of">4 / 11</span>
       </div>
-      <h2>이 표에서 먼저 눈에 담아둘 것</h2>
+      <h2>조치 결과에서 먼저 눈에 담아둘 것</h2>
+      <div class="stat-strip">
+        <div><span class="k">완료</span><span class="v good">9</span></div>
+        <div><span class="k">실행대기</span><span class="v warn">5</span></div>
+        <div><span class="k">SPC 채택</span><span class="v">9 / 14</span></div>
+      </div>
       <div class="insight-list">
         <div class="insight-item">
           <span class="itag">01</span>
-          <p><b>AP High가 14개 중 8개</b>다. 많아 보이지만 정상이다. 심각도가 높은 항목이 많고,
-            지금 검출 수단이 대부분 "공정이 끝난 뒤 육안 또는 샘플 검사"뿐이기 때문이다.</p>
+          <p><b>실행대기 5건(3·4·6·8·10)은 전부 "계측 수단이 없다"는 같은 이유</b>다.
+            품번별 세팅값·염욕 농도·벨트 속도·세정액 농도 — 모두 태그 자체가 없어 자율보정·상시감시
+            계층이 적용되지 않고 수기 점검만 가능하다.</p>
         </div>
         <div class="insight-item">
           <span class="itag">02</span>
-          <p><b>발생도 최고는 7번(솔트 컨베이어 온도)</b>이고, 마침 데이터도 충분하다.
-            개선 <b>1순위</b>다.</p>
+          <p><b>O·D는 좋아졌는데 AP가 그대로인 이슈(1·3·5·12)</b>가 있다. 이상하게 보이지만 정상이다.
+            AP를 구성하는 심각도(S)는 조치로 낮출 수 없는 값이라, S≥9인 안전 특별특성은 개선 후에도
+            사람의 확인·승인을 계속 병행한다.</p>
         </div>
         <div class="insight-item">
           <span class="itag">03</span>
-          <p><b>8번은 AP가 High인데 지금 데이터로는 손을 못 댄다.</b> 이 조합이 이 문서에서
-            가장 중요한 지점이라 맺음말에서 따로 다룬다.</p>
+          <p><b>12번(배출부 육안검사)이 이번 결과의 핵심 전환점</b>이다. 인라인 게이지 신규 설치로
+            데이터 가용성이 부분가능 → 착수가능으로 바뀌었고, 검사 시점에 걸리기 전에 설비가 먼저
+            조건을 보정하는 구조로 전환됐다.</p>
         </div>
       </div>
     </section>
@@ -440,27 +468,28 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">03 · 이슈그룹</span>
-        <span class="step-of">5 / 9</span>
+        <span class="step-of">5 / 11</span>
       </div>
       <h2>소입로 공정 (이슈 1~4)</h2>
-      <p class="lede">부품을 860℃까지 올려 침탄·경화 조건을 잡는 첫 구간으로, 4개 이슈 모두
-        AP High다.</p>
+      <p class="lede">부품을 860℃까지 올려 침탄·경화 조건을 잡는 첫 구간. 4개 이슈 모두 AP
+        High이며, 2건은 완료, 2건은 실행대기다.</p>
       <div class="dtable-wrap" style="flex:none;">
         <table class="dtable">
-          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th>O·D 변화</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="num">1</td><td>가열 온도가 설정 구간을 벗어남</td><td class="num">10·6·8</td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">2</td><td>침탄 CP값이 유지되지 않음</td><td class="num">8·6·8</td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">3</td><td>품목에 맞지 않는 조건으로 세팅</td><td class="num">10·6·7</td><td><span class="avail mid">부분가능</span></td></tr>
-            <tr><td class="num">4</td><td>센서 지시값이 실제와 다름</td><td class="num">8·5·9</td><td><span class="avail mid">부분가능</span></td></tr>
+            <tr><td class="num">1</td><td>가열 온도가 설정 구간을 벗어남</td><td class="odshift">O 6<span class="arrow">→</span><span class="better">4</span> · D 8<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">2</td><td>침탄 CP값이 유지되지 않음</td><td class="odshift">O 6<span class="arrow">→</span><span class="better">4</span> · D 8<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">3</td><td>품목에 맞지 않는 조건으로 세팅</td><td class="odshift">O 6<span class="arrow">→</span><span class="better">4</span> · D 7<span class="arrow">→</span><span class="better">4</span></td><td><span class="avail wait">실행대기</span></td></tr>
+            <tr><td class="num">4</td><td>센서 지시값이 실제와 다름</td><td class="odshift">O 5<span class="arrow">→</span><span class="better">4</span> · D 9<span class="arrow">→</span><span class="better">4</span></td><td><span class="avail wait">실행대기</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="pick-note">
         <span class="ptag">이 그룹에서 눈여겨볼 것</span>
-        <p class="ptext">설비 쪽(1·2)은 무너지면 잘 보이지만, <b>사람의 판단(3)</b>은 설비가 멀쩡해도
-          배치 전량이 잘못 만들어져 오히려 영향 범위가 넓다. <b>4번(센서 계측계)</b>은 13개 이슈 중
-          검출도가 가장 높아(9) 교정 이력 연계가 최우선 개선 대상이다.</p>
+        <p class="ptext">1·2번(설비)은 이탈 시 자율보정 + 실시간 트렌드 감시로 전환해 완료됐다.
+          <b>3번(사람의 세팅 판단)</b>은 품번별 정상운전 프로파일로 간접 검증하지만 세팅값 태그
+          자체는 아직 못 모은다. <b>4번(센서 계측계)</b>은 이중채널 상관성 모니터링을 도입했지만
+          교정이력 연계가 남아 있어 실행대기다.</p>
       </div>
     </section>
 
@@ -468,24 +497,24 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">03 · 이슈그룹</span>
-        <span class="step-of">6 / 9</span>
+        <span class="step-of">6 / 11</span>
       </div>
       <h2>솔트조 공정 (이슈 5~6)</h2>
       <p class="lede">250~450℃ 염욕에 급랭해 항온 유지하며 베이나이트 조직(인성)을 만드는 구간이다.</p>
       <div class="dtable-wrap" style="flex:none;">
         <table class="dtable">
-          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th>O·D 변화</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="num">5</td><td>염욕 항온 구간을 벗어남</td><td class="num">10·5·8</td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">6</td><td>염욕제가 열화된 상태로 사용</td><td class="num">8·4·7</td><td><span class="avail no">불가</span></td></tr>
+            <tr><td class="num">5</td><td>염욕 항온 구간을 벗어남</td><td class="odshift">O 5<span class="arrow">→</span><span class="better">4</span> · D 8<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">6</td><td>염욕제가 열화된 상태로 사용</td><td class="odshift">O 4<span class="arrow">→</span><span class="better">3</span> · D 7<span class="arrow">→</span><span class="better">4</span></td><td><span class="avail wait">실행대기</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="pick-note">
         <span class="ptag">이 그룹에서 눈여겨볼 것</span>
-        <p class="ptext">5번(온도)은 착수 가능하지만, <b>6번(염욕제 열화)</b>은 판단 기준이 데이터가
-          아니라 작업자의 경험이라 지금 데이터로는 다룰 수 없는 대표 사례다. 염욕 농도·청정도
-          계측 추가가 선행 과제다.</p>
+        <p class="ptext">5번(온도)은 항온유지율 실시간 감시로 완료됐다(사람 확인 병행).
+          <b>6번(염욕제 열화)</b>은 교체 주기를 경험 기반에서 누적 처리량 기반 고정주기(수기)로
+          바꿨을 뿐, 농도·청정도 실측 계측기가 없어 SPC 관리도 대상에서는 여전히 제외다.</p>
       </div>
     </section>
 
@@ -493,25 +522,26 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">03 · 이슈그룹</span>
-        <span class="step-of">7 / 9</span>
+        <span class="step-of">7 / 11</span>
       </div>
       <h2>솔트 컨베이어 공정 (이슈 7~8) ★</h2>
-      <p class="lede">변태가 끝날 때까지 부품을 실어 나르는 구간으로, 14개 이슈 중 가장 중요한
-        대비가 여기서 나온다.</p>
+      <p class="lede">변태가 끝날 때까지 부품을 실어 나르는 구간으로, 14개 이슈 중 가장 뚜렷한
+        전후 대비가 여기서 나온다.</p>
       <div class="dtable-wrap" style="flex:none;">
         <table class="dtable">
-          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th>O·D 변화</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="num">7</td><td>이송 구간 온도 편차로 변형 발생</td><td class="num">7·7·6</td><td><span class="avail go">착수(1순위)</span></td></tr>
-            <tr><td class="num">8</td><td>이송속도 변동으로 유지시간 편차</td><td class="num">7·5·7</td><td><span class="avail no">불가</span></td></tr>
+            <tr><td class="num">7</td><td>이송 구간 온도 편차로 변형 발생</td><td class="odshift">O 7<span class="arrow">→</span><span class="better">4</span> · D 6<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">8</td><td>이송속도 변동으로 유지시간 편차</td><td class="odshift">O 5<span class="arrow">→</span><span class="better">4</span> · D 7<span class="arrow">→</span><span class="better">4</span></td><td><span class="avail wait">실행대기</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="pick-note">
         <span class="ptag">이 그룹에서 눈여겨볼 것</span>
-        <p class="ptext"><b>7번</b>은 14개 이슈 중 발생도가 가장 높고(7) 데이터도 충분해 개선
-          <b>1순위</b>다. <b>8번</b>은 AP가 High인데도 벨트 속도 태그가 데이터셋에 없어 손을 대지
-          못한다. 속도 태그 수집이 선행 과제로 남는다.</p>
+        <p class="ptext"><b>7번</b>은 존간 온도편차 자율보정에 파생지표 임계알람까지 더해 완료됐다
+          (AP는 H→M으로 개선). <b>8번</b>은 벨트 속도 태그가 여전히 없어 운전화면 점검 빈도를
+          올리는 수기 강화에 머문다 — 속도 태그 수집은 이슈14(건조로)와 같은 방식으로 확장 적용할
+          예정이다.</p>
       </div>
     </section>
 
@@ -519,29 +549,28 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">03 · 이슈그룹</span>
-        <span class="step-of">8 / 9</span>
+        <span class="step-of">8 / 11</span>
       </div>
       <h2>세정·건조 공정 (이슈 9~11, 14)</h2>
       <p class="lede">염욕 후 소금기를 씻어내고 물기를 말리는 후처리 구간으로, AP가 상대적으로
         낮은 이슈들이 모여 있다.</p>
       <div class="dtable-wrap" style="flex:none;">
         <table class="dtable">
-          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th>O·D 변화</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="num">9</td><td>세정 온도가 낮아 염분 잔류</td><td class="num">5·4·6</td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">10</td><td>세정액이 열화된 상태로 사용</td><td class="num">5·4·7</td><td><span class="avail no">불가</span></td></tr>
-            <tr><td class="num">11</td><td>건조 부족으로 수분 잔류</td><td class="num">5·5·6</td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">14</td><td>메시벨트 속도 변동으로 건조 체류시간 편차 (신규 식별)</td><td class="num">5·4·6</td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">9</td><td>세정 온도가 낮아 염분 잔류</td><td class="odshift">O 4<span class="arrow">→</span><span class="better">3</span> · D 6<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">10</td><td>세정액이 열화된 상태로 사용</td><td class="odshift">O 4<span class="arrow">→</span><span class="better">3</span> · D 7<span class="arrow">→</span><span class="better">4</span></td><td><span class="avail wait">실행대기</span></td></tr>
+            <tr><td class="num">11</td><td>건조 부족으로 수분 잔류</td><td class="odshift">O 5<span class="arrow">→</span><span class="better">4</span> · D 6<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">14</td><td>메시벨트 속도 변동으로 건조 체류시간 편차 (신규 식별)</td><td class="odshift">O 4<span class="arrow">→</span>4 · D 6<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="pick-note">
         <span class="ptag">이 그룹에서 눈여겨볼 것</span>
-        <p class="ptext">9·11·14번은 AP <b>Low</b>지만 "무시해도 된다"는 뜻이 아니라 "조치를 검토할 수
-          있다"는 뜻 — 데이터가 이미 있어 큰 비용 없이 같이 처리 가능하다. <b>10번(세정액)</b>은
-          6번과 같은 구조로, 농도·오염도 계측이 없어 지금은 누적 처리량 기반 주기 관리만 가능하다.
-          <b>14번(건조로 메시벨트속도)</b>은 분석 중 신규 식별되어 2026-09-15 별도 센서로 데이터가
-          추가 확보되면서 착수가능으로 전환되었다 — 솔트컨베이어의 8번(메시벨트 이송속도)과는
+        <p class="ptext">9·11번은 자율보정 + 정기보고 편입으로 완료. <b>10번(세정액)</b>은 6번과 같은
+          구조로 농도·오염도 계측이 없어 누적 처리량 기반 주기 관리(수기)에 머문다. <b>14번(건조로
+          메시벨트속도)</b>은 정상 시 변동이 거의 없는 "안정 변수"로 판단해 예방조치는 현행 유지하고,
+          Rule 1 기반 즉시알람 검출체계만 신규 구축해 완료 처리했다 — 솔트컨베이어의 8번과는
           서로 다른 설비 구간의 별개 항목이므로 혼동하지 않는다.</p>
       </div>
     </section>
@@ -550,27 +579,92 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">03 · 이슈그룹</span>
-        <span class="step-of">9 / 9</span>
+        <span class="step-of">9 / 11</span>
       </div>
       <h2>배출부·전공정 (이슈 12~13) ★</h2>
       <p class="lede">앞선 11개 공정을 모두 떠받치는 마지막 관문과 기반 데이터층이다.</p>
       <div class="dtable-wrap" style="flex:none;">
         <table class="dtable">
-          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th class="num">S·O·D</th><th>데이터</th></tr></thead>
+          <thead><tr><th class="num">#</th><th>무엇이 잘못되는가</th><th>O·D 변화</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="num">12</td><td>육안 검사에서 불량을 놓침</td><td class="num">9·6·8</td><td><span class="avail go">착수가능</span></td></tr>
-            <tr><td class="num">13</td><td>공정 데이터 수집 누락</td><td class="num">5·6·7</td><td><span class="avail go">착수가능</span></td></tr>
+            <tr><td class="num">12</td><td>육안 검사에서 불량을 놓침</td><td class="odshift">O 6<span class="arrow">→</span><span class="better">4</span> · D 8<span class="arrow">→</span><span class="better">3</span></td><td><span class="avail done">완료</span></td></tr>
+            <tr><td class="num">13</td><td>공정 데이터 수집 누락</td><td class="odshift">O 6<span class="arrow">→</span><span class="better">4</span> · D 7<span class="arrow">→</span><span class="better">4</span></td><td><span class="avail done">완료</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="pick-note">
         <span class="ptag">이 그룹에서 눈여겨볼 것</span>
-        <p class="ptext"><b>12번(배출부 육안검사)</b>이 본 과제 전체의 핵심 논거다 — 검사 시점
-          자체가 문제이므로, 공정 데이터로 불량을 미리 판정해 검사에 이르기 전에 설비가 조건을
-          자율 보정하게 한다. 배출부 직전 스플라인 축에 인라인 치폭·외폭 센서(1Hz 실측)를 신규
-          추가하기로 하면서 데이터 가용성이 <b>부분가능 → 착수가능</b>으로 전환되었다. <b>13번</b>은
-          AP가 Medium이지만 나머지 조치가 전부 이 데이터 위에서 동작하므로 실행 순서는 가장 먼저다.</p>
+        <p class="ptext"><b>12번(배출부 육안검사)</b>이 본 과제 전체의 핵심 논거다 — 배출부 직전
+          스플라인 축에 인라인 내폭·외폭 게이지를 신규 설치해 자동 검출을 도입하고 육안검사를
+          병행한다. 1차 예측(머신러닝 위험도 점수)은 이 검사에 우선순위를 부여하는 보조 계층일
+          뿐, 실행 권한은 없다. <b>13번</b>은 청크당 수집률(216점 기준)을 상시 지표화해 결측 발생
+          시 즉시 알람하도록 바꾸면서 AP가 M→L로 개선됐다 — 나머지 조치가 전부 이 데이터 위에서
+          동작하므로 실행 순서는 가장 먼저다.</p>
       </div>
+    </section>
+
+    <!-- 09 : 조치 시스템 구성 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">04 · 시스템</span>
+        <span class="step-of">10 / 11</span>
+      </div>
+      <h2>조치 시스템 구성 — 4단계 계층</h2>
+      <p class="lede">이탈 시 무엇을 하는지를 공정변수의 특성에 따라 4단계로 표준화했다.
+        상시 계측 항목엔 3-B가 기본이고, 추세 확인이 필요하면 3-A가 더해진다.</p>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th>계층</th><th>내용</th><th>적용 대상</th></tr></thead>
+          <tbody>
+            <tr><td>1계층</td><td>데이터 경향 분석으로 관리범위 도출</td><td>연속 계측 가능한 공정변수 전체</td></tr>
+            <tr><td>2계층</td><td>이탈 감지 시 설비가 설정값 자율 보정</td><td>설비가 직접 제어하는 파라미터</td></tr>
+            <tr><td>3-A</td><td>시간당 1회 정기 보고</td><td>상시 계측·추세 확인 필요 항목</td></tr>
+            <tr><td>3-B</td><td>관리범위 이탈 시 즉시 알람</td><td>상시 계측되는 전 항목</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stage-block">
+        <span class="slabel">자율보정(2계층) 적용 6건 · 제외 8건</span>
+        <p class="lede" style="font-size:.7rem;"><b>적용</b> 1·2·5·7·9·11번 — 설비가 직접 제어하는
+          온도·CP·출력 파라미터. <b>계층 미적용</b> 3·4·6·8·10번은 계측 수단이 없어 수기 점검·주기
+          관리로만 운영한다. <b>12·13·14번</b>은 검사결과이거나 안정 변수라 자율보정 대상이 아니며
+          3-B(즉시 알람) 위주로만 적용한다.</p>
+      </div>
+      <p class="foot-note">S≥9 안전 특별특성(1·3·5·12)은 자율 보정이 있어도 결과를 사람이 확인한
+        뒤 확정하며, 대상이 아닌 경우 초물검사·전수실측으로 확인한다.</p>
+    </section>
+
+    <!-- 10 : 향후 계획 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">05 · 향후계획</span>
+        <span class="step-of">11 / 11</span>
+      </div>
+      <h2>향후 계획</h2>
+      <p class="lede">본 프로젝트는 학습 과제 특성상 설계 완료 시점을 "완료"로 간주했다. 실제
+        적용 시에는 아래 검증을 거쳐 예측 S/O/D를 확정값으로 전환한다.</p>
+      <div class="stage-block">
+        <span class="slabel">완료 조치(1·2·5·7·9·11·12·13·14) 효과성 검증</span>
+        <p class="lede" style="font-size:.7rem;"><b>발생도(O)</b> 신규 데이터로 관리도를 재작성해
+          이탈 빈도·산포가 조치 전보다 줄었는지 확인. <b>검출도(D)</b> 이탈 건의 알람 발생·검출
+          시점을 확인하고 미검출 시 D 재평가. <b>12번</b>은 게이지 R&R로 측정시스템 적합성을
+          확인한 뒤 D=3의 근거를 확정한다.</p>
+      </div>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th class="num">#</th><th>실행대기 이슈</th><th>완료 전환에 필요한 선행 작업</th></tr></thead>
+          <tbody>
+            <tr><td class="num">3</td><td>품목별 설비 세팅</td><td>세팅값 태그 수집, PLC/HMI 로그 연동</td></tr>
+            <tr><td class="num">4</td><td>온도·CP 센서 계측계</td><td>센서 교정이력을 설비보전기록시스템과 연계</td></tr>
+            <tr><td class="num">6</td><td>염욕제</td><td>염욕 농도·청정도 실측 계측기 도입</td></tr>
+            <tr><td class="num">8</td><td>메시벨트 이송속도(컨베이어)</td><td>벨트속도 태그 수집 — 이슈14 방식으로 확장 적용</td></tr>
+            <tr><td class="num">10</td><td>세정액</td><td>세정액 농도·오염도 실측 계측기 도입</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot-note">본 P-FMEA는 실제 양산 이관 전 현장 실사·현장 전문가 검증을 거쳐
+        재검토·개정되어야 하며, 검증 결과는 P-FMEA 개정 및 관리계획서 갱신의 입력자료로 환류한다.
+        본 과제는 학습 목적의 가상 시나리오로 실제 표준 P-FMEA 이관 대상은 아니다.</p>
     </section>
 
   </div>
