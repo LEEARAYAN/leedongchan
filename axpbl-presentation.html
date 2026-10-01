@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AX-PBL 분석기준서</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#eef1f0;
+    --surface:#ffffff;
+    --ink:#161d1c;
+    --ink-soft:#4b5754;
+    --ink-faint:#828d8a;
+    --line:#d7dedb;
+    --accent:#1f6e5c;
+    --accent-ink:#ffffff;
+    --accent-soft:#dcece6;
+    --alert:#c1443c;
+    --alert-soft:#f7e3e1;
+    --warn:#b8862f;
+    --warn-soft:#f3ead3;
+    --good:#2f7a4f;
+    --good-soft:#e2f0e6;
+    --tag-bg:#161d1c;
+    --tag-ink:#eef1f0;
+    --shadow: 0 1px 2px rgba(22,29,28,.07), 0 18px 40px -18px rgba(22,29,28,.4);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0f1513;
+      --surface:#182220;
+      --ink:#e9efec;
+      --ink-soft:#b7c4bf;
+      --ink-faint:#7c8b86;
+      --line:#2c3733;
+      --accent:#5fd3b3;
+      --accent-ink:#0f1513;
+      --accent-soft:#1f332c;
+      --alert:#e2857f;
+      --alert-soft:#3a2422;
+      --warn:#e0b45f;
+      --warn-soft:#3a2e18;
+      --good:#87c294;
+      --good-soft:#1e2c20;
+      --tag-bg:#e9efec;
+      --tag-ink:#0f1513;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0f1513;
+    --surface:#182220;
+    --ink:#e9efec;
+    --ink-soft:#b7c4bf;
+    --ink-faint:#7c8b86;
+    --line:#2c3733;
+    --accent:#5fd3b3;
+    --accent-ink:#0f1513;
+    --accent-soft:#1f332c;
+    --alert:#e2857f;
+    --alert-soft:#3a2422;
+    --warn:#e0b45f;
+    --warn-soft:#3a2e18;
+    --good:#87c294;
+    --good-soft:#1e2c20;
+    --tag-bg:#e9efec;
+    --tag-ink:#0f1513;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, sans-serif;
+    margin:0;
+    padding-block:28px;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+    line-break:strict;
+  }
+  .deck-head{
+    width:min(100% - 32px, 1100px);
+    padding-inline:16px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .deck-eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .deck-title{
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    color:var(--ink);
+  }
+
+  .stage{ position:relative; width:100%; display:flex; justify-content:center; }
+
+  .rail{
+    display:flex;
+    gap:22px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    padding:6px 12vw 28px;
+    width:100%;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .rail::-webkit-scrollbar{display:none;}
+
+  .card{
+    --card-h: min(76svh, 900px, calc((100vw - 64px) * 297 / 210));
+    flex:none;
+    scroll-snap-align:center;
+    height:var(--card-h);
+    aspect-ratio:210 / 297;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:var(--shadow);
+    padding:clamp(20px,3.4cqh,34px) clamp(18px,3cqh,30px) clamp(18px,2.6cqh,26px);
+    display:flex;
+    flex-direction:column;
+    gap:clamp(9px,1.4cqh,14px);
+    container-type:inline-size;
+  }
+
+  .card-kicker{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .step-tag{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.66rem;
+    font-weight:600;
+    letter-spacing:.09em;
+    color:var(--tag-ink);
+    background:var(--tag-bg);
+    padding:4px 9px;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  .step-tag.b{ background:var(--accent); color:var(--accent-ink); }
+  .step-of{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.68rem;
+    color:var(--ink-faint);
+    letter-spacing:.06em;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .card h2{
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:clamp(1.05rem, 3.4cqw, 1.36rem);
+    margin:0;
+    line-height:1.18;
+    text-wrap:balance;
+    color:var(--ink);
+  }
+  .card .lede{
+    margin:0;
+    font-size:clamp(.72rem, 1.9cqw, .82rem);
+    line-height:1.5;
+    color:var(--ink-soft);
+  }
+  .card .lede b{ color:var(--ink); font-weight:600; }
+  .card .lede code{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.92em;
+    background:var(--accent-soft);
+    color:var(--accent);
+    padding:1px 5px;
+    border-radius:3px;
+  }
+
+  .spec-strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .spec-strip div{ background:var(--surface); padding:8px 7px; display:flex; flex-direction:column; gap:2px; }
+  .spec-strip .k{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.56rem;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .spec-strip .v{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:clamp(.66rem,2cqw,.78rem);
+    font-weight:600;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .spec-strip .v.alert{ color:var(--alert); }
+  .spec-strip .v.good{ color:var(--good); }
+
+  /* ---- flow diagram components ---- */
+  .flow-row{
+    display:flex;
+    align-items:stretch;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .flow-row.tight > .flow-box{ min-width:0; }
+  .flow-arrow{
+    display:flex; align-items:center; justify-content:center;
+    color:var(--ink-faint);
+    font-size:.9rem;
+    flex:none;
+    padding:0 1px;
+  }
+  .flow-box{
+    flex:1;
+    min-width:0;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:7px 8px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    background:var(--paper);
+    text-align:center;
+  }
+  .flow-box .ftag{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.58rem;
+    letter-spacing:.04em;
+    color:var(--ink-faint);
+  }
+  .flow-box .fmain{
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:clamp(.72rem,2.2cqw,.86rem);
+    color:var(--ink);
+  }
+  .flow-box .fsub{ font-size:.62rem; color:var(--ink-soft); line-height:1.4; }
+  .flow-box.dark{ background:var(--tag-bg); border-color:var(--tag-bg); }
+  .flow-box.dark .ftag, .flow-box.dark .fsub{ color:var(--tag-ink); opacity:.72; }
+  .flow-box.dark .fmain{ color:var(--tag-ink); }
+  .flow-box.accent{ background:var(--accent); border-color:var(--accent); }
+  .flow-box.accent .ftag, .flow-box.accent .fsub{ color:var(--accent-ink); opacity:.8; }
+  .flow-box.accent .fmain{ color:var(--accent-ink); }
+  .flow-box.soft{ background:var(--accent-soft); border-color:var(--accent-soft); }
+  .flow-box.soft .fmain{ color:var(--accent); }
+
+  .stage-block{
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:8px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    flex:1;
+  }
+  .stage-block .slabel{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.6rem;
+    font-weight:600;
+    letter-spacing:.05em;
+    color:var(--accent);
+  }
+  .stage-group{
+    flex:1;
+    min-width:0;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:7px 8px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    background:var(--surface);
+  }
+  .stage-group .glabel{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.6rem;
+    font-weight:600;
+    letter-spacing:.03em;
+    color:var(--ink-soft);
+  }
+
+  .std-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .std-card{
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:8px 9px;
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .std-card .stitle{
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:.7rem;
+    color:var(--ink);
+    line-height:1.35;
+  }
+  .std-card .stitle .yr{ font-weight:400; color:var(--ink-faint); }
+  .std-card .ssub{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.6rem;
+    color:var(--accent);
+    letter-spacing:.02em;
+  }
+
+  /* ---- generic data table ---- */
+  .dtable-wrap{ flex:1; min-height:0; overflow:auto; border:1px solid var(--line); border-radius:4px; }
+  table.dtable{ width:100%; border-collapse:collapse; font-size:clamp(.6rem,1.7cqw,.7rem); }
+  table.dtable th, table.dtable td{
+    padding:5px 7px;
+    border-bottom:1px solid var(--line);
+    text-align:left;
+    line-height:1.4;
+  }
+  table.dtable th{
+    background:var(--accent-soft);
+    color:var(--ink);
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:.64rem;
+    letter-spacing:.01em;
+    position:sticky; top:0;
+  }
+  table.dtable td.num, table.dtable th.num{ font-family:"IBM Plex Mono", monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  table.dtable tr:last-child td{ border-bottom:none; }
+  table.dtable td.dim{ color:var(--ink-faint); }
+
+  .badge{
+    display:inline-block;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.6rem;
+    font-weight:600;
+    padding:1px 6px;
+    border-radius:3px;
+    letter-spacing:.03em;
+  }
+  .badge.h{ background:var(--alert-soft); color:var(--alert); }
+  .badge.m{ background:var(--warn-soft); color:var(--warn); }
+  .badge.l{ background:var(--good-soft); color:var(--good); }
+
+  .foot-note{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.6rem;
+    color:var(--ink-faint);
+    line-height:1.55;
+    border-top:1px solid var(--line);
+    padding-top:7px;
+  }
+
+  .cover .cover-mark{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.7rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .cover h1{
+    font-family:"IBM Plex Sans Condensed", sans-serif;
+    font-weight:700;
+    font-size:clamp(1.24rem,5.6cqw,1.78rem);
+    line-height:1.16;
+    margin:2px 0 0;
+    text-wrap:balance;
+    color:var(--ink);
+  }
+  .cover .sub{ font-size:clamp(.74rem,2cqw,.84rem); line-height:1.56; color:var(--ink-soft); margin:0; }
+  .cover .sub b{ color:var(--ink); font-weight:600; }
+  .cover-divider{ height:1px; background:var(--line); margin:2px 0; }
+  .cover-flow-label{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.62rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .cover-agenda{ display:flex; flex-direction:column; gap:3px; }
+  .cover-agenda .row{ display:flex; align-items:baseline; gap:8px; font-size:.72rem; color:var(--ink-soft); }
+  .cover-agenda .row .n{ font-family:"IBM Plex Mono", monospace; color:var(--ink-faint); font-size:.66rem; width:1.4em; flex:none; }
+
+  .cover-demo-split{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .cover-demo-split a{ text-decoration:none; color:inherit; display:flex; flex-direction:column; gap:4px; border:1px solid var(--accent); border-radius:7px; padding:9px 10px; background:var(--accent-soft); }
+  .cover-demo-split a.proto{ border-color:var(--line); background:var(--surface); }
+  .cover-demo-split .ctag{ font-family:"IBM Plex Mono", monospace; font-size:.52rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--accent); }
+  .cover-demo-split a.proto .ctag{ color:var(--ink-faint); }
+  .cover-demo-split .ctitle{ font-size:.68rem; font-weight:700; color:var(--ink); line-height:1.3; }
+  .cover-team{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .cover-team div{ background:var(--surface); padding:6px 8px; display:flex; flex-direction:column; gap:1px; }
+  .cover-team .k{ font-family:"IBM Plex Mono", monospace; font-size:.56rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); }
+  .cover-team .v{ font-size:.72rem; font-weight:600; color:var(--ink); }
+  .cover-footer{
+    margin-top:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:8px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.64rem;
+    color:var(--ink-faint);
+    letter-spacing:.02em;
+  }
+  .cover-footer .who{ color:var(--ink-soft); }
+  .status-pill{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:.6rem;
+    font-weight:600;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:2px 8px;
+    border-radius:10px;
+    letter-spacing:.03em;
+    align-self:flex-start;
+  }
+
+  .nav-btn{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:var(--shadow); font-size:1rem; z-index:5;
+  }
+  .nav-btn:hover{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .nav-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .nav-btn.prev{ left:6px; }
+  .nav-btn.next{ right:6px; }
+  @media (max-width:640px){ .nav-btn{ display:none; } }
+
+  .dots{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:center; max-width:90vw; }
+  .dots button{ width:7px; height:7px; padding:0; border-radius:50%; border:none; background:var(--line); cursor:pointer; }
+  .dots button[aria-current="true"]{ background:var(--accent); width:20px; border-radius:4px; }
+  .dots button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  .hint{ font-family:"IBM Plex Mono", monospace; font-size:.66rem; color:var(--ink-faint); letter-spacing:.02em; }
+
+  .demo-card{ border:1.5px solid var(--accent); border-radius:8px; padding:16px 18px; background:var(--accent-soft); display:flex; flex-direction:column; gap:10px; }
+  .demo-card .dtitle{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:1rem; color:var(--ink); }
+  .demo-card .dtext{ font-size:.74rem; color:var(--ink-soft); line-height:1.55; }
+  .demo-card .dlink{ display:inline-flex; align-items:center; gap:6px; align-self:flex-start; font-family:"IBM Plex Mono", monospace; font-size:.7rem; font-weight:600; color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent); padding-bottom:1px; }
+  .demo-card.proto{ border-color:var(--warn); background:var(--warn-soft); }
+  .demo-card.proto .dlink{ color:var(--ink-soft); border-color:var(--ink-faint); }
+  .demo-tag{ display:inline-block; font-family:"IBM Plex Mono", monospace; font-size:.58rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 7px; border-radius:3px; background:var(--accent); color:#fff; align-self:flex-start; }
+  .demo-tag.proto{ background:var(--ink-faint); }
+
+  .kpi-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .kpi-row.c3{ grid-template-columns:repeat(3,1fr); }
+  .kpi-box{ border:1px solid var(--line); border-radius:6px; padding:10px 10px; display:flex; flex-direction:column; gap:3px; }
+  .kpi-box .kl{ font-family:"IBM Plex Mono", monospace; font-size:.58rem; color:var(--ink-faint); letter-spacing:.02em; }
+  .kpi-box .kv{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:1.05rem; color:var(--ink); }
+  .kpi-box .kv.good{ color:var(--good); }
+  .kpi-box .kv.warn{ color:var(--warn); }
+  .kpi-box .ks{ font-size:.62rem; color:var(--ink-faint); }
+
+  .pipe-row{ display:flex; align-items:stretch; gap:3px; flex-wrap:nowrap; }
+  .pipe-box{ flex:1 1 0; min-width:0; border:1px solid var(--line); border-radius:6px; padding:clamp(4px,1.2cqw,8px) clamp(2px,0.8cqw,6px); display:flex; flex-direction:column; gap:3px; background:var(--surface); }
+  .pipe-box .pn{ font-family:"IBM Plex Mono", monospace; font-size:clamp(.5rem,1.6cqw,.6rem); color:var(--accent); font-weight:700; }
+  .pipe-box .pt{ font-size:clamp(.56rem,1.9cqw,.68rem); font-weight:700; color:var(--ink); line-height:1.25; }
+  .pipe-box .pd{ font-size:clamp(.48rem,1.5cqw,.58rem); color:var(--ink-faint); line-height:1.35; }
+  .pipe-box .pa{ font-size:clamp(.46rem,1.4cqw,.56rem); color:var(--ink-soft); margin-top:auto; padding-top:3px; border-top:1px dashed var(--line); }
+  .pipe-arrow-sm{ align-self:center; color:var(--ink-faint); font-size:clamp(.6rem,1.8cqw,.8rem); flex:0 0 auto; }
+
+  .flow-arrow-sep{ text-align:center; color:var(--ink-faint); font-size:.72rem; line-height:1; margin:-2px 0; }
+
+  .row-card.step{ gap:10px; }
+  .row-card.step .rv{ flex:0 0 auto; font-size:1rem; }
+  .row-card.step .rt{ flex:0 0 20%; }
+  .row-card.step .rd{ flex:1 1 auto; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .row-card.step .rn{ flex:0 0 auto; }
+
+  .row-card.ocap .rt{ flex:0 0 20%; }
+  .row-card.ocap .rd{ flex:1 1 auto; font-size:.76rem; color:var(--ink); white-space:nowrap; }
+
+  .row-card.dir{ align-items:flex-start; flex-wrap:wrap; }
+  .row-card.dir .rt{ flex:0 0 100%; font-size:.86rem; color:var(--accent); margin-bottom:2px; }
+  .row-card.dir .rd{ flex:1 1 45%; min-width:160px; font-size:.72rem; line-height:1.5; white-space:normal; }
+  .row-card.dir .rd b{ color:var(--ink); }
+
+  .mini-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+  .mini-grid.c2{ grid-template-columns:repeat(2,1fr); }
+  .mini-card{ border:1px solid var(--line); border-radius:7px; padding:10px 11px; display:flex; flex-direction:column; gap:4px; background:var(--surface); }
+  .mini-card .mt{ font-weight:700; font-size:.76rem; color:var(--ink); }
+  .mini-card .mv{ font-family:"IBM Plex Mono", monospace; font-weight:700; font-size:.98rem; color:var(--accent); }
+  .mini-card .md{ font-size:.65rem; color:var(--ink-soft); line-height:1.5; }
+  .mini-card .mn{ font-size:.6rem; color:var(--ink-faint); }
+
+  .arrow-flow{ display:flex; align-items:center; gap:8px; }
+  .arrow-flow .af-box{ flex:1; text-align:center; border:1.5px solid var(--line); border-radius:8px; padding:14px 8px; display:flex; flex-direction:column; gap:3px; }
+  .arrow-flow .af-box.before{ opacity:.68; }
+  .arrow-flow .af-box.after{ border-color:var(--accent); background:var(--accent-soft); }
+  .arrow-flow .af-label{ font-size:.6rem; color:var(--ink-faint); }
+  .arrow-flow .af-val{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:1.25rem; color:var(--ink); }
+  .arrow-flow .af-arrow{ font-size:1.3rem; color:var(--accent); flex:none; }
+
+  .scroll-body{ flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(10px,1.6cqh,16px); padding-right:3px; }
+  .center-body{ flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; gap:clamp(9px,1.4cqh,14px); }
+
+  .fig-wrap{ text-align:center; }
+  .fig-wrap img{ max-width:100%; max-height:clamp(100px,22cqh,190px); object-fit:contain; border-radius:6px; }
+  .fig-cap{ font-size:.58rem; color:var(--ink-faint); margin-top:3px; }
+
+  .sect-label{ font-family:"IBM Plex Mono", monospace; font-size:.6rem; font-weight:700; letter-spacing:.04em; color:var(--accent); text-transform:uppercase; margin-bottom:2px; }
+
+  .row-card{ display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:7px; padding:11px 14px; }
+  .row-card .rt{ flex:1 1 auto; min-width:0; font-weight:700; font-size:.78rem; color:var(--ink); white-space:nowrap; }
+  .row-card .rv{ flex:0 0 auto; white-space:nowrap; font-family:"IBM Plex Mono", monospace; font-weight:700; font-size:.88rem; color:var(--accent); }
+  .row-card .rd{ flex:1 1 auto; min-width:0; font-size:.63rem; color:var(--ink-soft); line-height:1.4; }
+  .row-card .rn{ flex:0 0 auto; white-space:nowrap; font-size:.66rem; color:var(--ink-faint); text-align:right; }
+
+  .mini-card.inline{ flex-direction:row; align-items:center; justify-content:space-between; gap:8px; }
+  .mini-card.inline .mt{ flex:1; }
+  .mini-card.inline .mv{ flex:0 0 auto; text-align:right; white-space:nowrap; }
+  .mini-card.inline .md{ flex:0 0 auto; text-align:right; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="deck-head">
+  <div>
+    <div class="deck-eyebrow">GITHUB PORTFOLIO · AX-PBL PROJECT DECK</div>
+    <div class="deck-title">AX-PBL 최종보고 — 열처리 공정 데이터 기반 품질개선 체계</div>
+  </div>
+  <div class="hint">← → 또는 스와이프로 이동</div>
+</div>
+
+<div class="stage">
+  <button class="nav-btn prev" id="prevBtn" aria-label="이전 카드">‹</button>
+  <button class="nav-btn next" id="nextBtn" aria-label="다음 카드">›</button>
+
+  <div class="rail" id="rail">
+
+    <!-- COVER -->
+    <section class="card cover" data-card>
+      <div class="cover-mark">AX-PBL · 최종 발표자료</div>
+      <h1>열처리 공정 데이터 기반<br>품질개선 체계</h1>
+      <span class="status-pill">● 최종 발표 · 26.10.09 · 재주동</span>
+      <div class="cover-divider"></div>
+      <div class="cover-flow-label">CONTENTS</div>
+      <div class="cover-agenda">
+        <div class="row"><span class="n">01</span>프로젝트 개요</div>
+        <div class="row"><span class="n">02</span>공정 진단 및 조치</div>
+        <div class="row"><span class="n">03</span>시스템 구조 설계</div>
+        <div class="row"><span class="n">04</span>공정 인과 관리도</div>
+        <div class="row"><span class="n">05</span>향후 계획</div>
+      </div>
+      <div class="cover-demo-split">
+        <a href="https://claude.ai/artifact/NKburrgC2AGP3eA1fv2isV?host=1" target="_blank" rel="noopener">
+          <span class="ctag">Live Demo</span>
+          <span class="ctitle">공정 인과 관리도</span>
+        </a>
+        <a class="proto" href="https://claude.ai/artifact/MQfHQNXnjLo28zqkoJE9eM" target="_blank" rel="noopener">
+          <span class="ctag">Prototype</span>
+          <span class="ctitle">예측모델 초안 (XGBoost)</span>
+        </a>
+      </div>
+      <div class="cover-footer">
+        <span class="who">AX-PBL 최종 발표</span>
+        <span>1 / 13</span>
+      </div>
+    </section>
+
+    <!-- 01-1 : 프로젝트 목표 + 과제 수행 방식 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">01 · 개요</span>
+        <span class="step-of">2 / 13</span>
+      </div>
+      <h2>프로젝트 목표</h2>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div class="mini-card inline">
+          <span class="mt">품질 수준 향상</span>
+          <span class="mv">Cpk 1.25 → 1.35</span>
+        </div>
+        <div class="mini-card inline">
+          <span class="mt">데이터 기반 공정 설계</span>
+          <span class="mv">자동 분석 체계</span>
+        </div>
+        <div class="mini-card inline">
+          <span class="mt">외부특성 시스템 구축</span>
+          <span class="mv">내폭 우선 적용</span>
+        </div>
+      </div>
+      <div style="margin-top:4px;">
+        <span class="sect-label">과제 수행 방식</span>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+          <div class="mini-card inline">
+            <span class="mt">Claude, Codex</span>
+            <span class="md">문서 검토 · AI 보조 코딩</span>
+          </div>
+          <div class="mini-card inline">
+            <span class="mt">Gemini · Copilot</span>
+            <span class="md">문서 검토 보조</span>
+          </div>
+          <div class="mini-card inline">
+            <span class="mt">Minitab, Python</span>
+            <span class="md">실측 데이터 검증</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01-2 : 부품 / 공정 소개 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">01 · 개요</span>
+        <span class="step-of">3 / 13</span>
+      </div>
+      <h2>부품 / 공정 소개</h2>
+      <div class="dtable-wrap" style="flex:1;">
+        <table class="dtable">
+          <thead><tr><th colspan="2">부품 요약</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">부품명</td><td>KFQ-SPL-EV-09</td></tr>
+            <tr><td class="dim">용도</td><td>EV 모터용 구동 모터축</td></tr>
+            <tr><td class="dim">재질</td><td>SCM415</td></tr>
+            <tr><td class="dim">가공 방식</td><td>호빙 후 연삭 마무리</td></tr>
+            <tr><td class="dim">사양</td><td>모듈 2 · 압력각 30° · 5급</td></tr>
+            <tr><td class="dim">관리 대상</td><td>스플라인 축 구간 내폭 · 외폭 (공차 ±0.013mm)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flow-row tight">
+        <div class="flow-box accent"><span class="fmain">소입로</span></div>
+        <div class="flow-arrow">▶</div>
+        <div class="flow-box accent"><span class="fmain">솔트조</span></div>
+        <div class="flow-arrow">▶</div>
+        <div class="flow-box accent"><span class="fmain">솔트<br>컨베이어</span></div>
+        <div class="flow-arrow">▶</div>
+        <div class="flow-box"><span class="fmain">세정기</span></div>
+        <div class="flow-arrow">▶</div>
+        <div class="flow-box"><span class="fmain">건조로</span></div>
+      </div>
+      <div class="dtable-wrap" style="flex:1;">
+        <table class="dtable">
+          <thead><tr><th colspan="2">공정 요약</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">장비명</td><td>KFQ-062822</td></tr>
+            <tr><td class="dim">열처리 원리</td><td>약 860℃ 가열 → 250~450℃ 급랭 → 염욕 이송 → 잔류 염분 제거 → 수분 제거</td></tr>
+            <tr><td class="dim">제어 방식</td><td>PLC 존별 폐루프 제어</td></tr>
+            <tr><td class="dim">수집 방식</td><td>MES 1초 주기</td></tr>
+            <tr><td class="dim">일일 처리량</td><td>약 28,900개</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 02-1 : 공정 현황 분석 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">02 · 진단조치</span>
+        <span class="step-of">4 / 13</span>
+      </div>
+      <h2>공정 현황 분석</h2>
+      <div style="display:flex; flex-direction:column; gap:9px;">
+        <div class="row-card"><span class="rt">감시 해상도</span><span class="rv">136 타점(7개월)</span><span class="rn">해상도 향상 필요</span></div>
+        <div class="row-card"><span class="rt">감지 지연 중앙값</span><span class="rv">4.4시간</span><span class="rn">지연 최소화 필요</span></div>
+        <div class="row-card"><span class="rt">공정/계측 사각지대</span><span class="rv">숙련공 의존</span><span class="rn">경험의 체계화 필요</span></div>
+        <div class="row-card"><span class="rt">내폭 공정능력</span><span class="rv">Cpk 1.245</span><span class="rn">Cpk 1.35로 상향</span></div>
+        <div class="row-card"><span class="rt">외폭 공정능력</span><span class="rv">Cpk 1.441</span><span class="rn">안정적, 현행 유지</span></div>
+      </div>
+    </section>
+
+    <!-- 02-2 : 감시 해상도 전환 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">02 · 진단조치</span>
+        <span class="step-of">5 / 13</span>
+      </div>
+      <h2>감시 해상도 상승 · 감지 지연 개선</h2>
+      <p class="lede">운영상 부여되는 배정번호 단위는 크기 편차가 커서 공정 변동을 그대로 반영하지
+        못했다. 집계 단위를 4분 고정 청크로 바꿔 해상도와 지연을 동시에 개선했다.</p>
+      <div class="arrow-flow">
+        <div class="af-box before"><span class="af-label">이전 · 배정번호 단위</span><span class="af-val">136 타점</span></div>
+        <span class="af-arrow">▶</span>
+        <div class="af-box after"><span class="af-label">개선 · 4분 청크 단위</span><span class="af-val">12,647 타점</span></div>
+      </div>
+      <div class="arrow-flow">
+        <div class="af-box before"><span class="af-label">검사 단위(이전)</span><span class="af-val">4.4시간</span></div>
+        <span class="af-arrow">▶</span>
+        <div class="af-box after"><span class="af-label">검사 단위(개선)</span><span class="af-val">4분</span></div>
+      </div>
+      <p class="foot-note">93배 더 촘촘한 타점으로 전환 — 사각지대가 사라지는 것이 아니라 줄어드는 것이므로
+        "전수검출"이 아닌 "사각지대 해소"로 서술한다.</p>
+    </section>
+
+    <!-- 02-3 : 공정/계측 사각지대 개선 (통합, 스크롤) -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">02 · 진단조치</span>
+        <span class="step-of">6 / 13</span>
+      </div>
+      <h2>공정/계측 사각지대 개선 조치</h2>
+      <p class="lede" style="flex:none;">P-FMEA로 1차 형식지화한 뒤 세부 기준을 만들었다 — 공정 개선, 경험 의존 항목
+        기준화, 기타 진단 항목 세 갈래로 정리한다.</p>
+      <div class="scroll-body">
+        <div>
+          <span class="sect-label">① 공정 개선 · 5개 공정 · 3개 조치방식 · 설계 완료</span>
+          <div class="dtable-wrap" style="flex:none;">
+            <table class="dtable">
+              <thead><tr><th>해당 공정</th><th>문제 식별</th><th>조치 방식</th><th>현황</th></tr></thead>
+              <tbody>
+                <tr><td>소입로·솔트조</td><td>존온도·CP값·항온구간 이탈</td><td>기기가 관리범위 자율보정</td><td><span class="avail done">설계 완료</span></td></tr>
+                <tr><td>솔트컨베이어</td><td>존간 온도편차</td><td>편차 파생지표 신설하여 관리</td><td><span class="avail done">설계 완료</span></td></tr>
+                <tr><td>세정기·건조로</td><td>세정온도 저하·존별 출력 산포</td><td>실시간 감시·자율보정</td><td><span class="avail done">설계 완료</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <span class="sect-label">② 경험 의존 항목 기준화 · 완료 1건 · 계측 대기 3건</span>
+          <div class="dtable-wrap" style="flex:none;">
+            <table class="dtable">
+              <thead><tr><th>해당 공정</th><th>숙련도 의존 방식</th><th>기기 관리 전환</th><th>현황</th></tr></thead>
+              <tbody>
+                <tr><td>소입로</td><td>작업자 경험 판단</td><td>품번별 프로파일 등록</td><td><span class="avail wait">계측 대기</span></td></tr>
+                <tr><td>솔트조·세정기</td><td>경험 기반 교체시점·주기</td><td>누적처리량 고정주기</td><td><span class="avail wait">계측 대기</span></td></tr>
+                <tr><td>솔트컨베이어</td><td>감각 기반 점검</td><td>점검주기 상향·기록</td><td><span class="avail wait">계측 대기</span></td></tr>
+                <tr><td>건조로</td><td>숙련도 의존 판정</td><td>인라인 전수실측</td><td><span class="avail done">설계 완료</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <span class="sect-label">③ 기타 진단 항목 · 완료 2건 · 계측 대기 1건</span>
+          <div class="dtable-wrap" style="flex:none;">
+            <table class="dtable">
+              <thead><tr><th>해당 공정</th><th>진단 구분</th><th>조치 방식</th><th>현황</th></tr></thead>
+              <tbody>
+                <tr><td>소입로</td><td>계측 신뢰성</td><td>센서 이중채널 상관성 상시감시</td><td><span class="avail wait">계측 대기</span></td></tr>
+                <tr><td>전 공정</td><td>데이터 품질</td><td>청크당 수집률 상시 지표화</td><td><span class="avail done">설계 완료</span></td></tr>
+                <tr><td>건조로</td><td>안정 변수</td><td>이탈 자체가 신호 → Rule 1 즉시알람</td><td><span class="avail done">설계 완료</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03-1 : 구조 설계 방향성 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">03 · 시스템설계</span>
+        <span class="step-of">7 / 13</span>
+      </div>
+      <h2>구조 설계 방향성 설정</h2>
+      <div style="display:flex; flex-direction:column; gap:9px;">
+        <div class="row-card dir">
+          <span class="rt">실시간 이상탐지</span>
+          <span class="rd"><b>원인</b> 모든 이상은 사람에게 의존하여 판단되고 있음 — 현 시스템은 센서만 존재하여 단순 데이터 나열만 가능</span>
+          <span class="rd"><b>조치 방향</b> 관리도 자동 판정을 통한 실시간 이상탐지 시스템 구축</span>
+        </div>
+        <div class="row-card dir">
+          <span class="rt">AI 3계층 도입</span>
+          <span class="rd"><b>원인</b> 예측·감지·보정이 분리되어 있지 않아 단계별 권한 구분이 없음</span>
+          <span class="rd"><b>조치 방향</b> 예측, 감지, 보정을 통한 공정 최적화 설계 도입</span>
+        </div>
+        <div class="row-card dir">
+          <span class="rt">암묵지 형식지화</span>
+          <span class="rd"><b>원인</b> 숙달된 소수의 개인 경험에 의존하여 작업하는 공정이 다수 식별됨</span>
+          <span class="rd"><b>조치 방향</b> 고장 모드 및 영향 분석(FMEA)을 통해 암묵지 항목들을 체계화</span>
+        </div>
+        <div class="row-card dir">
+          <span class="rt">감시 단위 전환</span>
+          <span class="rd"><b>원인</b> 기존 방식(배정번호)은 데이터의 해상도 저하 등 한계가 뚜렷함</span>
+          <span class="rd"><b>조치 방향</b> 4분 단위 청크로 데이터 해상도 향상 및 감시 지연 최소화</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03-2 : 구조 설계 5단계 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">03 · 시스템설계</span>
+        <span class="step-of">8 / 13</span>
+      </div>
+      <h2>구조 설계 — 5단계 파이프라인</h2>
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <div class="row-card step"><span class="rv">1</span><span class="rt">데이터 수집</span><span class="rd">MES 1초 원자료 → 4분 청크 집계</span><span class="rn">자동 처리</span></div>
+        <div class="flow-arrow-sep">▼</div>
+        <div class="row-card step"><span class="rv">2</span><span class="rt">사전 예측</span><span class="rd">로지스틱회귀·결정트리(기준선)</span><span class="rn">실행 권한 없음</span></div>
+        <div class="flow-arrow-sep">▼</div>
+        <div class="row-card step"><span class="rv">3</span><span class="rt">이상 감지</span><span class="rd">SPC 관리도(I-MR·X-bar)·Rule 1~5</span><span class="rn">판정(트리거만)</span></div>
+        <div class="flow-arrow-sep">▼</div>
+        <div class="row-card step"><span class="rv">4</span><span class="rt">자동 보정</span><span class="rd">Rule 단위 OCAP 매트릭스 자율보정</span><span class="rn">실행(S≥9 확인)</span></div>
+        <div class="flow-arrow-sep">▼</div>
+        <div class="row-card step"><span class="rv">5</span><span class="rt">사람 승인</span><span class="rd">담당 엔지니어 최종 확인</span><span class="rn">최종 권한</span></div>
+      </div>
+      <p class="foot-note">자동보정 선정 기준 · 설비 제어 파라미터 여부 / 심각도≥9 특별특성 · 자동보정 후 사람 확인 추가 병행</p>
+    </section>
+
+    <!-- 03-3 : OCAP 매트릭스 자동화 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">03 · 시스템설계</span>
+        <span class="step-of">9 / 13</span>
+      </div>
+      <h2>채널 단위 OCAP 매트릭스 자동화 구성</h2>
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <div class="row-card ocap"><span class="rt">입력</span><span class="rd">FMEA 조치내용 · SPC 분석결과</span></div>
+        <div class="flow-arrow-sep">▼</div>
+        <div class="row-card ocap"><span class="rt">구조화</span><span class="rd">Claude API · 6개 필드 변환</span></div>
+        <div class="flow-arrow-sep">▼</div>
+        <div class="row-card ocap"><span class="rt">확인</span><span class="rd">담당자 검토·승인</span></div>
+        <div class="flow-arrow-sep">▼</div>
+        <div class="row-card ocap"><span class="rt">반영</span><span class="rd">매트릭스 행 확정·대시보드 연결</span></div>
+      </div>
+      <div>
+        <span class="sect-label">구조화 필드 (6종)</span>
+        <div class="mini-grid" style="margin-top:6px;">
+          <div class="mini-card" style="text-align:center; align-items:center;"><span class="mt">대상 채널</span></div>
+          <div class="mini-card" style="text-align:center; align-items:center;"><span class="mt">이탈 유형</span></div>
+          <div class="mini-card" style="text-align:center; align-items:center;"><span class="mt">특성 등급</span></div>
+          <div class="mini-card" style="text-align:center; align-items:center;"><span class="mt">진입 단계</span></div>
+          <div class="mini-card" style="text-align:center; align-items:center;"><span class="mt">보정 유형</span></div>
+          <div class="mini-card" style="text-align:center; align-items:center;"><span class="mt">보고 방식</span></div>
+        </div>
+      </div>
+      <p class="foot-note">FMEA·SPC 결과를 Claude API로 구조화해 OCAP 매트릭스 행을 자동 생성하고, 담당자 승인 후 대시보드에 반영한다.</p>
+    </section>
+
+    <!-- 04 : 공정 인과 관리도 (라이브 데모, 보강) -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag">04 · 라이브데모</span>
+        <span class="step-of">10 / 13</span>
+      </div>
+      <h2>공정 인과 관리도 구성 요소</h2>
+      <div class="mini-grid c2">
+        <div class="mini-card">
+          <span class="mt">집계 단위</span>
+          <span class="mv">4분 청크</span>
+        </div>
+        <div class="mini-card">
+          <span class="mt">분석열 구성</span>
+          <span class="mv">공정 5<br>결과 2</span>
+        </div>
+      </div>
+      <div class="dtable-wrap" style="flex:none;">
+        <table class="dtable">
+          <thead><tr><th class="num">Rule</th><th>위반 조건</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>1점이 관리한계(±3σ) 이탈</td></tr>
+            <tr><td class="num">2</td><td>연속 3점 중 2점이 중심선 같은 쪽 ±2σ 밖</td></tr>
+            <tr><td class="num">3</td><td>연속 5점 중 4점이 중심선 같은 쪽 ±1σ 밖</td></tr>
+            <tr><td class="num">4</td><td>연속 9점이 중심선 한쪽에 연속 위치</td></tr>
+            <tr><td class="num">5</td><td>연속 15점이 ±1σ 이내에 밀집</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mini-grid">
+        <div class="mini-card" style="text-align:center; align-items:center;">
+          <span class="mt">I-MR</span>
+          <span class="md">공정 센서</span>
+        </div>
+        <div class="mini-card" style="text-align:center; align-items:center;">
+          <span class="mt">X-Bar</span>
+          <span class="md">내폭</span>
+        </div>
+        <div class="mini-card" style="text-align:center; align-items:center;">
+          <span class="mt">발생감시</span>
+          <span class="md">외폭</span>
+        </div>
+      </div>
+      <div class="demo-card">
+        <span class="demo-tag">LIVE DEMO</span>
+        <span class="dtitle">공정 인과 관리도 — 실제 동작 프로토타입</span>
+        <p class="dtext">Rule 1~5 판정, OCAP 조정 매트릭스, 자동보정 트리거까지 실제로 눌러보며 확인할 수 있는
+          최종 프로토타입이다.</p>
+        <a class="dlink" href="https://claude.ai/artifact/NKburrgC2AGP3eA1fv2isV?host=1" target="_blank" rel="noopener">데모 열기 ↗</a>
+      </div>
+    </section>
+
+    <!-- 05-1 : 한계 및 유의사항 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">05 · 향후계획</span>
+        <span class="step-of">11 / 13</span>
+      </div>
+      <h2>한계 및 유의사항</h2>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th>구분</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><td>자율보정 범위</td><td>설비 제어 파라미터 중 심각도≥9 2건(소입로·솔트조 존온도)은 사람 확인 병행</td></tr>
+            <tr><td>감지 시점</td><td>4분 만에 이상을 잡아도 노 안에는 이미 2시간치 물량이 처리 중. 해당 물량은 배출부 전수검사로 선별, 보정 효과는 이후 투입분부터 적용</td></tr>
+            <tr><td>사전예측 수준</td><td>로지스틱회귀·결정트리 기준선 모델 및 정상구간 비교데이터 확보 후 통계적 학습 진행 예정</td></tr>
+            <tr><td>데모 데이터 성격</td><td>고정 데이터셋 기반 시뮬레이션, 실시간 라인 연동 아님</td></tr>
+            <tr><td>판정 로직 범위</td><td>추세(CUSUM/EWMA) 학습 미구현, 현재 Rule 1~5로 대체 적용</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 05-2 : 향후 계획 + 예측모델 초안 (통합) -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">05 · 향후계획</span>
+        <span class="step-of">12 / 13</span>
+      </div>
+      <h2>향후 계획</h2>
+      <div class="mini-grid">
+        <div class="mini-card">
+          <span class="mt">미결 계측 확보</span>
+          <span class="md">게이지 R&amp;R 5건 · 태그수집</span>
+        </div>
+        <div class="mini-card">
+          <span class="mt">효과성 검증</span>
+          <span class="md">판정 로그 · Claude API 참고의견</span>
+        </div>
+        <div class="mini-card">
+          <span class="mt">예측모델 확정</span>
+          <span class="md">기준선 모델 확정 후 XGBoost와 비교</span>
+        </div>
+        <div class="mini-card">
+          <span class="mt">보정로직 검증</span>
+          <span class="md">매트릭스 미매칭 대응</span>
+        </div>
+        <div class="mini-card">
+          <span class="mt">2차 암묵지 학습</span>
+          <span class="md">실설비 적용</span>
+        </div>
+      </div>
+      <div class="demo-card proto">
+        <span class="demo-tag proto">PROTOTYPE · 테스트용</span>
+        <span class="dtitle">예측모델 초안 — 위험도 기반 조정 권고 (XGBoost)</span>
+        <p class="dtext">한계점은 여전히 감지 시점이다. 4분 만에 이상을 잡아도 그 사이 2시간치 물량은 이미
+          처리 중이다. XGBoost로 위험확률을 실시간 산출해 처리 전·후 물량을 구분하는 방식을 초안으로
+          검토했다 — 정식 채택 모델이 아니라 구현 가능성만 확인한 참고용 시제품이며, 기준선 모델 확정
+          후 성능을 비교할 예정이다.</p>
+        <a class="dlink" href="https://claude.ai/artifact/MQfHQNXnjLo28zqkoJE9eM" target="_blank" rel="noopener">테스트 데모 열기 ↗</a>
+      </div>
+    </section>
+
+    <!-- 05-3 : 확장 방향 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">05 · 향후계획</span>
+        <span class="step-of">13 / 13</span>
+      </div>
+      <h2>확장 방향</h2>
+      <div style="display:flex; flex-direction:column; gap:9px;">
+        <div class="row-card dir">
+          <span class="rt">감시 단위 전환</span>
+          <span class="rd"><b>현재</b> 4분 단위 청크 기반, 즉각 반영 불가</span>
+          <span class="rd"><b>방향</b> 원시 시계열(초당) 기반으로 세부화해 해상도 상승</span>
+        </div>
+        <div class="row-card dir">
+          <span class="rt">적용 범위</span>
+          <span class="rd"><b>현재</b> 열처리 단일 라인에만 반영</span>
+          <span class="rd"><b>방향</b> 전체 공정군으로 확장해 공정 최적화율 상승</span>
+        </div>
+        <div class="row-card dir">
+          <span class="rt">자율도</span>
+          <span class="rd"><b>현재</b> 숙련자 경험이 충분히 학습 안 돼 사람 판단 필요</span>
+          <span class="rd"><b>방향</b> 경험 항목 체계화로 단계적 전 공정 자율화, 시스템 권한 확장</span>
+        </div>
+        <div class="row-card dir">
+          <span class="rt">관리 특성</span>
+          <span class="rd"><b>현재</b> 외부 특성 기반으로 설계</span>
+          <span class="rd"><b>방향</b> 내부 특성 기반으로 시스템 확장</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<script>
+(function(){
+  var rail = document.getElementById('rail');
+  var cards = Array.prototype.slice.call(document.querySelectorAll('[data-card]'));
+  var dotsWrap = document.getElementById('dots');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var current = 0;
+
+  cards.forEach(function(_, i){
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', (i+1) + '번째 카드로 이동');
+    b.addEventListener('click', function(){ scrollToCard(i); });
+    dotsWrap.appendChild(b);
+  });
+  var dotEls = Array.prototype.slice.call(dotsWrap.children);
+
+  function setCurrent(i){
+    current = Math.max(0, Math.min(cards.length - 1, i));
+    dotEls.forEach(function(d, idx){
+      d.setAttribute('aria-current', idx === current ? 'true' : 'false');
+    });
+  }
+
+  function scrollToCard(i){
+    var target = cards[Math.max(0, Math.min(cards.length - 1, i))];
+    target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting && e.intersectionRatio > 0.6){
+        setCurrent(cards.indexOf(e.target));
+      }
+    });
+  }, { root: rail, threshold: [0.6] });
+  cards.forEach(function(c){ io.observe(c); });
+
+  prevBtn.addEventListener('click', function(){ scrollToCard(current - 1); });
+  nextBtn.addEventListener('click', function(){ scrollToCard(current + 1); });
+
+  window.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight'){ scrollToCard(current + 1); }
+    else if (e.key === 'ArrowLeft'){ scrollToCard(current - 1); }
+  });
+
+  setCurrent(0);
+})();
+</script>
+</body>
+</html>

@@ -105,6 +105,29 @@
   }
   .frame iframe{ display:block; width:100%; height:900px; border:0; background:var(--paper); }
 
+  .deliverables{ margin:0 0 16px; }
+  .deliverables .dlabel{
+    font-family:"IBM Plex Mono", monospace; font-size:.68rem; font-weight:600; letter-spacing:.04em;
+    color:var(--ink-faint); text-transform:uppercase; margin-bottom:8px;
+  }
+  .deliv-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:560px){ .deliv-grid{ grid-template-columns:1fr; } }
+  .deliv{
+    display:flex; flex-direction:column; gap:5px; text-decoration:none; color:inherit;
+    border:1.5px solid var(--accent); border-radius:8px; padding:14px 16px;
+    background:var(--accent-soft); transition:transform .15s ease;
+  }
+  .deliv:hover{ transform:translateY(-1px); }
+  .deliv.proto{ border-color:var(--line); background:var(--surface); }
+  .deliv .dtag{
+    align-self:flex-start; font-family:"IBM Plex Mono", monospace; font-size:.6rem; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:3px;
+    background:var(--accent); color:var(--accent-ink);
+  }
+  .deliv.proto .dtag{ background:var(--ink-faint); color:var(--surface); }
+  .deliv .dtitle{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:.98rem; color:var(--ink); }
+  .deliv .ddesc{ font-size:.74rem; line-height:1.5; color:var(--ink-soft); }
+
   footer{
     margin-top:56px; padding-top:20px; border-top:1px solid var(--line);
     font-family:"IBM Plex Mono", monospace; font-size:.68rem; color:var(--ink-faint);
@@ -191,11 +214,36 @@
   <div class="project">
     <div class="project-kicker">
       <span class="project-num">4</span>
-      <h3>AX-PBL — P-FMEA 이슈별 분석 결과</h3>
+      <h3>AX-PBL — P-FMEA 판정 및 조치 결과</h3>
       <span class="tag">진행 중</span>
     </div>
-    <p class="desc">분석기준서의 FMEA 단계를 실제로 적용해, 열처리 라인 13개 고장원인의 심각도·발생도·검출도와 조치 우선순위(AP), 데이터 착수 가능 여부를 정리한 P-FMEA 분석 결과</p>
-    <div class="frame"><iframe src="pfmea-result.html" title="P-FMEA 이슈별 분석 결과" loading="lazy"></iframe></div>
+    <p class="desc">분석기준서의 FMEA 단계를 실제로 적용해, 열처리 라인 14개 고장원인의 심각도·발생도·검출도와 조치 우선순위(AP)를 판정하고, 실제 조치 내용·조치 후 개선된 O·D 값·조치상태(완료 9건·실행대기 5건)까지 정리한 P-FMEA 결과</p>
+    <div class="frame"><iframe src="pfmea-result.html" title="P-FMEA 판정 및 조치 결과" loading="lazy"></iframe></div>
+  </div>
+
+  <div class="project">
+    <div class="project-kicker">
+      <span class="project-num">5</span>
+      <h3>AX-PBL 최종 발표자료</h3>
+      <span class="tag">최종 산출물</span>
+    </div>
+    <p class="desc">공정 진단 및 조치, P-FMEA·SPC 기반 시스템 구조 설계, 라이브 데모, 향후 계획까지 AX-PBL 프로젝트 전체를 정리한 최종 발표자료. 아래 두 가지는 이 프로젝트의 실제 최종 산출물이다.</p>
+    <div class="deliverables">
+      <div class="dlabel">AX-PBL 최종 산출물</div>
+      <div class="deliv-grid">
+        <a class="deliv" href="https://claude.ai/artifact/NKburrgC2AGP3eA1fv2isV?host=1" target="_blank" rel="noopener">
+          <span class="dtag">Live Demo</span>
+          <span class="dtitle">공정 인과 관리도</span>
+          <span class="ddesc">5개 공정·7개 채널을 4분 청크 단위로 실시간 감시. SPC 관리도·Rule 1~5 판정, OCAP 조정 매트릭스, 자동보정 트리거까지 실제로 조작해볼 수 있는 최종 프로토타입</span>
+        </a>
+        <a class="deliv proto" href="https://claude.ai/artifact/MQfHQNXnjLo28zqkoJE9eM" target="_blank" rel="noopener">
+          <span class="dtag">Prototype · 테스트용</span>
+          <span class="dtitle">예측모델 초안 (XGBoost)</span>
+          <span class="ddesc">위험확률 실시간 산출 + 조정 권고 데모. 정식 채택 모델이 아니라 구현 가능성만 확인해본 참고용 시제품</span>
+        </a>
+      </div>
+    </div>
+    <div class="frame"><iframe src="axpbl-presentation.html" title="AX-PBL 최종 발표자료" loading="lazy"></iframe></div>
   </div>
 
   <footer>

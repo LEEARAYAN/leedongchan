@@ -450,6 +450,12 @@
   .dots button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
 
   .hint{ font-family:"IBM Plex Mono", monospace; font-size:.66rem; color:var(--ink-faint); letter-spacing:.02em; }
+
+  .demo-card{ border:1.5px solid var(--accent); border-radius:8px; padding:14px 16px; background:var(--accent-soft); display:flex; flex-direction:column; gap:8px; }
+  .demo-card .dtitle{ font-family:"IBM Plex Sans Condensed", sans-serif; font-weight:700; font-size:.92rem; color:var(--ink); }
+  .demo-card .dtext{ font-size:.7rem; color:var(--ink-soft); line-height:1.5; }
+  .demo-card .dlink{ display:inline-flex; align-items:center; gap:6px; align-self:flex-start; font-family:"IBM Plex Mono", monospace; font-size:.68rem; font-weight:600; color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent); padding-bottom:1px; }
+  .demo-tag{ display:inline-block; font-family:"IBM Plex Mono", monospace; font-size:.56rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 7px; border-radius:3px; background:var(--accent); color:#fff; align-self:flex-start; }
 </style>
 </head>
 <body>
@@ -469,7 +475,7 @@
 
     <!-- COVER -->
     <section class="card cover" data-card>
-      <div class="cover-mark">AX-PBL · 분석기준서 v0.2.7</div>
+      <div class="cover-mark">AX-PBL · 분석기준서 v0.2.8</div>
       <h1>열처리 공정 데이터 기반<br>이상 탐지 및 설정값 자동 보정</h1>
       <span class="status-pill">● 진행 중 · 26.08.31 ~ 26.10.09</span>
       <div class="cover-divider"></div>
@@ -483,18 +489,19 @@
         <div class="row"><span class="n">06</span>FMEA 작성기준 — 평가 척도</div>
         <div class="row"><span class="n">07</span>FMEA 작성기준 — AP 산정·활용</div>
         <div class="row"><span class="n">08</span>FMEA 작성기준 — 조치상태 정의</div>
-        <div class="row"><span class="n">09</span>SPC 분석기준 — 관리도 선정</div>
-        <div class="row"><span class="n">10</span>SPC 분석기준 — 관리도 보정</div>
-        <div class="row"><span class="n">11</span>SPC 분석기준 — 공정능력지수</div>
-        <div class="row"><span class="n">12</span>SPC 분석기준 — 안정성 판정</div>
-        <div class="row"><span class="n">13</span>OCAP 연계</div>
-        <div class="row"><span class="n">14</span>예측 모델링 — 위치·역할·데이터셋 설계</div>
-        <div class="row"><span class="n">15</span>예측 모델링 — 모델 채택·성능평가·XAI</div>
-        <div class="row"><span class="n">16</span>관리계획서 연계</div>
+        <div class="row"><span class="n">09</span>SPC 분석기준 — 집계 단위 정의</div>
+        <div class="row"><span class="n">10</span>SPC 분석기준 — 관리도 선정</div>
+        <div class="row"><span class="n">11</span>SPC 분석기준 — 관리도 보정</div>
+        <div class="row"><span class="n">12</span>SPC 분석기준 — 공정능력지수</div>
+        <div class="row"><span class="n">13</span>SPC 분석기준 — 안정성 판정</div>
+        <div class="row"><span class="n">14</span>OCAP 연계</div>
+        <div class="row"><span class="n">15</span>예측 모델링 — 위치·역할·데이터셋 설계</div>
+        <div class="row"><span class="n">16</span>예측 모델링 — 모델 채택·성능평가·XAI</div>
+        <div class="row"><span class="n">17</span>관리계획서 연계</div>
       </div>
       <div class="cover-footer">
         <span class="who">AX-PBL - 분석기준서</span>
-        <span>1 / 17</span>
+        <span>1 / 18</span>
       </div>
     </section>
 
@@ -502,25 +509,28 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">2 / 17</span>
+        <span class="step-of">2 / 18</span>
       </div>
       <h2>추진 배경</h2>
       <p class="lede">
-        전기차 구동계는 감속기 기어의 정밀도와 소음(NVH) 요구가 내연기관 대비 훨씬 가혹하며,
-        이 요구를 공통으로 결정하는 것이 <b>열처리 변형</b>이다. 그러나 열처리는 특별공정으로
-        분류되어 내부 특성(경도·경화층 깊이)은 <b>파괴검사로만</b> 확인할 수 있어 전수검사가
-        원천적으로 불가능하다.
+        전기차 구동계는 모터 회전수 15,000rpm 이상, 소음(NVH) 노출, 정지 상태 최대 토크 즉시
+        인가 등 내연기관 대비 훨씬 가혹한 조건을 요구하며, 이 요구의 공통 병목이 <b>열처리
+        변형</b>이다. 열처리는 특별공정으로 분류되어 내부 특성(경도·경화층 깊이)은
+        <b>파괴검사로만</b> 확인 가능해 전수검사가 원천적으로 불가능하다. 이 내부 특성의
+        품질을 보증하는 유일한 수단은 결국 공정 파라미터 자체다.
       </p>
       <p class="lede">
         반면 외부 특성(<b>내폭·외폭</b>)은 비파괴 검사로 로트 전량 확인이 가능하다. 이에 본
-        프로젝트는 이 치수 특성을 대상으로 공정 데이터를 자동 분석해 이상을 탐지하고
-        설정값을 자동 보정하는 체계를 먼저 구축·검증한 뒤, 향후 파괴검사 특성으로 확장한다.
+        프로젝트는 우선 현재 Cpk 1.25 수준인 내폭 특성의 공정 능력을 향상시켜 Critical 등급
+        목표치인 <b>Cpk 1.35 · 목표 불량률 63ppm</b> 달성을 목표로 한 뒤, 공정 데이터를 자동
+        분석해 이상을 탐지하고 설정값을 자동 보정하는 체계를 구축·검증하고, 향후 파괴검사
+        특성(경도 등)으로 확장한다.
       </p>
       <div class="spec-strip">
-        <div><span class="k">분석 대상</span><span class="v">내폭 · 외폭</span></div>
-        <div><span class="k">확장 예정</span><span class="v">경도 등</span></div>
+        <div><span class="k">내폭 Cpk 현재</span><span class="v num">1.25</span></div>
+        <div><span class="k">내폭 Cpk 목표</span><span class="v num">1.35</span></div>
+        <div><span class="k">목표 불량률</span><span class="v num">63ppm</span></div>
         <div><span class="k">검사 방식</span><span class="v">비파괴 전수</span></div>
-        <div><span class="k">공정 분류</span><span class="v">특별공정</span></div>
       </div>
     </section>
 
@@ -528,7 +538,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">3 / 17</span>
+        <span class="step-of">3 / 18</span>
       </div>
       <h2>분석 대상 설비·부품</h2>
       <p class="lede">분석 범위는 오스템퍼링 연속식 열처리 라인(소입로~건조)과, 그 라인에서 처리되는
@@ -582,7 +592,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">01 · 개요</span>
-        <span class="step-of">4 / 17</span>
+        <span class="step-of">4 / 18</span>
       </div>
       <h2>공정 요약 · 규격 개요</h2>
       <p class="lede">
@@ -623,6 +633,14 @@
           <span class="stitle">AIAG&amp;VDA FMEA Handbook<br><span class="yr">(1st Ed., 2019)</span></span>
           <span class="ssub">P-FMEA 자료 기준</span>
         </div>
+        <div class="std-card">
+          <span class="stitle">KS B ISO 4156</span>
+          <span class="ssub">직선 원통 인벌류트 스플라인, 미터 모듈</span>
+        </div>
+        <div class="std-card">
+          <span class="stitle">KS R 2001</span>
+          <span class="ssub">자동차용 인벌류트 스플라인 (국내 적용 참고 병기)</span>
+        </div>
       </div>
     </section>
 
@@ -630,7 +648,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">02 · 분석기준</span>
-        <span class="step-of">5 / 17</span>
+        <span class="step-of">5 / 18</span>
       </div>
       <h2>분석 기준 원칙</h2>
       <p class="lede"><b>FMEA는 발단, SPC는 근거</b>로 사용한다. FMEA는 잠재 고장을 식별하고
@@ -672,7 +690,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">6 / 17</span>
+        <span class="step-of">6 / 18</span>
       </div>
       <h2>FMEA 작성기준 — 절차</h2>
       <p class="lede">FMEA는 준비부터 결과 문서화까지 7단계 절차를 따르며, 최적화(3.6) 단계에서는
@@ -705,7 +723,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">7 / 17</span>
+        <span class="step-of">7 / 18</span>
       </div>
       <h2>FMEA 작성기준 — 평가 척도</h2>
       <p class="lede">AIAG-VDA 핸드북 부록 C2의 Severity·Occurrence·Detection 기준을 본 과제
@@ -738,7 +756,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">8 / 17</span>
+        <span class="step-of">8 / 18</span>
       </div>
       <h2>FMEA 작성기준 — AP 산정·활용</h2>
       <p class="lede">Action Priority(AP)는 S→O→D 순으로 가중해 1,000가지 S·O·D 조합을
@@ -768,7 +786,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">03 · FMEA</span>
-        <span class="step-of">9 / 17</span>
+        <span class="step-of">9 / 18</span>
       </div>
       <h2>FMEA 작성기준 — 조치상태 정의</h2>
       <p class="lede">P-FMEA Report의 조치 요약(표 8 구성 항목 5)에 적을 조치상태는 5단계로
@@ -790,21 +808,50 @@
         시점을 완료로 간주한다.</p>
     </section>
 
+    <!-- 06c : 집계 단위 정의 -->
+    <section class="card" data-card>
+      <div class="card-kicker">
+        <span class="step-tag b">04 · SPC</span>
+        <span class="step-of">10 / 18</span>
+      </div>
+      <h2>SPC 분석기준 — 집계 단위 정의</h2>
+      <p class="lede">기존 배정번호는 운영상 부여되는 관리 단위라 크기가 214~63,960행(299배)까지
+        편차가 있어 공정 변동이 아닌 운영 사정이 관리한계에 반영된다. 로트 단위 타점도 7개월
+        전체 136점뿐이라 실시간 감시 해상도를 확보할 수 없다. 이에 집계 단위를 <b>시간 청크(4분)</b>로
+        다시 정의하고, 배정번호는 추적성 유지를 위해 청크의 속성으로만 보존한다.</p>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th>유형</th><th>판정 조건</th><th>관리도 용도</th></tr></thead>
+          <tbody>
+            <tr><td>정상</td><td>216점 이상, 단일 배정번호</td><td>타점 — 이상탐지</td></tr>
+            <tr><td>초기가동</td><td>로트의 첫 청크</td><td>제외 — 가동 시작 시각</td></tr>
+            <tr><td>종료가동</td><td>로트의 마지막 청크</td><td>제외 — 로트 소요시간</td></tr>
+            <tr><td>로트전환</td><td>배정번호 2개 이상 포함</td><td>제외 — 무정지 연속 전환 기록</td></tr>
+            <tr><td>결측</td><td>216점 미만(위 유형 제외)</td><td>제외 — 수집 이상(이슈13 지표)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot-note">매시 00분 기준 4분 고정 격자(1초 주기 240점)로 청크를 생성해 시간당 15구간을
+        만든다. 청크 수집률이 90%(216점) 미만이면 결측으로 판정해 타점에서 제외하되, 정상 구간에서도
+        수집 지터로 230점 내외가 흔해 240점을 만점 기준으로 삼지 않는다. 집계 주기는 특성별로 다르다 —
+        공정 센서는 4분 청크, 치수 실측은 시간 버킷, 계수형 불량개수는 교대(8시간) 단위를 기준으로 한다.</p>
+    </section>
+
     <!-- 07 : 관리도 선정 -->
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">10 / 17</span>
+        <span class="step-of">11 / 18</span>
       </div>
       <h2>SPC 분석기준 — 관리도 선정</h2>
-      <p class="lede">수집 데이터를 공정 센서 데이터와 로트 실적 데이터로 나누고, 서브그룹
+      <p class="lede">수집 데이터를 공정 센서 데이터와 청크 집계 데이터로 나누고, 서브그룹
         구성 가능 여부·데이터 성격에 따라 관리도 계열을 1차 선정한다.</p>
       <div class="flow-row tight">
         <div class="flow-box dark" style="flex:2;"><span class="fmain">수집 데이터</span></div>
       </div>
       <div class="flow-row tight">
         <div class="flow-box accent"><span class="fsub">공정 센서 데이터</span></div>
-        <div class="flow-box accent"><span class="fsub">로트 실적 데이터</span></div>
+        <div class="flow-box accent"><span class="fsub">청크 집계 데이터</span></div>
       </div>
       <div class="dtable-wrap">
         <table class="dtable">
@@ -812,19 +859,19 @@
           <tbody>
             <tr><td>I-MR</td><td>I(개별값) 관리도</td><td>MR(이동범위) 관리도</td></tr>
             <tr><td>Xbar-R / Xbar-S</td><td>Xbar 관리도</td><td>R(범위) / S(표준편차) 관리도</td></tr>
-            <tr><td>요약통계기반</td><td>I(로트평균) 관리도</td><td>MR(로트 간 변동) 관리도</td></tr>
-            <tr><td>p / np</td><td colspan="2">불량률(p) 또는 불량개수(np) 단일 차트로 관리</td></tr>
+            <tr><td>요약통계기반</td><td>I(청크평균) 관리도</td><td>MR(청크 간 변동) 관리도</td></tr>
+            <tr><td>p / np</td><td colspan="2">불량률(p) 또는 불량개수(np) 단일 차트로 관리 — 집계 단위는 청크가 아닌 교대(8시간)</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="foot-note">서브그룹 구성 불가(고빈도 연속측정) → I-MR 우선 검토 / 구성 가능 → Xbar-R·Xbar-S 병행 검토 / 로트 실적 중 공정변수 집계값은 요약통계기반, 불량개수(내폭·외폭)는 계수형 특성상 p·np 단일 차트로 관리한다.</p>
+      <p class="foot-note">서브그룹 구성 불가(고빈도 연속측정) → I-MR 우선 검토 / 구성 가능 → Xbar-R·Xbar-S 병행 검토 / 청크 집계값 중 공정변수는 요약통계기반 관리도를, 불량개수 중 내폭은 p-관리도를, 외폭은 발생 감시로 관리한다. 계수형은 교대별 가동률 차이로 검사 물량이 변동하므로 p-관리도를 기본으로 한다.</p>
     </section>
 
     <!-- 08 : 관리도 보정 -->
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">11 / 17</span>
+        <span class="step-of">12 / 18</span>
       </div>
       <h2>SPC 분석기준 — 관리도 보정</h2>
       <p class="lede">1차 선정된 관리도 계열 안에서도 아래 6가지 판단축에 따라 세부 조정이 필요할 수 있다.</p>
@@ -849,7 +896,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">12 / 17</span>
+        <span class="step-of">13 / 18</span>
       </div>
       <h2>SPC 분석기준 — 공정능력지수</h2>
       <p class="lede">특성 등급은 P-FMEA의 AP 등급에서 변환되며, 등급별로 계량형(Cp/Cpk)과
@@ -883,7 +930,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">13 / 17</span>
+        <span class="step-of">14 / 18</span>
       </div>
       <h2>SPC 분석기준 — 안정성 판정</h2>
       <p class="lede">안정성 기준을 이상탐지 로직의 1차 판정 기준으로 채택하며, Rule 1~5는
@@ -912,14 +959,14 @@
           </tbody>
         </table>
       </div>
-      <p class="foot-note">내폭 p-관리도는 로트크기 편차가 커(8,412~104,740) 관리한계가 로트마다 변동한다. Rule 1은 그대로, Rule 2~5는 표준화 잔차(Laney p′ 관리도) 기준으로 재계산해 적용한다.</p>
+      <p class="foot-note">Rule 1~5는 위치 차트와 산포 차트 어느 쪽에서 발생했는지에 따라 원인 해석이 달라진다(위치 차트 이탈=평균 이동, 산포 차트 이탈=변동성 변화). 런 규칙의 연속 판정은 정상 유형 청크에 한해 누적하며, 로트 간 공백·결측·로트전환 구간에서는 카운트를 초기화한다.</p>
     </section>
 
     <!-- 11 : OCAP 연계 -->
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag b">04 · SPC</span>
-        <span class="step-of">14 / 17</span>
+        <span class="step-of">15 / 18</span>
       </div>
       <h2>OCAP 연계</h2>
       <p class="lede">규격 내 6.6 OCAP 개념을 "설정값 자동 보정" 로직의 조정 매트릭스 설계 근거로 삼아,
@@ -949,6 +996,7 @@
             <tr><td>산포 확대</td><td>3단계부터(구조요소 조정 우선)</td></tr>
             <tr><td>내폭 p-관리도 이탈</td><td>2단계부터(차기 로트 적용, 당해 로트 소급 불가)</td></tr>
             <tr><td>외폭 1건 이상 발생</td><td>즉시 원인조사 + 잔여물량 전수검사 전환</td></tr>
+            <tr><td>로트 간 공백 후 재가동</td><td>단계 미적용, 안정화 구간 경과 후 판정 재개(자동 보정 보류)</td></tr>
           </tbody>
         </table>
       </div>
@@ -959,7 +1007,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">05 · 예측모델링</span>
-        <span class="step-of">15 / 17</span>
+        <span class="step-of">16 / 18</span>
       </div>
       <h2>예측 모델링 — 위치·역할·데이터셋 설계</h2>
       <p class="lede">예측 모델링은 머신러닝을 통해 이뤄지며, SPC보다 한 단계 앞서 위험을 미리
@@ -969,28 +1017,27 @@
         <table class="dtable">
           <thead><tr><th>위치</th><th>수행 주체 / 방식</th><th>역할 및 권한</th></tr></thead>
           <tbody>
-            <tr><td>1차 예측</td><td>예측 모델링 / 배정번호 단위 위험도 점수 산출</td><td>관리한계를 벗어나지 않아도 과거 패턴을 학습해 로트의 불량 위험을 미리 점수로 알림 — <b>실행 권한 없음</b></td></tr>
+            <tr><td>1차 예측</td><td>예측 모델링 / 청크 단위 위험도 점수 산출 — 4분마다 직전 60분 시간 버킷으로 위험도 갱신</td><td>관리한계를 벗어나지 않아도 과거 패턴을 학습해 시간 버킷의 치수 중심 이탈 위험을 미리 점수로 알림 — <b>실행 권한 없음</b></td></tr>
             <tr><td>2차 감지</td><td>SPC 관리도 / Rule 1~5 이탈 판정</td><td>이미 측정된 데이터가 관리한계를 벗어난 순간을 감지 — 이탈 시 자동 보정 트리거(OCAP 매트릭스 기반)</td></tr>
             <tr><td>최종 실행</td><td>담당 엔지니어 승인</td><td>실제 설정값 조정 실행</td></tr>
           </tbody>
         </table>
       </div>
       <div style="flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:clamp(9px,1.4cqh,14px);">
-        <p class="foot-note" style="border-top:none; padding-top:0;">예측 모델링의 결과는 참고용 신호일 뿐 자동 실행의 근거로 쓰지 않는다.</p>
+        <p class="foot-note" style="border-top:none; padding-top:0;">예측 모델링의 결과는 참고용 신호일 뿐 자동 실행의 근거로 쓰지 않는다. 롤링 창(추론용)이 56분 중첩되므로 학습·검증은 시간 블록 분할 기반 k-fold로 하며 무작위 분할은 적용하지 않는다.</p>
         <div class="stage-block">
-          <span class="slabel">데이터셋 설계 원칙</span>
-          <p class="lede" style="font-size:.72rem;"><b>지도학습(Supervised Learning)</b> 과거 로트의
-            공정 기록(특징, X)과 그 로트가 실제 불량이었는지 여부(정답, y)를 함께 학습.
-            <b>교차검증</b> 데이터를 여러 조각으로 나눠 돌아가며 학습·검증을 반복(k-fold, 데이터가
-            매우 적을 경우 LOOCV)하여 신뢰도 있는 성능을 확인한다.</p>
+          <span class="slabel">시간 버킷 정의</span>
+          <p class="lede" style="font-size:.72rem;">4분 청크 15개 = 시간 버킷(60분)이며 예측 모델링 전용 단위다.
+            관리도 타점(4분)과 계수형 집계(교대)는 SPC 분석기준을 그대로 따른다. 유효 판정 기준은 내부
+            정상 청크 12개 이상이며, 로트전환 청크를 포함하는 시간 버킷은 학습·추론 대상에서 제외한다.</p>
         </div>
         <div class="dtable-wrap" style="flex:none;">
           <table class="dtable">
             <thead><tr><th>구분</th><th>정의 원칙</th><th>본 프로젝트 데이터 출처</th></tr></thead>
             <tbody>
-              <tr><td>목적변수(y)</td><td>판정하고자 하는 결과를 이진(양품/불량) 또는 범주형으로 정의</td><td>불량 유형 항목(예: 내폭·외폭 등 실측값이 있는 항목)</td></tr>
-              <tr><td>입력변수(X)</td><td>목적변수 발생 이전 시점의 공정 조건 요약값으로 구성</td><td>배정번호별 집계표의 Zone별 Avg·Std</td></tr>
-              <tr><td>데이터 단위</td><td>배정번호(로트) 단위로 통일</td><td>배정번호 별 집계(세부 집계표는 확정 전)</td></tr>
+              <tr><td>목적변수(y)</td><td>판정하고자 하는 결과를 이진(양품/불량)으로 정의</td><td>시간 버킷별 내폭 평균의 기준값(25.000mm) 대비 부호 편차를 절댓값 기준 상위 25%로 이진화, 결과엔 편차 부호도 함께 출력</td></tr>
+              <tr><td>입력변수(X)</td><td>목적변수 발생 이전 시점의 공정 조건 요약값으로 구성</td><td>청크별 집계표의 Zone별 Avg·Std</td></tr>
+              <tr><td>데이터 단위</td><td>시간 버킷(60분) 단위로 통일</td><td>학습·검증은 비중첩, 추론은 4분 롤링 갱신(청크별 집계)</td></tr>
             </tbody>
           </table>
         </div>
@@ -1001,7 +1048,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">05 · 예측모델링</span>
-        <span class="step-of">16 / 17</span>
+        <span class="step-of">17 / 18</span>
       </div>
       <h2>예측 모델링 — 모델 채택·성능평가·XAI</h2>
       <p class="lede">가장 단순하고 해석하기 쉬운 모델을 기준선(baseline)으로 먼저 채택하고, 그보다
@@ -1029,9 +1076,9 @@
           <table class="dtable">
             <thead><tr><th>SPC 특성 등급</th><th>우선 지표</th><th>이유</th></tr></thead>
             <tbody>
-              <tr><td>Critical (S≥9)</td><td>재현율 우선</td><td>불량을 놓치는 것이 가장 위험 — 오탐이 있어도 반드시 잡아야 함</td></tr>
-              <tr><td>Major / Minor</td><td>정밀도·재현율 균형</td><td>과도한 오탐이 현장 업무 부담을 늘림</td></tr>
-              <tr><td>Others</td><td>정밀도 우선</td><td>영향도가 낮아 불필요한 알람을 줄이는 것이 더 중요</td></tr>
+              <tr><td>Critical (AP=H, S≥9)</td><td>재현율 우선</td><td>불량을 놓치는 것이 가장 위험 — 오탐이 있어도 반드시 잡아야 함</td></tr>
+              <tr><td>Major (AP=H, S&lt;9)</td><td>정밀도·재현율 균형</td><td>과도한 오탐이 현장 업무 부담을 늘림</td></tr>
+              <tr><td>Minor / Others</td><td>정밀도 우선</td><td>영향도가 낮아 불필요한 알람을 줄이는 것이 더 중요</td></tr>
             </tbody>
           </table>
         </div>
@@ -1043,7 +1090,7 @@
     <section class="card" data-card>
       <div class="card-kicker">
         <span class="step-tag">06 · 연계</span>
-        <span class="step-of">17 / 17</span>
+        <span class="step-of">18 / 18</span>
       </div>
       <h2>관리계획서 연계</h2>
       <p class="lede">FMEA에서 도출된 특별특성을 관리계획서의 관리 항목으로 지정해,
@@ -1054,7 +1101,7 @@
           <tbody>
             <tr><td>솔트조 / 솔트컨베이어</td><td>공정 센서 자동측정</td><td>I-MR</td><td>Rule1~5 매트릭스 참조</td></tr>
             <tr><td>내폭 불량</td><td>치수 게이지 검사(전수)</td><td>p</td><td>내폭 p-관리도 이탈 행 참조</td></tr>
-            <tr><td>외폭 불량</td><td>치수 게이지 검사(전수)</td><td>p 또는 발생시</td><td>외폭 발생 행 참조</td></tr>
+            <tr><td>외폭 불량</td><td>치수 게이지 검사(전수)</td><td>발생 감시</td><td>외폭 발생 행 참조</td></tr>
           </tbody>
         </table>
       </div>
@@ -1065,7 +1112,13 @@
         <div class="flow-arrow">▶</div>
         <div class="flow-box"><span class="fsub">관리계획서</span></div>
       </div>
-      <p class="foot-note">SPC 근본원인분석 결과(안정성 판정 5단계)는 반대 방향으로 P-FMEA 개정 및 관리계획서 갱신의 입력자료로 환류한다. ※ 본 문서는 분석 방법론 기준서이며, 실제 P-FMEA 판정·조치 결과는 별도 문서 「P-FMEA 결과 보고서 v0.2.8」로 발행되었다(14개 이슈 중 9건 완료·5건 실행대기). SPC 분석 결과는 프로젝트 진행에 따라 추후 별도 공개될 예정이다.</p>
+      <p class="foot-note">SPC 근본원인분석 결과(안정성 판정 5단계)는 반대 방향으로 P-FMEA 개정 및 관리계획서 갱신의 입력자료로 환류한다. ※ 본 문서는 분석 방법론 기준서이며, 실제 P-FMEA 판정·조치 결과는 별도 문서 「P-FMEA 결과 보고서 v0.2.8」로(14개 이슈 중 9건 완료·5건 실행대기), 최종 종합 결과는 「AX-PBL 최종 발표자료 v0.22」로 발행되었다.</p>
+      <div class="demo-card" style="margin-top:4px;">
+        <span class="demo-tag">LIVE DEMO</span>
+        <span class="dtitle">공정 인과 관리도 — 실제 동작 프로토타입</span>
+        <p class="dtext">본 기준서의 SPC·OCAP 규칙이 실제로 어떻게 동작하는지 눌러볼 수 있다.</p>
+        <a class="dlink" href="https://claude.ai/artifact/NKburrgC2AGP3eA1fv2isV?host=1" target="_blank" rel="noopener">데모 열기 ↗</a>
+      </div>
     </section>
 
   </div>
