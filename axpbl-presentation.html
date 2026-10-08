@@ -357,7 +357,7 @@
   .hz-arr::before, .hz-arr::after{ content:""; position:absolute; top:-6px; border:5px solid transparent; }
   .hz-arr::before{ left:-2px; border-right:8px solid var(--red); border-left:0; }
   .hz-arr::after{ right:-2px; border-left:8px solid var(--red); border-right:0; }
-  .hz-txt{ grid-row:5; grid-column:3 / -1; color:var(--red); font-weight:700; margin-top:.55em; }
+  .hz-txt{ grid-row:5; grid-column:3 / 14; justify-self:stretch; text-align:center !important; color:var(--red); font-weight:700; margin-top:.55em; }
   .hz-foot{ grid-row:6; grid-column:1 / -1; display:flex; justify-content:space-between; gap:1em; font-size:.85em; color:var(--ink-soft); margin-top:.5em; }
 
   /* 현재 문제: 글자 크기 통일 */
@@ -387,6 +387,31 @@
   /* 포트폴리오 첫 화면에 끼워 볼 때는 중복 제목 · 밝기 버튼 숨김 */
   .embedded .theme-switch, .embedded .deck-title{ display:none; }
   .embedded .deck-head{ justify-content:flex-end; }
+
+  /* ===== 다른 포트폴리오 페이지와 글자 체계 맞춤 =====
+     기준: 루트 17px, 크기는 카드 안쪽 폭(카드 폭 - 좌우 여백 52px)에 비례 */
+  html{ font-size:17px; }
+  .ci{ font-size:clamp(.8rem, calc((100cqw - 52px) * .027), .95rem); line-height:1.5; gap:12px; }
+  .kick{ font-size:.82rem; }
+  .ci h2{ font-size:clamp(1.25rem, calc((100cqw - 52px) * .054), 1.75rem); line-height:1.22; }
+  .cv-top h1, .demo-card h3{ font-size:clamp(1.5rem, calc((100cqw - 52px) * .07), 2.3rem); line-height:1.25; }
+  .note{ font-size:.74rem; }
+  /* 굵은 글씨는 머리칸 · 핵심 수치에만 */
+  .kv .v, .vstep.on .txt, .it.done, .six b, .proc .act b, .proc.hot .why span,
+  .lim3 div, .sys .r.final, .res .rn, .count span, .cap{ font-weight:400; }
+  .proc .act b{ font-weight:700; }
+
+  /* ===== 칸 안 글자: 세로 가운데 · 가로 왼쪽 ===== */
+  .kv > div, .vstep .lab, .proc > div, .prob > div, .sys .r, .phase .ph, .phase .no{
+    display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+  }
+  .vstep .txt, .stat .k, .sys .nm, .sys .d, .crit .pn, .tool .v, .var div, .var.big div{
+    display:flex; align-items:center;
+  }
+  .stat .v{ display:flex; align-items:center; flex-wrap:wrap; column-gap:.35em; }
+  .it, .lim3 div, .phase li, .six div{ display:flex; align-items:center; }
+  .lot, .res, .count{ align-items:center; }
+  .lot .lb{ margin-top:0; }
   @media (prefers-reduced-motion: reduce){ .rail{ scroll-behavior:auto; } body,.card{ transition:none; } }
 </style>
 </head>
