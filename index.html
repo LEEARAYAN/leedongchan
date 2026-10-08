@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MEGA-AX 프로그램 — 이동찬 포트폴리오</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   :root{
     --paper:#eef1f0;
@@ -137,12 +136,117 @@
   @media (max-width:640px){
     .frame iframe{ height:820px; }
   }
+
+  /* ===== 발표자료 양식 레이어 (회색톤 · 맑은 고딕 · 왼쪽/위쪽 정렬) ===== */
+  :root{
+    --paper:#dcdedf; --surface:#fbfbfa; --panel:#ebebe9; --panel-2:#dfe0de;
+    --ink:#1f2225; --ink-soft:#474c51; --ink-faint:#7b8187; --line:#cfd2d4;
+    --head:#3a3f44; --head-ink:#ffffff;
+    --accent:#3a3f44; --accent-ink:#ffffff; --accent-soft:#ebebe9;
+    --alert:#d3261f; --alert-soft:#f8e1df; --red:#d3261f;
+    --warn:#8a6514; --warn-soft:#f1e9d6;
+    --good:#1f2225; --good-soft:#dfe0de;
+    --tag-bg:#3a3f44; --tag-ink:#ffffff; --img-bg:#eeeeec;
+    --shadow:0 1px 2px rgba(30,33,36,.08), 0 18px 40px -20px rgba(30,33,36,.45);
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme]){
+      --paper:#141618; --surface:#212427; --panel:#2c3034; --panel-2:#353a3f;
+      --ink:#e7e9eb; --ink-soft:#b5bac0; --ink-faint:#868c92; --line:#3a3f44;
+      --head:#4a5056; --head-ink:#ffffff;
+      --accent:#cfd3d7; --accent-ink:#1b1d20; --accent-soft:#2c3034;
+      --alert:#ff6b61; --alert-soft:#40292a; --red:#ff6b61;
+      --warn:#e0b45f; --warn-soft:#3a2f1a;
+      --good:#f2f3f4; --good-soft:#353a3f;
+      --tag-bg:#4a5056; --tag-ink:#ffffff; --img-bg:#cdd0d3;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -20px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="mid"]{
+    --paper:#8e9295; --surface:#d3d5d6; --panel:#c4c6c8; --panel-2:#b9bcbe;
+    --ink:#16181a; --ink-soft:#30353a; --ink-faint:#50565b; --line:#aeb2b5;
+    --head:#33373b; --head-ink:#f5f5f5;
+    --accent:#33373b; --accent-ink:#f5f5f5; --accent-soft:#c4c6c8;
+    --alert:#b01c16; --alert-soft:#e3c6c3; --red:#b01c16;
+    --warn:#6e500e; --warn-soft:#dcd2bb;
+    --good:#16181a; --good-soft:#b9bcbe;
+    --tag-bg:#33373b; --tag-ink:#f5f5f5; --img-bg:#e4e5e5;
+    --shadow:0 1px 2px rgba(0,0,0,.15), 0 18px 40px -20px rgba(0,0,0,.55);
+  }
+  :root[data-theme="dark"]{
+    --paper:#141618; --surface:#212427; --panel:#2c3034; --panel-2:#353a3f;
+    --ink:#e7e9eb; --ink-soft:#b5bac0; --ink-faint:#868c92; --line:#3a3f44;
+    --head:#4a5056; --head-ink:#ffffff;
+    --accent:#cfd3d7; --accent-ink:#1b1d20; --accent-soft:#2c3034;
+    --alert:#ff6b61; --alert-soft:#40292a; --red:#ff6b61;
+    --warn:#e0b45f; --warn-soft:#3a2f1a;
+    --good:#f2f3f4; --good-soft:#353a3f;
+    --tag-bg:#4a5056; --tag-ink:#ffffff; --img-bg:#cdd0d3;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -20px rgba(0,0,0,.8);
+  }
+
+  *, *::before, *::after{
+    font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR",sans-serif !important;
+    letter-spacing:normal !important; text-transform:none !important;
+  }
+  body{ transition:background .25s; }
+  main{ max-width:980px; }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:22px; }
+  .theme-switch{ display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:var(--surface); }
+  .theme-switch button{ font:inherit; font-size:.8rem; padding:6px 12px; border:0; background:transparent; color:var(--ink-soft); cursor:pointer; }
+  .theme-switch button + button{ border-left:1px solid var(--line); }
+  .theme-switch button[aria-pressed="true"]{ background:var(--head); color:var(--head-ink); font-weight:700; }
+  .eyebrow{ font-size:.85rem; font-weight:700; color:var(--ink-soft); }
+  h1{ font-size:clamp(1.8rem, 5vw, 2.5rem); font-weight:700; }
+  .badge{ border-radius:3px; font-size:.78rem; font-weight:700; background:var(--head); color:var(--head-ink); }
+  .badge.status{ background:var(--red); color:#fff; }
+  .badge.status::before{ content:none; }
+  .badge.muted{ background:var(--panel); color:var(--ink-soft); border:0; }
+  .lede{ font-size:1rem; color:var(--ink-soft); }
+  .skill{ font-size:.8rem; background:var(--panel); border:0; border-radius:3px; padding:4px 10px; color:var(--ink); }
+  .course-wrap{ border:0; border-radius:4px; background:var(--panel); }
+  table.course{ font-size:.92rem; }
+  table.course th{ background:var(--head); color:var(--head-ink); font-size:.88rem; }
+  table.course td{ border-bottom-color:var(--surface); vertical-align:top; }
+  table.course td.dur{ color:var(--ink-soft); font-weight:700; }
+  .divider{ background:var(--line); }
+  .projects-head h2{ font-size:1.5rem; font-weight:700; }
+  .projects-hint{ font-size:.8rem; }
+  .project-kicker{ align-items:center; }
+  .project-num{ display:inline-flex; align-items:center; justify-content:center; min-width:1.9em; height:1.9em; border-radius:3px;
+    background:var(--head); color:var(--head-ink); font-size:.85rem; font-weight:700; }
+  .project h3{ font-size:1.2rem; font-weight:700; }
+  .project .tag{ border-radius:3px; font-size:.72rem; font-weight:700; background:var(--panel-2); color:var(--ink); padding:2px 8px; }
+  .project p.desc{ font-size:.92rem; color:var(--ink-soft); }
+  .frame{ border:0; border-radius:8px; background:var(--paper); box-shadow:none; }
+  .frame iframe{ height:960px; background:var(--paper); }
+  .deliverables .dlabel{ font-size:.8rem; font-weight:700; color:var(--ink-soft); }
+  .deliv{ border:0; border-radius:5px; background:var(--panel); }
+  .deliv:first-child{ background:var(--head); }
+  .deliv:first-child .dtitle, .deliv:first-child .ddesc{ color:var(--head-ink); }
+  .deliv:first-child .ddesc{ opacity:.85; }
+  .deliv .dtag{ border-radius:3px; font-size:.7rem; background:var(--red); color:#fff; }
+  .deliv.proto{ border:0; background:var(--panel); }
+  .deliv.proto .dtag{ background:var(--panel-2); color:var(--ink); }
+  .deliv .dtitle{ font-size:1rem; }
+  .deliv .ddesc{ font-size:.82rem; }
+  .deliv:focus-visible{ outline:3px solid var(--red); outline-offset:2px; }
+  footer{ font-size:.78rem; }
+  @media (max-width:640px){ .frame iframe{ height:880px; } }
 </style>
 </head>
 <body>
 <main>
 
-  <div class="eyebrow">2026 부·울·경 광역이음프로젝트 · 초광역 제조산업 핵심인재양성</div>
+  <div class="topbar">
+    <div class="eyebrow">2026 부·울·경 광역이음프로젝트 · 초광역 제조산업 핵심인재양성</div>
+    <div class="theme-switch" role="group" aria-label="화면 밝기">
+      <button type="button" data-set="light">밝게</button>
+      <button type="button" data-set="mid">중간</button>
+      <button type="button" data-set="dark">어둡게</button>
+    </div>
+  </div>
   <h1>MEGA-AX 프로그램</h1>
 
   <div class="badges">
@@ -231,12 +335,12 @@
     <div class="deliverables">
       <div class="dlabel">AX-PBL 최종 산출물</div>
       <div class="deliv-grid">
-        <a class="deliv" href="https://claude.ai/artifact/NKburrgC2AGP3eA1fv2isV?host=1" target="_blank" rel="noopener">
+        <a class="deliv" href="ocap-rule-chart-demo.html" target="_blank" rel="noopener">
           <span class="dtag">Live Demo</span>
           <span class="dtitle">공정 인과 관리도</span>
           <span class="ddesc">5개 공정·7개 채널을 4분 청크 단위로 실시간 감시. SPC 관리도·Rule 1~5 판정, OCAP 조정 매트릭스, 자동보정 트리거까지 실제로 조작해볼 수 있는 최종 프로토타입</span>
         </a>
-        <a class="deliv proto" href="https://claude.ai/artifact/MQfHQNXnjLo28zqkoJE9eM" target="_blank" rel="noopener">
+        <a class="deliv proto" href="xgboost-risk-dashboard-demo.html" target="_blank" rel="noopener">
           <span class="dtag">Prototype · 테스트용</span>
           <span class="dtitle">예측모델 초안 (XGBoost)</span>
           <span class="ddesc">위험확률 실시간 산출 + 조정 권고 데모. 정식 채택 모델이 아니라 구현 가능성만 확인해본 참고용 시제품</span>
@@ -252,5 +356,65 @@
   </footer>
 
 </main>
+<script>
+(function(){
+  /* 화면 밝기: 같은 사이트의 모든 페이지가 함께 바뀜 */
+  var KEY = 'mx-theme', root = document.documentElement;
+  try{ if (window.top !== window.self) root.classList.add('embedded'); }catch(e){ root.classList.add('embedded'); }
+  var btns = Array.prototype.slice.call(document.querySelectorAll('[data-set]'));
+  function current(){
+    var t = root.getAttribute('data-theme'); if (t) return t;
+    return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function mark(){ var c = current(); btns.forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.set === c ? 'true' : 'false'); }); }
+  function use(t){ if (t) root.setAttribute('data-theme', t); else root.removeAttribute('data-theme'); mark(); }
+  try{ use(localStorage.getItem(KEY)); }catch(e){ mark(); }
+  btns.forEach(function(b){ b.addEventListener('click', function(){ use(b.dataset.set); try{ localStorage.setItem(KEY, b.dataset.set); }catch(e){} }); });
+  window.addEventListener('storage', function(e){ if (e.key === KEY) use(e.newValue); });
+
+  /* 카드 이동 */
+  var rail = document.getElementById('rail');
+  if (!rail) return;
+  var cards = Array.prototype.slice.call(rail.querySelectorAll('[data-card], .card'));
+  cards = cards.filter(function(c, i){ return cards.indexOf(c) === i; });
+  var total = cards.length, cur = 0;
+  var dotsWrap = document.getElementById('dots');
+  var dots = [];
+  if (dotsWrap){
+    dotsWrap.innerHTML = '';
+    cards.forEach(function(_, i){
+      var b = document.createElement('button');
+      b.setAttribute('aria-label', (i+1) + '번째 장으로 이동');
+      b.addEventListener('click', function(){ go(i); });
+      dotsWrap.appendChild(b); dots.push(b);
+    });
+  }
+  function set(i){ cur = i; dots.forEach(function(d, k){ d.setAttribute('aria-current', k === cur ? 'true' : 'false'); }); }
+  function nearest(){
+    var mid = rail.scrollLeft + rail.clientWidth / 2, best = 0, bd = Infinity;
+    cards.forEach(function(c, i){ var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd){ bd = d; best = i; } });
+    return best;
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total - 1, i));
+    var c = cards[i];
+    rail.scrollTo({ left: c.offsetLeft - (rail.clientWidth - c.offsetWidth) / 2, behavior: 'smooth' });
+  }
+  var ticking = false;
+  rail.addEventListener('scroll', function(){
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(function(){ ticking = false; set(nearest()); });
+  }, { passive:true });
+  var prev = document.getElementById('prevBtn'), next = document.getElementById('nextBtn');
+  if (prev) prev.addEventListener('click', function(){ go(cur - 1); });
+  if (next) next.addEventListener('click', function(){ go(cur + 1); });
+  window.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); go(cur + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'Home'){ go(0); } else if (e.key === 'End'){ go(total - 1); }
+  });
+  set(nearest());
+})();
+</script>
 </body>
 </html>

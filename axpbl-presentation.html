@@ -383,6 +383,10 @@
   .phase{ grid-template-columns:2.2em 20% 1fr; }
   .phase .no{ background:var(--strong); color:var(--strong-ink); font-weight:700; border-radius:3px; padding:.5em .7em; }
   .phase .ph{ justify-content:flex-start; }
+
+  /* 포트폴리오 첫 화면에 끼워 볼 때는 중복 제목 · 밝기 버튼 숨김 */
+  .embedded .theme-switch, .embedded .deck-title{ display:none; }
+  .embedded .deck-head{ justify-content:flex-end; }
   @media (prefers-reduced-motion: reduce){ .rail{ scroll-behavior:auto; } body,.card{ transition:none; } }
 </style>
 </head>
@@ -419,9 +423,9 @@
     <div><b>05</b>향후 계획</div>
   </div>
   <div class="cv-links">
-    <a class="demo-link" href="https://claude.ai/artifact/NKburrgC2AGP3eA1fv2isV?host=1" target="_blank" rel="noopener">
+    <a class="demo-link" href="ocap-rule-chart-demo.html" target="_blank" rel="noopener">
       <div>공정 인과 관리도<span>라이브 데모</span></div><em>열기 ↗</em></a>
-    <a class="demo-link" href="https://claude.ai/artifact/MQfHQNXnjLo28zqkoJE9eM" target="_blank" rel="noopener">
+    <a class="demo-link" href="xgboost-risk-dashboard-demo.html" target="_blank" rel="noopener">
       <div>예측 모델 초안 (XGBoost)<span>시제품</span></div><em>열기 ↗</em></a>
   </div>
 </div></section>
@@ -667,7 +671,7 @@
     <div>Rule 1~5 자동 판정과 이상 신호</div>
     <div>조치 계획표에 따른 자동 보정 흐름</div>
   </div>
-  <a class="demo-link" href="https://claude.ai/artifact/NKburrgC2AGP3eA1fv2isV?host=1" target="_blank" rel="noopener">
+  <a class="demo-link" href="ocap-rule-chart-demo.html" target="_blank" rel="noopener">
     <div>데모 열기<span>새 탭에서 열림</span></div><em>열기 ↗</em></a>
 </div></section>
 
@@ -732,7 +736,7 @@
     <div class="vstep"><div class="lab">단계<br><small style="font-weight:400">참고 신호</small></div><div class="txt">초안 단계로 참고만 사용<br>기준 모델 확정 후 비교</div></div>
   </div>
   <div class="note">확인 후 대응에서 미리 대비로 · 현재는 가능성 확인 단계</div>
-  <a class="demo-link" href="https://claude.ai/artifact/MQfHQNXnjLo28zqkoJE9eM" target="_blank" rel="noopener">
+  <a class="demo-link" href="xgboost-risk-dashboard-demo.html" target="_blank" rel="noopener">
     <div>시제품 열기<span>예측 모델 초안 (XGBoost)</span></div><em>열기 ↗</em></a>
 </div></section>
 
@@ -755,6 +759,7 @@
 (function(){
   /* theme */
   var root = document.documentElement;
+  try{ if (window.top !== window.self) root.classList.add('embedded'); }catch(e){ root.classList.add('embedded'); }
   var btns = Array.prototype.slice.call(document.querySelectorAll('[data-set]'));
   function current(){
     var t = root.getAttribute('data-theme');
@@ -762,9 +767,10 @@
     return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
   }
   function mark(){ var c = current(); btns.forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.set === c ? 'true' : 'false'); }); }
-  function apply(t){ root.setAttribute('data-theme', t); try{ localStorage.setItem('axpbl-theme', t); }catch(e){} mark(); }
-  try{ var saved = localStorage.getItem('axpbl-theme'); if (saved) root.setAttribute('data-theme', saved); }catch(e){}
+  function apply(t){ root.setAttribute('data-theme', t); try{ localStorage.setItem('mx-theme', t); }catch(e){} mark(); }
+  try{ var saved = localStorage.getItem('mx-theme'); if (saved) root.setAttribute('data-theme', saved); }catch(e){}
   btns.forEach(function(b){ b.addEventListener('click', function(){ apply(b.dataset.set); }); });
+  window.addEventListener('storage', function(e){ if (e.key === 'mx-theme'){ if (e.newValue) root.setAttribute('data-theme', e.newValue); else root.removeAttribute('data-theme'); mark(); } });
   mark();
 
   /* cards */
