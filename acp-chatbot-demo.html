@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ACP 챗봇 시연 · 포트폴리오</title>
+<meta name="description" content="ACP(에이전트 챗봇 프로젝트) 고장 대응 챗봇과 호스트 관리 화면을 브라우저 안에서 체험하는 단독 시연">
+<style>
+  :root{
+    --paper:#dcdedf; --surface:#fbfbfa; --panel:#ebebe9; --panel-2:#dfe0de;
+    --ink:#1f2225; --ink-soft:#474c51; --ink-faint:#7b8187; --line:#cfd2d4;
+    --head:#3a3f44; --head-ink:#ffffff; --strong:#3a3f44; --strong-ink:#ffffff;
+    --red:#d3261f; --red-soft:#f8e1df;
+    --shadow:0 1px 2px rgba(30,33,36,.08), 0 18px 40px -20px rgba(30,33,36,.45);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme]){
+      --paper:#141618; --surface:#212427; --panel:#2c3034; --panel-2:#353a3f;
+      --ink:#e7e9eb; --ink-soft:#b5bac0; --ink-faint:#868c92; --line:#3a3f44;
+      --head:#4a5056; --head-ink:#ffffff; --strong:#dfe2e5; --strong-ink:#1b1d20;
+      --red:#ff6b61; --red-soft:#40292a;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -20px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="mid"]{
+    --paper:#8e9295; --surface:#d3d5d6; --panel:#c4c6c8; --panel-2:#b9bcbe;
+    --ink:#16181a; --ink-soft:#30353a; --ink-faint:#50565b; --line:#aeb2b5;
+    --head:#33373b; --head-ink:#f5f5f5; --strong:#33373b; --strong-ink:#f5f5f5;
+    --red:#b01c16; --red-soft:#e3c6c3;
+    --shadow:0 1px 2px rgba(0,0,0,.15), 0 18px 40px -20px rgba(0,0,0,.55);
+  }
+  :root[data-theme="dark"]{
+    --paper:#141618; --surface:#212427; --panel:#2c3034; --panel-2:#353a3f;
+    --ink:#e7e9eb; --ink-soft:#b5bac0; --ink-faint:#868c92; --line:#3a3f44;
+    --head:#4a5056; --head-ink:#ffffff; --strong:#dfe2e5; --strong-ink:#1b1d20;
+    --red:#ff6b61; --red-soft:#40292a;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -20px rgba(0,0,0,.8);
+  }
+  *{ box-sizing:border-box; }
+  html{ font-size:16px; }
+  html,body{ margin:0; }
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+    padding:16px 0 28px; min-height:100svh; line-height:1.5; word-break:keep-all; overflow-wrap:break-word; line-break:strict;
+    transition:background .25s;
+  }
+  button,input,select,textarea{ font:inherit; color:inherit; }
+  .wrap{ width:min(100% - 24px, 1280px); margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+  .deck-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .deck-title{ font-weight:700; font-size:1.05rem; }
+  .deck-title span{ font-weight:400; color:var(--ink-soft); font-size:.9rem; }
+  .tools{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .theme-switch{ display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:var(--surface); }
+  .theme-switch button{ font-size:.8rem; padding:6px 12px; border:0; background:transparent; color:var(--ink-soft); cursor:pointer; }
+  .theme-switch button + button{ border-left:1px solid var(--line); }
+  .theme-switch button[aria-pressed="true"]{ background:var(--head); color:var(--head-ink); font-weight:700; }
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{ outline:2px solid var(--red); outline-offset:2px; }
+  .hostsw{ display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 6px 4px 12px; font-size:.85rem; font-weight:700; }
+  .hostsw .sw{ position:relative; width:46px; height:24px; border-radius:999px; border:0; background:var(--ink-faint); cursor:pointer; transition:background .2s; padding:0; }
+  .hostsw .sw::after{ content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s; }
+  .hostsw .sw[aria-checked="true"]{ background:var(--red); }
+  .hostsw .sw[aria-checked="true"]::after{ transform:translateX(22px); }
+  .hostsw .st{ min-width:5.2em; text-align:right; color:var(--ink-soft); font-weight:400; }
+  .note-line{ font-size:.82rem; color:var(--ink-soft); background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:.45em .8em; }
+  .note-line b{ color:var(--red); }
+
+  .app{ display:grid; grid-template-columns:minmax(0,1fr); gap:16px; align-items:start; }
+  .app.host-on{ grid-template-columns:400px minmax(0,1fr); }
+  .guest{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .app:not(.host-on) .guest{ margin:0 auto; }
+  .phone{ width:100%; max-width:400px; height:min(80svh, 780px); min-height:560px; background:var(--surface); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden; position:relative; }
+  .ph-head{ background:var(--head); color:var(--head-ink); padding:.7em 1em; display:flex; align-items:center; justify-content:space-between; gap:.6em; }
+  .ph-head b{ font-size:1rem; }
+  .ph-head small{ opacity:.75; font-size:.76rem; display:block; font-weight:400; }
+  .ph-head .no{ font-size:.78rem; background:rgba(255,255,255,.16); border-radius:999px; padding:.15em .7em; white-space:nowrap; }
+  .ph-ban{ background:var(--panel); color:var(--ink-soft); font-size:.74rem; padding:.35em 1em; border-bottom:1px solid var(--line); }
+  .ph-ban b{ color:var(--red); }
+  .log{ flex:1; overflow-y:auto; padding:.8em .8em .4em; display:flex; flex-direction:column; gap:.55em; scroll-behavior:smooth; }
+  .b{ max-width:90%; padding:.6em .8em; border-radius:12px; background:var(--panel); font-size:.92rem; display:block; }
+  .b > * + *{ margin-top:.35em; }
+  .b img{ display:block; min-width:64px; min-height:40px; object-fit:cover; }
+  .b.me{ align-self:flex-end; background:var(--strong); color:var(--strong-ink); border-bottom-right-radius:3px; }
+  .b.bot{ align-self:flex-start; border-bottom-left-radius:3px; }
+  .b .t{ font-weight:700; }
+  .b .s{ font-size:.82rem; color:var(--ink-soft); }
+  .b ol{ margin:.1em 0 0; padding-left:1.3em; display:flex; flex-direction:column; gap:.25em; }
+  .b .fig{ background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:.3em; }
+  .b .fig svg{ width:100%; height:auto; display:block; }
+  .b .fig small{ display:block; text-align:center; color:var(--ink-faint); font-size:.72rem; }
+  .warn{ border:1.5px solid var(--red); background:var(--red-soft); border-radius:8px; padding:.6em .75em; font-size:.88rem; display:flex; flex-direction:column; gap:.3em; max-width:94%; align-self:flex-start; }
+  .warn b{ color:var(--red); }
+  .card-s{ align-self:stretch; background:var(--surface); border:1px solid var(--line); border-radius:8px; overflow:hidden; font-size:.86rem; }
+  .card-s h4{ margin:0; background:var(--head); color:var(--head-ink); padding:.4em .7em; font-size:.86rem; }
+  .card-s .r{ display:grid; grid-template-columns:34% 1fr; border-top:1px solid var(--line); }
+  .card-s .r:first-of-type{ border-top:0; }
+  .card-s .r > div{ padding:.35em .7em; display:flex; align-items:center; }
+  .card-s .r > div:first-child{ background:var(--panel); color:var(--ink-soft); font-weight:700; }
+  .choices{ border-top:1px solid var(--line); padding:.6em .8em; display:flex; flex-wrap:wrap; gap:.4em; background:var(--surface); max-height:34%; overflow-y:auto; }
+  .choices:empty{ display:none; }
+  .chip{ border:1px solid var(--ink-faint); background:var(--surface); color:var(--ink); border-radius:999px; padding:.4em .9em; font-size:.86rem; cursor:pointer; }
+  .chip:hover{ background:var(--head); color:var(--head-ink); border-color:var(--head); }
+  .chip.dk{ background:var(--strong); color:var(--strong-ink); border-color:var(--strong); }
+  .chip.red{ border-color:var(--red); color:var(--red); }
+  .chip[disabled]{ opacity:.45; cursor:not-allowed; }
+  .inp{ border-top:1px solid var(--line); display:flex; gap:.4em; padding:.5em .6em; background:var(--surface); align-items:center; }
+  .inp input[type=text]{ flex:1; min-width:0; border:1px solid var(--line); background:var(--panel); border-radius:6px; padding:.5em .7em; }
+  .iconbtn{ border:1px solid var(--line); background:var(--panel); border-radius:6px; padding:.45em .6em; cursor:pointer; font-size:.82rem; white-space:nowrap; }
+  .iconbtn:hover{ background:var(--head); color:var(--head-ink); }
+  .dropmark{ position:absolute; inset:0; background:rgba(0,0,0,.45); color:#fff; display:none; align-items:center; justify-content:center; font-weight:700; border-radius:18px; z-index:5; }
+  .phone.drag .dropmark{ display:flex; }
+  .quick{ width:100%; max-width:400px; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:.5em .7em; font-size:.8rem; color:var(--ink-soft); display:flex; flex-wrap:wrap; gap:.35em; align-items:center; }
+  .quick b{ color:var(--ink); margin-right:.2em; }
+  .quick button{ border:1px solid var(--line); background:var(--panel); border-radius:999px; padding:.2em .7em; cursor:pointer; font-size:.78rem; }
+  .quick button:hover{ background:var(--head); color:var(--head-ink); }
+
+  /* ---------- host console ---------- */
+  .console{ background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow); display:grid; grid-template-columns:200px minmax(0,1fr); min-height:min(80svh,780px); overflow:hidden; }
+  .app:not(.host-on) .console{ display:none; }
+  .side{ background:var(--head); color:var(--head-ink); display:flex; flex-direction:column; }
+  .side .brand{ padding:.9em 1em; font-weight:700; border-bottom:1px solid rgba(255,255,255,.14); display:flex; flex-direction:column; }
+  .side .brand small{ font-weight:400; opacity:.7; font-size:.74rem; }
+  .side nav{ display:flex; flex-direction:column; padding:.4em 0; flex:1; }
+  .side nav button{ background:transparent; border:0; color:inherit; text-align:left; padding:.62em 1em; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:.5em; font-size:.88rem; opacity:.82; border-left:3px solid transparent; }
+  .side nav button:hover{ background:rgba(255,255,255,.08); opacity:1; }
+  .side nav button[aria-current="page"]{ background:rgba(255,255,255,.14); opacity:1; font-weight:700; border-left-color:var(--red); }
+  .side nav .n{ font-size:.7rem; background:rgba(255,255,255,.2); border-radius:999px; padding:0 .55em; min-width:1.6em; text-align:center; }
+  .side nav .n.red{ background:var(--red); color:#fff; }
+  .side .foot{ padding:.7em 1em; font-size:.72rem; opacity:.7; border-top:1px solid rgba(255,255,255,.14); }
+  .main{ padding:1em 1.1em 1.2em; min-width:0; display:flex; flex-direction:column; gap:.8em; overflow:auto; max-height:min(80svh,780px); }
+  .ph1{ display:flex; justify-content:space-between; align-items:flex-start; gap:1em; flex-wrap:wrap; }
+  .ph1 .ey{ font-size:.72rem; font-weight:700; color:var(--red); letter-spacing:.08em; }
+  .ph1 h2{ margin:0; font-size:1.35rem; line-height:1.25; }
+  .ph1 p{ margin:.2em 0 0; color:var(--ink-soft); font-size:.86rem; }
+  .btn{ border:1px solid var(--head); background:var(--head); color:var(--head-ink); border-radius:6px; padding:.42em .95em; cursor:pointer; font-size:.86rem; font-weight:700; }
+  .btn:hover{ filter:brightness(1.15); }
+  .btn.ghost{ background:transparent; color:var(--ink); border-color:var(--ink-faint); font-weight:400; }
+  .btn.ghost:hover{ background:var(--panel); filter:none; }
+  .btn.red{ background:var(--red); border-color:var(--red); color:#fff; }
+  .btn.sm{ padding:.2em .6em; font-size:.78rem; }
+  .btn[disabled]{ opacity:.45; cursor:not-allowed; }
+  .row{ display:flex; gap:.5em; flex-wrap:wrap; align-items:center; }
+  .kpis{ display:grid; grid-template-columns:repeat(auto-fit,minmax(104px,1fr)); gap:.4em; }
+  .kpi{ background:var(--panel); border-radius:6px; padding:.55em .7em; display:flex; flex-direction:column; justify-content:center; }
+  .kpi b{ font-size:1.5rem; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .kpi span{ font-size:.76rem; color:var(--ink-soft); }
+  .kpi.red b{ color:var(--red); }
+  .bar{ background:var(--head); color:var(--head-ink); font-weight:700; padding:.4em .8em; border-radius:4px; display:flex; justify-content:space-between; align-items:baseline; gap:.6em; flex-wrap:wrap; font-size:.9rem; }
+  .bar small{ font-weight:400; opacity:.85; font-size:.8rem; }
+  .bar.red{ background:var(--red); color:#fff; }
+  .box{ background:var(--panel); border-radius:6px; padding:.6em .8em; display:flex; flex-direction:column; gap:.25em; justify-content:center; }
+  .box.dk{ background:var(--strong); color:var(--strong-ink); }
+  .box .s{ font-size:.82rem; color:var(--ink-soft); }
+  .box.dk .s{ color:inherit; opacity:.8; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:.6em; }
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:.6em; }
+  @media (max-width:760px){ .grid2,.grid3{ grid-template-columns:1fr; } }
+  .callout{ border:1.5px solid var(--ink-faint); border-radius:6px; padding:.5em .8em; background:var(--surface); font-size:.86rem; }
+  .callout.red{ border-color:var(--red); }
+  .callout b{ color:var(--red); }
+  .tbl{ width:100%; border-collapse:collapse; font-size:.84rem; }
+  .tbl th{ background:var(--head); color:var(--head-ink); text-align:left; padding:.45em .6em; font-weight:700; white-space:nowrap; position:sticky; top:0; }
+  .tbl td{ padding:.4em .6em; border-bottom:1px solid var(--line); vertical-align:middle; }
+  .tbl tr.sel td{ background:var(--panel); }
+  .tbl tr[data-row]{ cursor:pointer; }
+  .tbl tr[data-row]:hover td{ background:var(--panel); }
+  .tbl input,.tbl select{ width:100%; min-width:5em; border:1px solid var(--line); background:var(--surface); border-radius:4px; padding:.2em .4em; }
+  .tbl .lock{ color:var(--ink-faint); }
+  .scroll{ overflow:auto; max-height:340px; border:1px solid var(--line); border-radius:6px; }
+  .tag{ display:inline-block; font-size:.74rem; font-weight:700; padding:.05em .55em; border-radius:3px; background:var(--panel-2); color:var(--ink-soft); white-space:nowrap; }
+  .tag.red{ background:var(--red); color:#fff; }
+  .tag.dk{ background:var(--strong); color:var(--strong-ink); }
+  .tag.ol{ background:transparent; border:1px solid var(--red); color:var(--red); }
+  .kv{ display:grid; grid-template-columns:30% 1fr; gap:.25em; }
+  .kv > div{ background:var(--panel); padding:.4em .7em; border-radius:3px; display:flex; flex-direction:column; justify-content:center; }
+  .kv .k{ background:var(--panel-2); font-weight:700; font-size:.84rem; }
+  .field{ display:flex; flex-direction:column; gap:.2em; font-size:.82rem; }
+  .field label{ font-weight:700; color:var(--ink-soft); }
+  .field input,.field select,.field textarea{ border:1px solid var(--line); background:var(--surface); border-radius:5px; padding:.4em .55em; }
+  .field textarea{ min-height:4.2em; resize:vertical; }
+  .chk{ display:flex; gap:.45em; align-items:flex-start; font-size:.84rem; }
+  .chk input{ margin-top:.25em; }
+  .hbar{ display:grid; grid-template-columns:9.5em 1fr 6.5em; gap:.5em; align-items:center; font-size:.82rem; }
+  .hbar .tr{ background:var(--panel); border-radius:3px; height:1.1em; overflow:hidden; }
+  .hbar .tr i{ display:block; height:100%; background:var(--head); }
+  .hbar.hi .tr{ outline:2px solid var(--red); }
+  .hbar.hi .lb{ color:var(--red); font-weight:700; }
+  .hbar .v{ text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-soft); }
+  .stack{ display:flex; flex-direction:column; gap:.35em; }
+  .empty{ color:var(--ink-faint); text-align:center; padding:1.6em 1em; background:var(--panel); border-radius:6px; font-size:.86rem; }
+  pre.json{ margin:0; background:var(--panel); border-radius:6px; padding:.7em .9em; font-size:.76rem; overflow:auto; max-height:300px; line-height:1.45; }
+  .gal{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.5em; }
+  .gal .it{ background:var(--panel); border-radius:6px; padding:.4em; display:flex; flex-direction:column; gap:.25em; font-size:.78rem; }
+  .gal .it .pv{ background:var(--surface); border:1px solid var(--line); border-radius:4px; height:90px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .gal .it .pv svg,.gal .it .pv img{ width:100%; height:100%; object-fit:contain; }
+  .pathbox{ overflow-x:auto; background:var(--panel); border-radius:6px; padding:.4em; }
+  .pathbox svg{ display:block; }
+  .att{ display:flex; align-items:center; gap:.5em; background:var(--panel); border-radius:5px; padding:.35em .6em; font-size:.82rem; }
+  .att .nm{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tabs{ display:flex; gap:.3em; flex-wrap:wrap; }
+  .tabs button{ border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:.25em .9em; cursor:pointer; font-size:.82rem; }
+  .tabs button[aria-pressed="true"]{ background:var(--head); color:var(--head-ink); border-color:var(--head); font-weight:700; }
+  .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--head); color:var(--head-ink); border-radius:8px; padding:.55em 1.1em; font-size:.86rem; box-shadow:var(--shadow); z-index:30; display:none; max-width:90vw; }
+  .toast.on{ display:block; }
+  @media (max-width:1060px){
+    .app.host-on{ grid-template-columns:minmax(0,1fr); }
+    .app.host-on .guest{ margin:0 auto; }
+    .console{ grid-template-columns:minmax(0,1fr); }
+    .side nav{ flex-direction:row; flex-wrap:wrap; }
+    .side nav button{ border-left:0; border-bottom:3px solid transparent; }
+    .side nav button[aria-current="page"]{ border-bottom-color:var(--red); }
+    .main{ max-height:none; }
+  }
+  .embedded .deck-title{ display:none; }
+  @media (prefers-reduced-motion: reduce){ .log{ scroll-behavior:auto; } body,.hostsw .sw,.hostsw .sw::after{ transition:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="deck-head">
+    <div class="deck-title">ACP 챗봇 시연 <span>· 고장 대응 챗봇과 호스트 관리 화면 (포트폴리오용 단독 시연)</span></div>
+    <div class="tools">
+      <div class="theme-switch" role="group" aria-label="화면 밝기">
+        <button type="button" data-set="light">밝게</button>
+        <button type="button" data-set="mid">중간</button>
+        <button type="button" data-set="dark">어둡게</button>
+      </div>
+      <div class="hostsw"><span>Host</span><button type="button" class="sw" id="hostSw" role="switch" aria-checked="false" aria-label="호스트 화면 켜기·끄기"></button><span class="st" id="hostSt">OFF · 고객 화면만</span></div>
+      <button type="button" class="btn ghost sm" id="resetBtn">시연 초기화</button>
+    </div>
+  </header>
+  <div class="note-line"><b>시연용</b> · 서버와 DB 없이 이 브라우저 안에서만 동작하며, 저장은 이 브라우저에만 남습니다. 기업·제조사·장비·오류코드는 공개용 가칭이고, 매뉴얼에 없는 경로(“안 됨” 이후 단계, AS 연결 조건)는 시연을 위해 임의로 설계한 것입니다.</div>
+
+  <div class="app" id="app">
+    <section class="guest" aria-label="고객 화면(게스트)">
+      <div class="phone" id="phone">
+        <div class="ph-head"><div><b>현장 조치 도우미</b><small id="phSub">STEP 01 · 장비 확인</small></div><span class="no" id="caseNo">접수번호 —</span></div>
+        <div class="ph-ban"><b>게스트 화면</b> · 시연용 임의 내용 · 승인된 순서도만 안내합니다</div>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="choices" id="choices"></div>
+        <form class="inp" id="inpForm" autocomplete="off">
+          <button type="button" class="iconbtn" id="photoBtn" title="사진 첨부 (촬영 또는 선택, 끌어다 놓기도 가능)">📷 사진</button>
+          <input type="text" id="inpText" placeholder="답변 입력" aria-label="답변 입력">
+          <button type="submit" class="btn sm">보내기</button>
+        </form>
+        <div class="dropmark">여기에 사진을 놓으세요</div>
+      </div>
+      <div class="quick" id="quick"><b>빠른 시작</b>
+        <button type="button" data-q="code:21012">오류코드 21012</button>
+        <button type="button" data-q="code:4913">오류코드 4913</button>
+        <button type="button" data-q="code:5120">통신에러 5120</button>
+        <button type="button" data-q="sym:SG01">증상: 토치가 뜨거워요</button>
+        <button type="button" data-q="code:22038">새 코드 22038(승인 전)</button>
+      </div>
+      <div class="quick" id="hint" style="display:block"><b>둘러보기</b> 오른쪽 위 <b>Host 스위치</b>를 켜면 회사용 호스트 화면이 이 화면 옆에 열립니다. 새 코드 22038은 승인 전이라 안내되지 않으며, 호스트의 AS 처리에서 신규 조치를 승인하면 그다음부터 안내됩니다.</div>
+    </section>
+
+    <section class="console" id="console" aria-label="회사 화면(호스트)">
+      <aside class="side">
+        <div class="brand">호스트 관리<small>회사 안에서만 사용(시연)</small></div>
+        <nav id="nav" aria-label="호스트 메뉴"></nav>
+        <div class="foot">이 화면의 값은 고객 화면과 같은 브라우저 DB를 읽고 씁니다.</div>
+      </aside>
+      <div class="main" id="hostMain"></div>
+    </section>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<input type="file" id="photoIn" accept="image/*" multiple hidden>
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s);};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function pad(n,l){return String(n).padStart(l||2,'0');}
+function ymd(d){return pad(d.getFullYear()%100)+pad(d.getMonth()+1)+pad(d.getDate());}
+function isoDay(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtDT(s){var d=new Date(s);return pad(d.getMonth()+1)+'.'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
+function fmtSz(n){return n>1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';}
+var KEY='acp-demo-db-v1', HKEY='acp-demo-host';
+var mem={att:{},photos:{},img:{}};   // 파일 미리보기는 메모리에만 둔다(저장 안 함)
+var toastT=null;
+function toast(msg){var t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on');},2600);}
+
+/* ===== 그림(SVG) ===== */
+function svg(inner){return '<svg viewBox="0 0 240 130" role="img" aria-hidden="true" style="color:var(--ink-soft)" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';}
+var RC='<circle r="15" stroke="var(--red)" stroke-width="3" fill="none"';
+var SVGS={
+ tank:svg('<rect x="70" y="26" width="100" height="92" rx="6"/><rect x="104" y="14" width="32" height="12" rx="2"/><path d="M70 88 H170" stroke-dasharray="6 5"/><rect x="73" y="92" width="94" height="23" fill="currentColor" opacity=".18" stroke="none"/><text x="176" y="92" font-size="12" fill="currentColor" stroke="none">MIN</text>'+RC+' cx="120" cy="18"/><text x="116" y="22" font-size="12" fill="var(--red)" stroke="none">1</text>'+RC+' cx="48" cy="88"/><text x="44" y="92" font-size="12" fill="var(--red)" stroke="none">2</text>'),
+ hose:svg('<path d="M18 100 H96 V42 H150 V100 H222" stroke-width="11" opacity=".55"/>'+RC+' cx="96" cy="70" style="transform:translate(0,0)"/><text x="170" y="38" font-size="12" fill="var(--red)" stroke="none">꺾임</text>'),
+ fan:svg('<circle cx="120" cy="65" r="46"/><path d="M120 19 V111 M74 65 H166" opacity=".5"/><circle cx="120" cy="65" r="8" fill="currentColor"/>'+RC+' cx="150" cy="40" stroke-dasharray="5 4"/><text x="170" y="36" font-size="12" fill="var(--red)" stroke="none">이물</text>'),
+ cable:svg('<rect x="30" y="48" width="70" height="34" rx="5"/><rect x="132" y="48" width="78" height="34" rx="5"/><path d="M100 65 H132" stroke-dasharray="4 4"/><path d="M104 100 H128 M120 94 l8 6 l-8 6" stroke="var(--red)"/>'+RC+' cx="116" cy="65"/>'),
+ torch:svg('<path d="M24 100 Q80 100 96 66 T170 44" stroke-width="12" opacity=".5"/><rect x="170" y="30" width="46" height="28" rx="5"/><path d="M216 44 h10"/>'+RC+' cx="170" cy="44"/><text x="26" y="118" font-size="12" fill="currentColor" stroke="none">호스 팩</text>'),
+ new:svg('<rect x="40" y="22" width="160" height="86" rx="8" stroke-dasharray="7 5"/><text x="96" y="76" font-size="26" fill="var(--red)" stroke="none">NEW</text>')
+};
+var IMGNAME={tank:'냉각수 탱크',hose:'냉각수 호스',fan:'냉각 팬',cable:'통신 케이블',torch:'토치 호스 팩',new:'신규 조치(이미지 미등록)'};
+
+/* ===== 시드 데이터 ===== */
+var WARN={'W-01':{lv:'경고',t:'작업 전 본체 전원을 끄고 전원 플러그를 뽑는다. 감전으로 다치거나 사망할 수 있다.'},'C-01':{lv:'주의',t:'냉각수는 제조사가 지정한 냉각수만 사용한다. 냉각장치가 손상될 수 있다.'}};
+var MODELS=['XW-320','XW-400','XW-400 Compact','XW-500 Robotics'];
+function seedTrees(){
+ return {
+  CU01:{id:'CU01',name:'냉각수 (오류코드)',kind:'code',comp:'CU',rev:1,start:{'21012':'CU-C-01','21456':'CU-C-01','4913':'CU-C-02','21581':'CU-C-02','4942':'CU-C-03'},nodes:{
+   'CU-C-01':{type:'C',q:'냉각수 탱크 수위가 부족한가요?',yes:'CU-A-01',no:'CU-C-02'},
+   'CU-A-01':{type:'A',title:'냉각수 보충',steps:['주입구 마개(1)를 연다.','MIN 선(2) 위까지 지정 냉각수를 보충한다.','마개를 닫고 오류 표시가 사라졌는지 확인한다.'],img:'tank',warn:['W-01','C-01'],next:'CU-C-02',level:'고객 조치'},
+   'CU-C-02':{type:'C',q:'냉각수 호스가 꺾이거나 막혔나요?',yes:'CU-A-02',no:'CU-C-03'},
+   'CU-A-02':{type:'A',title:'호스 정리',steps:['본체 전원을 끈 상태에서 호스 경로를 따라 꺾인 곳을 찾는다.','꺾인 호스를 펴고 눌린 곳이 없게 고정한다.','전원을 켜고 오류 표시를 확인한다.'],img:'hose',warn:['W-01'],next:'CU-C-03',level:'고객 조치'},
+   'CU-C-03':{type:'C',q:'사용률을 넘겨 연속 용접했나요?',yes:'CU-A-03',no:'AS'},
+   'CU-A-03':{type:'A',title:'냉각 후 재사용',steps:['용접을 멈추고 본체를 켠 채 10분 동안 냉각한다.','냉각 팬이 도는지 확인한다.','오류 표시가 사라지면 사용률을 낮춰 다시 용접한다.'],img:'fan',warn:[],next:'AS',level:'고객 조치'}}},
+  TH01:{id:'TH01',name:'토치 호스 팩 (오류코드)',kind:'code',comp:'TH',rev:1,start:{'3317':'TH-C-01'},nodes:{
+   'TH-C-01':{type:'C',q:'토치 호스 팩이 반대 방향으로 연결되어 있나요?',yes:'TH-A-01',no:'TH-C-02'},
+   'TH-A-01':{type:'A',title:'호스 팩 재연결',steps:['본체 전원을 끈다.','라벨 표시를 보고 호스 팩 연결 방향을 맞춘다.','연결부를 끝까지 밀어 넣고 전원을 켠다.'],img:'torch',warn:['W-01'],next:'TH-C-02',level:'고객 조치'},
+   'TH-C-02':{type:'C',q:'토치 접점에 이물이 보이나요?',yes:'TH-A-02',no:'AS'},
+   'TH-A-02':{type:'A',title:'접점 이물 제거',steps:['전원을 끄고 토치를 식힌다.','마른 천으로 접점의 이물을 닦는다.','다시 체결하고 시험 용접한다.'],img:'torch',warn:['W-01'],next:'AS',level:'고객 조치'}}},
+  RI01:{id:'RI01',name:'로봇 통신 (오류코드)',kind:'code',comp:'RI',rev:1,start:{'5120':'RI-C-01'},nodes:{
+   'RI-C-01':{type:'C',q:'로봇 통신 케이블이 헐겁게 꽂혀 있나요?',yes:'RI-A-01',no:'RI-C-02'},
+   'RI-A-01':{type:'A',title:'케이블 재체결',steps:['본체 전원을 끈다.','통신 케이블 양쪽 커넥터를 끝까지 밀어 넣는다.','전원을 켜고 통신 표시등을 확인한다.'],img:'cable',warn:['W-01'],next:'RI-C-02',level:'고객 조치'},
+   'RI-C-02':{type:'C',q:'인터페이스 전원 표시등이 꺼져 있나요?',yes:'RI-A-02',no:'AS'},
+   'RI-A-02':{type:'A',title:'전원 재투입',steps:['본체 전원을 끄고 1분 기다린다.','전원을 다시 켠다.','표시등이 켜지는지 확인한다.'],img:'cable',warn:['W-01'],next:'AS',level:'고객 조치'}}},
+  SG01:{id:'SG01',name:'토치가 뜨거워요 (증상 그룹)',kind:'symptom',comp:'CU',rev:1,order:['CU-A-04','CU-A-05','CU-A-06'],nodes:{
+   'CU-A-04':{type:'A',title:'호스 꺾임 확인',steps:['본체 전원을 끈다.','토치 호스 팩을 따라 꺾이거나 눌린 곳을 찾는다.','꺾인 곳을 펴고 다시 연결한다.'],img:'hose',warn:['W-01'],level:'고객 조치'},
+   'CU-A-05':{type:'A',title:'냉각수 부족 확인',steps:['탱크 마개(1)를 열고 MIN 선(2)을 확인한다.','부족하면 지정 냉각수를 보충한다.','마개를 닫는다.'],img:'tank',warn:['W-01','C-01'],level:'고객 조치'},
+   'CU-A-06':{type:'A',title:'팬 이물 제거',steps:['본체 전원을 끄고 팬이 완전히 멈추길 기다린다.','팬 주변의 이물을 마른 천으로 제거한다.','전원을 켜고 팬이 도는지 확인한다.'],img:'fan',warn:['W-01'],level:'고객 조치'}}}
+ };
+}
+var SYMS=[{id:'SG01',label:'토치가 뜨거워요'},{id:null,label:'와이어가 걸려요'},{id:null,label:'이상한 소리가 나요'}];
+function seedLedger(){return [
+ {qr:'DM-XW400-000123',serial:'SN-SAMPLE-0001',model:'XW-400',voltage:'440 V',customer:'A사(예시)',line:'시연용 예시 라인',parts:'전원부 · 와이어 피더 · 토치 · 냉각장치'},
+ {qr:'DM-XW500-000207',serial:'SN-SAMPLE-0002',model:'XW-500 Robotics',voltage:'440 V',customer:'B사(예시)',line:'로봇 셀 2',parts:'전원부 · 와이어 피더 · 로봇 토치 · 냉각장치 · 로봇 연동'}];}
+function seedStats(){return {'CU-A-01':{t:15,r:12},'CU-A-02':{t:12,r:8},'CU-A-03':{t:10,r:6},'TH-A-01':{t:11,r:7},'TH-A-02':{t:9,r:3},'RI-A-01':{t:13,r:9},'RI-A-02':{t:10,r:5},'CU-A-04':{t:20,r:5},'CU-A-05':{t:15,r:12},'CU-A-06':{t:10,r:6}};}
+function nodeOf(trees,id){for(var k in trees){if(trees[k].nodes[id])return trees[k].nodes[id];}return null;}
+/* 시드 상담: [며칠 전, 모델, 코드, 증상, 해결 지점 또는 AS/PHONE/DROP] */
+var CASE_SEEDS=[[3,'XW-400',21012,null,'CU-A-01'],[3,'XW-500 Robotics',5120,null,'RI-A-01'],[3,'XW-400',3317,null,'AS'],[2,'XW-400',21456,null,'CU-A-01'],[2,'XW-320',null,'SG01','CU-A-05'],[2,'XW-400',4913,null,'CU-A-02'],[2,'XW-500 Robotics',5120,null,'PHONE'],[1,'XW-400',4942,null,'CU-A-03'],[1,'XW-400 Compact',3317,null,'TH-A-01'],[1,'XW-500 Robotics',21581,null,'CU-A-02'],[1,'XW-400',null,'SG01','CU-A-04'],[1,'XW-320',null,'SG01','AS'],[0,'XW-400',21012,null,'CU-A-01'],[0,'XW-500 Robotics',5120,null,'RI-A-02'],[0,'XW-400',null,'SG01','CU-A-06'],[0,'XW-320',99999,null,'PHONE'],[0,'XW-400',21456,null,'DROP']];
+function buildSteps(trees,tid,start,solve){
+ var steps=[],t=0,tr=trees[tid];function dt(){t+=20+Math.floor(Math.random()*5)*14;return t;}
+ if(tr.kind==='symptom'){var seq=tr.order;for(var i=0;i<seq.length;i++){var id=seq[i];if(id===solve){steps.push({node:id,kind:'A',resp:'해결',t:dt()});return {steps:steps,ok:true};}steps.push({node:id,kind:'A',resp:'안 됨',t:dt()});}return {steps:steps,ok:false};}
+ var cur=start;
+ while(cur&&cur!=='AS'){var n=tr.nodes[cur];
+  if(n.type==='C'){var path=reach(tr,n.yes,solve);steps.push({node:cur,kind:'C',resp:path?'예':'아니오',t:dt()});cur=path?n.yes:n.no;}
+  else{if(cur===solve){steps.push({node:cur,kind:'A',resp:'해결',t:dt()});return {steps:steps,ok:true};}steps.push({node:cur,kind:'A',resp:'안 됨',t:dt()});cur=n.next;}}
+ return {steps:steps,ok:false};}
+function reach(tr,from,target){var cur=from,g=0;while(cur&&cur!=='AS'&&g++<20){if(cur===target)return true;var n=tr.nodes[cur];if(!n)return false;cur=n.type==='C'?n.no:n.next;}return false;}
+function findTreeByCode(trees,code){for(var k in trees){var t=trees[k];if(t.kind==='code'&&t.start[String(code)])return {tree:t,node:t.start[String(code)]};}return null;}
+function seedDB(){
+ var trees=seedTrees(),ledger=seedLedger(),cases=[],asJobs={},cnt={},now=new Date();
+ CASE_SEEDS.forEach(function(s,i){
+  var d=new Date(now.getTime()-s[0]*86400000);d.setHours(9+(i%7),10+((i*7)%45),0,0);if(s[0]===0&&d>now)d=new Date(now.getTime()-(60+i*3)*60000);
+  var key=ymd(d);cnt[key]=(cnt[key]||0)+1;var id='ACP-'+key+'-'+pad(cnt[key],3);
+  var led=ledger.filter(function(l){return l.model===s[1];})[0];
+  var tid=null,start=null;if(s[3]){tid=s[3];}else if(s[2]){var f=findTreeByCode(trees,s[2]);if(f){tid=f.tree.id;start=f.node;}}
+  var res,reason='',steps=[],status;
+  if(!tid){res='전화 연결';reason='승인된 안내 없음';status='조치 중';}
+  else if(s[4]==='PHONE'){var b0=buildSteps(trees,tid,start,'__none__');steps=b0.steps.slice(0,1);res='전화 연결';reason='안내가 어려워요';status='조치 중';}
+  else if(s[4]==='DROP'){var b1=buildSteps(trees,tid,start,'__none__');steps=b1.steps.slice(0,1);res='이탈';reason='20분 미조작';status='종결';}
+  else{var b=buildSteps(trees,tid,start,s[4]);steps=b.steps;if(b.ok){res='해결';status=s[0]>=2?'종결':'확인 대기';}else{res='AS';reason='조치 소진';status='조치 중';}}
+  var end=new Date(d.getTime()+((steps.length?steps[steps.length-1].t:60)+30)*1000);
+  var c={id:id,startedAt:d.toISOString(),endedAt:end.toISOString(),model:s[1],serial:led?led.serial:'미입력',verified:!!led&&(i%2===0),customer:led?led.customer:'미확인',line:led?led.line:'미확인',lineStop:i%4===0,code:s[2]||null,symptom:s[3]?trees[s[3]].name.replace(' (증상 그룹)',''):null,treeId:tid,sequenceId:tid?tid+'-R01':'',result:res,reason:reason,status:status,asReq:res!=='해결'&&res!=='이탈',steps:steps,photos:0,warnAck:[]};
+  cases.push(c);
+  if(c.asReq)asJobs[id]={caseId:id,status:'접수 필요',memo:'',attachments:[],openedAt:c.endedAt};
+ });
+ cases.sort(function(a,b){return a.startedAt<b.startedAt?1:-1;});
+ // 일부 AS 건은 진행·완료 상태로
+ var k=0;for(var id in asJobs){if(k===1)asJobs[id].status='진행 중';if(k===3){asJobs[id].status='완료';asJobs[id].memo='부품 교환 후 정상 확인(시연 예시)';}k++;}
+ return {meta:{schema:'acp-demo/1',treesVersion:1,seededAt:now.toISOString(),counter:cnt,lastEditAt:null,lastDailyRun:null,pr:0,att:0},
+  ledger:ledger,trees:trees,stats:seedStats(),cases:cases,asJobs:asJobs,proposals:[],dailyReports:[],audit:[],imgOverride:{}};
+}
+var DB=null;
+function load(){try{var s=localStorage.getItem(KEY);if(s){var o=JSON.parse(s);if(o&&o.meta&&o.meta.schema==='acp-demo/1')return o;}}catch(e){}return seedDB();}
+var saveT=null;
+function save(){clearTimeout(saveT);saveT=setTimeout(function(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}},120);}
+function audit(table,key,field,from,to,who){DB.audit.unshift({at:new Date().toISOString(),who:who||'host(시연)',table:table,key:key,field:field,from:String(from==null?'':from),to:String(to==null?'':to)});DB.audit=DB.audit.slice(0,200);DB.meta.lastEditAt=new Date().toISOString();}
+function nextCaseNo(){var k=ymd(new Date());DB.meta.counter[k]=(DB.meta.counter[k]||0)+1;return 'ACP-'+k+'-'+pad(DB.meta.counter[k],3);}
+function allNodes(){var out=[];for(var tk in DB.trees){var t=DB.trees[tk];for(var nk in t.nodes){var n=t.nodes[nk];out.push({id:nk,tree:tk,type:n.type,text:n.type==='C'?n.q:n.title,level:n.level||'',n:n});}}return out;}
+function nodeTitle(id){var n=nodeOf(DB.trees,id);return n?(n.type==='C'?n.q:n.title):id;}
+function resTag(r){return '<span class="tag '+(r==='해결'?'dk':(r==='AS'?'red':(r==='전화 연결'?'ol':'')))+'">'+esc(r)+'</span>';}
+function imgHtml(name,nodeId){var ov=mem.img[nodeId];if(ov)return '<img alt="'+esc(IMGNAME[name]||'')+'" src="'+ov+'" style="width:100%;height:auto;display:block">';return SVGS[name]||SVGS.new;}
+
+/* ===== 고객 챗봇 ===== */
+var CHAT=null;
+function log(){return $('#log');}
+function scroll(){var l=log();setTimeout(function(){l.scrollTop=l.scrollHeight;},30);}
+function bot(html,cls){var d=document.createElement('div');d.className='b bot'+(cls?' '+cls:'');d.innerHTML=html;log().appendChild(d);scroll();return d;}
+function me(text){var d=document.createElement('div');d.className='b me';d.textContent=text;log().appendChild(d);scroll();}
+function elapsed(){return Math.round((Date.now()-CHAT.t0)/1000);}
+function setSub(t){$('#phSub').textContent=t;}
+function choices(items){var c=$('#choices');c.innerHTML='';items.forEach(function(it){var b=document.createElement('button');b.type='button';b.className='chip'+(it.cls?' '+it.cls:'');b.textContent=it.label;b.addEventListener('click',function(){if(CHAT&&CHAT.locked)return;c.innerHTML='';me(it.label);it.fn();});c.appendChild(b);});}
+var inputHandler=null;
+function askText(ph,fn){inputHandler=fn;var i=$('#inpText');i.placeholder=ph||'답변 입력';i.focus&&i.focus();}
+function newChat(){
+ CHAT={no:nextCaseNo(),t0:Date.now(),startedAt:new Date(),model:null,serial:'미입력',verified:false,customer:'미확인',line:'미확인',lineStop:null,code:null,symptom:null,treeId:null,steps:[],warnAck:[],photos:[],result:null,locked:false};
+ $('#log').innerHTML='';$('#choices').innerHTML='';inputHandler=null;$('#caseNo').textContent='접수번호 '+CHAT.no;setSub('STEP 01 · 장비 확인');
+ bot('<div class="t">상담을 시작했습니다.</div><div class="s">접수번호 <b>'+CHAT.no+'</b> (서버가 발급하는 번호를 흉내 낸 값)</div>');
+ bot('먼저 정확한 장비를 확인합니다. 장비의 QR을 스캔할 수 있나요?');
+ choices([{label:'QR 스캔 (시연: 예시 QR 선택)',fn:stepQr},{label:'제품·모델 목록 선택',fn:stepModel},{label:'장비 식별이 어려워요',fn:function(){finish('전화 연결','장비 식별 실패');}}]);
+}
+function stepQr(){bot('시연에서는 카메라 대신 장비대장의 예시 QR 중 하나를 고릅니다.');choices(DB.ledger.map(function(l){return {label:l.qr+' · '+l.model,fn:function(){setEquip(l,true);}};}).concat([{label:'QR이 읽히지 않아요',fn:stepModel}]));}
+function stepModel(){bot('사용 중인 제품·모델을 선택해 주세요.');choices(MODELS.map(function(m){return {label:m,fn:function(){CHAT.model=m;bot('시리얼 번호가 있으면 입력해 주세요. (예: SN-SAMPLE-0001)');choices([{label:'시리얼을 모르겠어요',fn:function(){inputHandler=null;equipDone(null);}}]);askText('시리얼 번호',function(v){var l=DB.ledger.filter(function(x){return x.serial.toLowerCase()===v.toLowerCase();})[0];equipDone(l||null,v);});}};}));}
+function setEquip(l,viaQr){CHAT.model=l.model;equipDone(l,l.serial,viaQr);}
+function equipDone(l,serial,viaQr){
+ inputHandler=null;$('#choices').innerHTML='';
+ if(l){CHAT.model=l.model;CHAT.serial=l.serial;CHAT.verified=true;CHAT.customer=l.customer;CHAT.line=l.line;}
+ else if(serial){CHAT.serial=serial+' (장비대장에 없음)';}
+ bot('<div class="card-s"><h4>장비 확인</h4><div class="r"><div>모델</div><div>'+esc(CHAT.model)+'</div></div><div class="r"><div>시리얼</div><div>'+esc(CHAT.serial)+'</div></div><div class="r"><div>출고전압</div><div>'+(l?esc(l.voltage):'장비대장 확인 필요')+'</div></div><div class="r"><div>고객사</div><div>'+esc(CHAT.customer)+'</div></div><div class="r"><div>확인 방식</div><div>'+(l?(viaQr?'QR · 장비대장 대조':'시리얼 · 장비대장 대조'):'목록 선택(대조 안 됨)')+'</div></div></div>');
+ setSub('STEP 02 · 증상 확인');
+ bot('용접 라인이 멈춰 있나요?');
+ choices([{label:'예, 라인이 멈췄어요',fn:function(){CHAT.lineStop=true;stepCodeAsk();}},{label:'아니요',fn:function(){CHAT.lineStop=false;stepCodeAsk();}}]);
+}
+function stepCodeAsk(){bot('장비 화면에 <b>오류 코드</b>가 표시되나요?');choices([{label:'예, 코드가 보여요',fn:function(){bot('오류 코드를 입력해 주세요. (예: 21012)');askText('오류 코드',handleCode);choices([]);}},{label:'아니요, 증상으로 찾을래요',fn:stepSym}]);}
+function handleCode(v){
+ var code=v.replace(/[^0-9]/g,'');inputHandler=null;
+ if(!code){bot('숫자 코드를 입력해 주세요.');askText('오류 코드',handleCode);return;}
+ CHAT.code=code;var f=findTreeByCode(DB.trees,code);
+ if(!f){bot('코드 <b>'+esc(code)+'</b>에 대해 <b>승인된 안내가 없습니다.</b> 승인 전 내용은 고객에게 보여 드리지 않습니다. 전화 연결로 안내합니다.','');finish('전화 연결','승인된 안내 없음');return;}
+ CHAT.treeId=f.tree.id;bot('코드 <b>'+esc(code)+'</b> → 순서도 <b>'+f.tree.id+'</b>('+esc(f.tree.name)+')를 불러왔습니다.');enter(f.node);
+}
+function stepSym(){bot('증상을 골라 주세요.');choices(SYMS.map(function(s){return {label:s.label,fn:function(){if(!s.id){bot('“'+esc(s.label)+'” 증상은 승인된 순서도가 아직 없습니다. 전화 연결로 안내합니다.');CHAT.symptom=s.label;finish('전화 연결','승인된 안내 없음');return;}CHAT.symptom=s.label;CHAT.treeId=s.id;bot('증상 그룹 <b>'+s.id+'</b>의 순서도를 불러왔습니다. 현재 점검 순서대로 안내합니다.');enter(null,0);}};}));}
+function enter(nodeId,idx){
+ var tr=DB.trees[CHAT.treeId];
+ if(tr.kind==='symptom'){var order=tr.order;if(idx>=order.length){bot('준비된 조치를 모두 해 보았습니다. AS로 연결합니다.');finish('AS','조치 소진');return;}CHAT.symIdx=idx;showAction(order[idx],function(){return idx+1<order.length?{sym:idx+1}:'AS';});return;}
+ if(!nodeId||nodeId==='AS'){bot('고객 조치로 해결하기 어렵습니다. AS로 연결합니다.');finish('AS','조치 소진');return;}
+ var n=tr.nodes[nodeId];
+ if(n.type==='C'){setSub('STEP 02 · 증상 확인');bot('<div class="s">질문 노드 '+nodeId+'</div><div class="t">'+esc(n.q)+'</div>');choices([{label:'예',fn:function(){CHAT.steps.push({node:nodeId,kind:'C',resp:'예',t:elapsed()});enter(n.yes);}},{label:'아니오',fn:function(){CHAT.steps.push({node:nodeId,kind:'C',resp:'아니오',t:elapsed()});enter(n.no);}},{label:'판단하기 어려워요',cls:'red',fn:function(){CHAT.steps.push({node:nodeId,kind:'C',resp:'판단 어려움',t:elapsed()});finish('전화 연결','안내가 어려워요');}}]);}
+ else showAction(nodeId,function(){return n.next;});
+}
+function showAction(nodeId,nextFn){
+ var tr=DB.trees[CHAT.treeId],n=tr.nodes[nodeId];setSub('STEP 02 · 단계별 조치');
+ var ws=(n.warn||[]).slice();
+ var go=function(){
+  var steps=n.steps.map(function(s){return '<li>'+esc(s)+'</li>';}).join('');
+  bot('<div class="s">조치 노드 '+nodeId+' · '+esc(n.level||'고객 조치')+'</div><div class="t">'+esc(n.title)+'</div><div class="fig">'+imgHtml(n.img,nodeId)+'<small>'+esc(IMGNAME[n.img]||'조치 이미지')+' · 붉은 원이 확인할 곳</small></div><ol>'+steps+'</ol>');
+  choices([{label:'조치를 마쳤어요',cls:'dk',fn:function(){ask();}},{label:'수행하기 어려워요',fn:function(){CHAT.steps.push({node:nodeId,kind:'A',resp:'수행 어려움',t:elapsed()});advance();}}]);
+ };
+ var ask=function(){bot('조치 후 문제가 <b>해결</b>되었나요?');choices([{label:'해결됐어요',cls:'dk',fn:function(){bump(nodeId,true);CHAT.steps.push({node:nodeId,kind:'A',resp:'해결',t:elapsed()});finish('해결','');}},{label:'안 됐어요',fn:function(){bump(nodeId,false);CHAT.steps.push({node:nodeId,kind:'A',resp:'안 됨',t:elapsed()});advance();}},{label:'전화 연결',cls:'red',fn:function(){CHAT.steps.push({node:nodeId,kind:'A',resp:'전화 연결',t:elapsed()});finish('전화 연결','급해요');}}]);};
+ var advance=function(){var nx=nextFn();if(nx&&typeof nx==='object')enter(null,nx.sym);else enter(nx);};
+ if(ws.length){
+  var html=ws.map(function(w){return '<div><b>'+WARN[w].lv+' '+w+'</b> '+esc(WARN[w].t)+'</div>';}).join('');
+  bot('<div class="warn">'+html+'<div class="s">내용을 확인해야 조치 절차가 표시됩니다.</div></div>');
+  ws.forEach(function(w){if(CHAT.warnAck.indexOf(w)<0)CHAT.warnAck.push(w);});
+  choices([{label:'확인했습니다',cls:'dk',fn:go},{label:'작업을 중단하고 AS',cls:'red',fn:function(){finish('AS','안전 확인 후 중단');}}]);
+ }else go();
+}
+function bump(id,ok){var s=DB.stats[id]||(DB.stats[id]={t:0,r:0});s.t++;if(ok)s.r++;}
+function finish(result,reason){
+ if(CHAT.result)return;CHAT.result=result;CHAT.locked=false;$('#choices').innerHTML='';inputHandler=null;
+ var tr=CHAT.treeId?DB.trees[CHAT.treeId]:null;
+ var status=result==='해결'?'확인 대기':(result==='이탈'?'종결':'조치 중');
+ var rec={id:CHAT.no,startedAt:CHAT.startedAt.toISOString(),endedAt:new Date().toISOString(),model:CHAT.model||'미확인',serial:CHAT.serial,verified:CHAT.verified,customer:CHAT.customer,line:CHAT.line,lineStop:CHAT.lineStop,code:CHAT.code,symptom:CHAT.symptom,treeId:CHAT.treeId,sequenceId:tr?tr.id+'-R'+pad(tr.rev||1):'',result:result,reason:reason,status:status,asReq:result==='AS'||result==='전화 연결',steps:CHAT.steps,photos:CHAT.photos.length,warnAck:CHAT.warnAck};
+ DB.cases.unshift(rec);if(rec.asReq)DB.asJobs[rec.id]={caseId:rec.id,status:'접수 필요',memo:'',attachments:[],openedAt:rec.endedAt};
+ CHAT.rec=rec;save();setSub('STEP 03 · 판단 후 저장');
+ var due=result==='해결'?'7일 뒤 해결 확인(재접수 없으면 종결)':'';
+ bot('<div class="card-s"><h4>상담 결과 · DB에 저장됨(모의)</h4><div class="r"><div>접수번호</div><div>'+rec.id+'</div></div><div class="r"><div>장비</div><div>'+esc(rec.model)+'</div></div><div class="r"><div>코드·증상</div><div>'+esc(rec.code||rec.symptom||'—')+'</div></div><div class="r"><div>결과</div><div>'+esc(result)+(reason?' · '+esc(reason):'')+'</div></div>'+(due?'<div class="r"><div>다음</div><div>'+due+'</div></div>':'')+(rec.asReq?'<div class="r"><div>다음</div><div>사내 지원·AS 담당자에게 전달됨</div></div>':'')+'</div>');
+ bot('사진을 더 보내실 수 있습니다(📷 사진). 새 상담을 시작할까요?');
+ choices([{label:'새 상담 시작',cls:'dk',fn:newChat}]);
+ renderHost();
+}
+function addPhotos(files){
+ if(!CHAT)newChat();
+ Array.prototype.forEach.call(files,function(f){
+  if(!/^image\//.test(f.type)){toast('이미지 파일만 첨부할 수 있습니다.');return;}
+  var u=URL.createObjectURL(f);var d=document.createElement('div');d.className='b me';d.innerHTML='<img alt="첨부 사진" src="'+u+'" style="max-width:100%;max-height:160px;border-radius:6px">';log().appendChild(d);scroll();
+  var key=CHAT.rec?CHAT.rec.id:CHAT.no;(mem.photos[key]=mem.photos[key]||[]).push({url:u,name:f.name});CHAT.photos.push(f.name);
+  if(CHAT.rec){CHAT.rec.photos=(CHAT.rec.photos||0)+1;save();renderHost();}
+ });
+ bot('사진을 받았습니다. 접수번호 <b>'+(CHAT.rec?CHAT.rec.id:CHAT.no)+'</b>에 붙였습니다.');
+}
+function quickStart(q){
+ newChat();var p=q.split(':');
+ var l=DB.ledger[0];$('#choices').innerHTML='';me('QR 스캔 (시연: 예시 QR 선택)');me(l.qr+' · '+l.model);
+ equipDone(l,l.serial,true);
+ $('#choices').innerHTML='';me('아니요');CHAT.lineStop=false;
+ bot('장비 화면에 <b>오류 코드</b>가 표시되나요?');
+ if(p[0]==='code'){me('예, 코드가 보여요');bot('오류 코드를 입력해 주세요. (예: 21012)');me(p[1]);handleCode(p[1]);}
+ else{me('아니요, 증상으로 찾을래요');bot('증상을 골라 주세요.');me('토치가 뜨거워요');CHAT.symptom='토치가 뜨거워요';CHAT.treeId='SG01';bot('증상 그룹 <b>SG01</b>의 순서도를 불러왔습니다. 현재 점검 순서대로 안내합니다.');enter(null,0);}
+}
+
+/* ===== 호스트 화면 ===== */
+var UI={tab:'overview',selCase:null,filter:'전체',selAs:null,treeSel:'SG01',draft:null,selProp:null,imgTab:'node',dbTable:'cases',selDaily:null,hostOn:false,mCase:''};
+var TABS=[['overview','운영 현황'],['records','상담 기록'],['as','AS 처리·보고서'],['trees','기준 DB·순서'],['approvals','변경 승인'],['images','이미지 확인'],['metrics','경로·단계 지표'],['daily','일일 집계'],['dbview','DB 전체 조회'],['state','상태 JSON']];
+function openAs(){return Object.keys(DB.asJobs).filter(function(k){return DB.asJobs[k].status!=='완료';}).length;}
+function pending(){return DB.proposals.filter(function(p){return p.status==='대기';}).length;}
+function caseById(id){return DB.cases.filter(function(c){return c.id===id;})[0];}
+function rate(s){return s&&s.t?Math.round(s.r*100/s.t):0;}
+function hbar(label,val,max,txt,hi){var w=max?Math.round(val*100/max):0;return '<div class="hbar'+(hi?' hi':'')+'"><span class="lb">'+esc(label)+'</span><span class="tr"><i style="width:'+w+'%"></i></span><span class="v">'+esc(txt)+'</span></div>';}
+function counts(arr){var o={total:arr.length,resolved:0,phone:0,as:0,drop:0};arr.forEach(function(c){if(c.result==='해결')o.resolved++;else if(c.result==='전화 연결')o.phone++;else if(c.result==='AS')o.as++;else if(c.result==='이탈')o.drop++;});return o;}
+
+function vOverview(){
+ var k=isoDay(new Date()),td=DB.cases.filter(function(c){return isoDay(new Date(c.startedAt))===k;}),c=counts(td),all=counts(DB.cases),wait=DB.cases.filter(function(x){return x.status==='확인 대기';}).length;
+ var mx=Math.max(all.resolved,all.phone,all.as,all.drop,1);
+ var rows=DB.cases.slice(0,6).map(function(x){return '<tr data-row data-act="open-case" data-id="'+x.id+'"><td>'+x.id+'</td><td>'+fmtDT(x.startedAt)+'</td><td>'+esc(x.model)+'</td><td>'+esc(x.code||x.symptom||'—')+'</td><td>'+resTag(x.result)+'</td></tr>';}).join('');
+ return {ey:'OPERATIONS OVERVIEW',title:'운영 현황',desc:'오늘 들어온 상담과 처리 상태를 한눈에 봅니다. 고객 화면에서 상담을 끝내면 바로 반영됩니다.',html:
+ '<div class="kpis"><div class="kpi"><b>'+c.total+'</b><span>오늘 상담</span></div><div class="kpi"><b>'+c.resolved+'</b><span>해결</span></div><div class="kpi"><b>'+(c.total?Math.round(c.resolved*100/c.total):0)+'%</b><span>오늘 해결률</span></div><div class="kpi"><b>'+c.phone+'</b><span>전화 연결</span></div><div class="kpi red"><b>'+openAs()+'</b><span>AS 처리 대기</span></div><div class="kpi"><b>'+wait+'</b><span>7일 확인 대기</span></div></div>'+
+ '<div class="grid2"><div class="stack"><div class="bar">전체 결과 분포 <small>누적 '+all.total+'건</small></div>'+hbar('해결',all.resolved,mx,all.resolved+'건')+hbar('전화 연결',all.phone,mx,all.phone+'건')+hbar('AS',all.as,mx,all.as+'건')+hbar('이탈',all.drop,mx,all.drop+'건')+'</div>'+
+ '<div class="stack"><div class="bar">이 화면의 구조</div><div class="box"><b>호스트와 게스트</b><span class="s">왼쪽은 고객이 쓰는 게스트 화면, 이 화면은 회사 안에서만 쓰는 호스트 화면입니다. 둘은 같은 DB를 씁니다.</span></div><div class="box dk"><b>시연 순서</b><span class="s">① 왼쪽에서 상담을 끝낸다 → ② 상담 기록·지표에 나타난다 → ③ AS 보고서를 올려 신규 조치를 제안한다 → ④ 승인하면 챗봇에 반영된다.</span></div></div></div>'+
+ '<div class="bar">최근 상담</div><div class="scroll"><table class="tbl"><thead><tr><th>접수번호</th><th>시작</th><th>모델</th><th>코드·증상</th><th>결과</th></tr></thead><tbody>'+rows+'</tbody></table></div>'};
+}
+function stepsHtml(c){return c.steps.length?'<div class="stack">'+c.steps.map(function(s,i){return '<div class="att"><span class="tag">'+(i+1)+'</span><span class="nm">'+esc(s.node)+' · '+esc(nodeTitle(s.node))+'</span><span class="tag '+(s.resp==='해결'?'dk':'')+'">'+esc(s.resp)+'</span><span class="s">'+s.t+'초</span></div>';}).join('')+'</div>':'<div class="empty">기록된 단계가 없습니다.</div>';}
+function vRecords(){
+ var f=UI.filter,list=DB.cases.filter(function(c){return f==='전체'||c.result===f;});
+ var rows=list.map(function(x){return '<tr data-row class="'+(UI.selCase===x.id?'sel':'')+'" data-act="open-case" data-id="'+x.id+'"><td>'+x.id+'</td><td>'+fmtDT(x.startedAt)+'</td><td>'+esc(x.model)+'</td><td>'+esc(x.code||x.symptom||'—')+'</td><td>'+resTag(x.result)+'</td><td>'+esc(x.status)+'</td><td>'+x.steps.length+'</td></tr>';}).join('');
+ var c=UI.selCase?caseById(UI.selCase):null,det='';
+ if(c){var ph=(mem.photos[c.id]||[]).map(function(p){return '<a href="'+p.url+'" target="_blank" rel="noopener"><img alt="'+esc(p.name)+'" src="'+p.url+'" style="height:60px;border-radius:4px"></a>';}).join('');
+  det='<div class="bar">상담 상세 · '+c.id+' <small><button class="btn ghost sm" data-act="to-metrics" data-id="'+c.id+'" style="color:inherit;border-color:rgba(255,255,255,.5)">경로 그래프 보기</button></small></div><div class="kv"><div class="k">장비</div><div>'+esc(c.model)+' · '+esc(c.serial)+(c.verified?' <span class="tag dk">장비대장 대조</span>':' <span class="tag">대조 안 됨</span>')+'</div><div class="k">고객사</div><div>'+esc(c.customer)+' · '+esc(c.line)+'</div><div class="k">순서도</div><div>'+esc(c.treeId||'—')+(c.sequenceId?' · 순서 ID '+c.sequenceId:'')+'</div><div class="k">결과</div><div>'+esc(c.result)+(c.reason?' · '+esc(c.reason):'')+' · 상태 '+esc(c.status)+'</div><div class="k">첨부 사진</div><div>'+(ph||(c.photos?c.photos+'장 (새로 고침 후에는 미리보기 없음)':'없음'))+'</div></div>'+stepsHtml(c)+(c.asReq?'<div class="row"><button class="btn sm" data-act="to-as" data-id="'+c.id+'">AS 처리·보고서로 이동</button></div>':'');}
+ return {ey:'CASE RECORDS',title:'상담 기록',desc:'고객 화면의 상담이 접수 이력으로 쌓입니다. 행을 누르면 단계별 기록을 봅니다.',html:'<div class="row"><label class="s" for="fres">결과</label><select id="fres" data-act="set-filter">'+['전체','해결','AS','전화 연결','이탈'].map(function(o){return '<option'+(o===f?' selected':'')+'>'+o+'</option>';}).join('')+'</select><span class="s">'+list.length+'건</span></div><div class="scroll"><table class="tbl"><thead><tr><th>접수번호</th><th>시작</th><th>모델</th><th>코드·증상</th><th>결과</th><th>상태</th><th>단계</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+det};
+}
+function attHtml(a){var u=mem.att[a.id];var pv=u?(/^image\//.test(a.type)?'<a href="'+u+'" target="_blank" rel="noopener"><img alt="'+esc(a.name)+'" src="'+u+'" style="height:44px;border-radius:4px"></a>':'<a class="btn ghost sm" href="'+u+'" target="_blank" rel="noopener">열기</a>'):'<span class="s">미리보기 없음(저장하지 않음)</span>';return '<div class="att"><span class="tag">'+esc((a.type.split('/')[1]||'파일').toUpperCase())+'</span><span class="nm" title="'+esc(a.name)+'">'+esc(a.name)+'</span><span class="s">'+fmtSz(a.size)+'</span>'+pv+'<button class="btn ghost sm" data-act="att-del" data-id="'+a.id+'">삭제</button></div>';}
+function vAs(){
+ var ids=Object.keys(DB.asJobs).sort().reverse();
+ var rows=ids.map(function(id){var j=DB.asJobs[id],c=caseById(id)||{};return '<tr data-row class="'+(UI.selAs===id?'sel':'')+'" data-act="sel-as" data-id="'+id+'"><td>'+id+'</td><td>'+esc(c.model||'')+'</td><td>'+esc(c.code||c.symptom||'—')+'</td><td>'+esc(c.reason||'')+'</td><td><span class="tag '+(j.status==='완료'?'dk':(j.status==='접수 필요'?'red':''))+'">'+esc(j.status)+'</span></td><td>'+j.attachments.length+'</td></tr>';}).join('');
+ var det='';
+ if(UI.selAs&&DB.asJobs[UI.selAs]){var j=DB.asJobs[UI.selAs],c=caseById(UI.selAs)||{};
+  det='<div class="bar">AS 처리 · '+UI.selAs+'</div><div class="kv"><div class="k">상담</div><div>'+esc(c.model||'')+' · '+esc(c.code||c.symptom||'—')+' · '+esc(c.result||'')+(c.reason?' ('+esc(c.reason)+')':'')+'</div></div>'+
+  '<div class="grid2"><div class="field"><label for="asSt">AS 상태</label><select id="asSt">'+['접수 필요','진행 중','완료'].map(function(o){return '<option'+(o===j.status?' selected':'')+'>'+o+'</option>';}).join('')+'</select></div><div class="field"><label for="asMemo">담당자 메모</label><textarea id="asMemo" placeholder="조치 내용, 교체 부품 등">'+esc(j.memo)+'</textarea></div></div><div class="row"><button class="btn sm" data-act="as-save">상태·메모 저장</button></div>'+
+  '<div class="bar">AS 보고서 첨부 <small>PDF · PNG · JPG</small></div><div class="stack">'+(j.attachments.map(attHtml).join('')||'<div class="empty">첨부된 보고서가 없습니다.</div>')+'</div><div class="row"><label class="btn sm" for="asFile" style="cursor:pointer">＋ 파일 첨부</label><input type="file" id="asFile" data-act="as-file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" multiple hidden><span class="s">이 건에 바로 붙습니다. 파일은 이 브라우저 안에서만 열립니다.</span></div>'+
+  '<div class="bar red">신규 조치 제안 <small>AS 보고서의 노하우를 챗봇에 반영</small></div><div class="callout">AS 보고서에서 나온 새 조치를 등록하면 <b>변경 승인</b>에 들어가고, 승인되면 고객 화면에서 해당 코드를 입력했을 때 안내됩니다.</div>'+
+  '<div class="grid3"><div class="field"><label for="npCode">오류 코드</label><input id="npCode" inputmode="numeric" placeholder="예: 22038" value="'+esc(c.code&&!findTreeByCode(DB.trees,c.code)?c.code:'')+'"></div><div class="field"><label for="npComp">구성품</label><select id="npComp"><option value="TH">TH · 토치·호스 팩</option><option value="CU">CU · 냉각장치</option><option value="RI">RI · 로봇 연동</option></select></div><div class="field"><label for="npTitle">조치 제목</label><input id="npTitle" placeholder="예: 호스 팩 잠금 레버 재체결"></div></div>'+
+  '<div class="grid2"><div class="field"><label for="npQ">질문 (고객에게 묻는 문장)</label><input id="npQ" placeholder="예: 토치 호스 팩 잠금 레버가 풀려 있나요?"></div><div class="field"><label for="npSteps">조치 단계 (한 줄에 하나)</label><textarea id="npSteps" placeholder="전원을 끈다.&#10;잠금 레버를 끝까지 돌린다."></textarea></div></div>'+
+  '<label class="chk"><input type="checkbox" id="npPow" checked> 작업 전 전원 차단 경고(W-01)를 붙인다</label><div class="row"><button class="btn red sm" data-act="np-create">신규 조치로 변경 요청 만들기</button></div>';}
+ return {ey:'AFTER SERVICE',title:'AS 처리·보고서',desc:'AS가 필요한 건에 보고서를 바로 붙이고, 현장에서 쌓인 노하우를 신규 조치로 제안합니다.',html:'<div class="scroll"><table class="tbl"><thead><tr><th>접수번호</th><th>모델</th><th>코드·증상</th><th>사유</th><th>AS 상태</th><th>첨부</th></tr></thead><tbody>'+(rows||'<tr><td colspan="6"><div class="empty">AS 건이 없습니다. 고객 화면에서 “새 코드 22038”로 상담해 보세요.</div></td></tr>')+'</tbody></table></div>'+(det||'<div class="empty">위 표에서 건을 고르면 보고서 첨부와 신규 조치 제안 화면이 열립니다.</div>')};
+}
+function orderDraft(){var t=DB.trees.SG01;if(!UI.draft||UI.draftRev!==t.rev){UI.draft=t.order.slice();UI.draftRev=t.rev;}return UI.draft;}
+function vTrees(){
+ var ts=Object.keys(DB.trees).map(function(k){return '<button type="button" aria-pressed="'+(UI.treeSel===k)+'" data-act="tree-sel" data-id="'+k+'">'+k+'</button>';}).join('');
+ var t=DB.trees[UI.treeSel]||DB.trees.CU01,nodes=Object.keys(t.nodes).map(function(id){var n=t.nodes[id];return '<tr><td>'+id+'</td><td>'+n.type+'</td><td>'+esc(n.type==='C'?n.q:n.title)+'</td><td>'+(n.type==='C'?'예→'+n.yes+' · 아니오→'+n.no:(n.next?'안 됨→'+n.next:'순서 목록'))+'</td><td>'+esc(n.level||'질문')+'</td></tr>';}).join('');
+ var starts=t.kind==='code'?'<div class="kv"><div class="k">시작 노드</div><div>'+Object.keys(t.start).map(function(k){return '<span class="tag">'+k+' → '+t.start[k]+'</span>';}).join(' ')+'</div></div>':'';
+ var ord='';
+ if(t.id==='SG01'){var d=orderDraft(),dirty=d.join()!==t.order.join();
+  ord='<div class="bar">점검 순서 <small>위에서 아래로 안내 · 현재 개정 R'+pad(t.rev)+'</small></div><div class="scroll"><table class="tbl"><thead><tr><th>순서</th><th>조치</th><th>시도</th><th>해결</th><th>해결률</th><th></th></tr></thead><tbody>'+d.map(function(id,i){var s=DB.stats[id]||{t:0,r:0};return '<tr><td>'+(i+1)+'</td><td>'+esc(nodeTitle(id))+' <span class="s">'+id+'</span></td><td>'+s.t+'</td><td>'+s.r+'</td><td>'+(s.t?rate(s)+'%':'—')+(s.t<10?' <span class="tag">10건 미만</span>':'')+'</td><td><button class="btn ghost sm" data-act="ord-up" data-i="'+i+'"'+(i===0?' disabled':'')+'>▲</button> <button class="btn ghost sm" data-act="ord-down" data-i="'+i+'"'+(i===d.length-1?' disabled':'')+'>▼</button></td></tr>';}).join('')+'</tbody></table></div>'+
+  '<div class="row"><button class="btn ghost sm" data-act="ord-weight">가중치(해결률 순)로 정렬</button><button class="btn ghost sm" data-act="ord-reset"'+(dirty?'':' disabled')+'>되돌리기</button><button class="btn red sm" data-act="ord-propose"'+(dirty?'':' disabled')+'>이 순서로 변경 요청 만들기</button></div><div class="callout">시도가 10건 이상인 단계만 해결률 순서로 바꿉니다(기준서 5장 4.3). 변경 요청은 <b>변경 승인</b>에서 승인하면 호스트 서버에서 바로 챗봇에 연결됩니다. 운영 설계는 하루 한 번 일괄 반영입니다.</div>';}
+ return {ey:'APPROVED TREES',title:'기준 DB·순서',desc:'고객 화면이 읽는 승인된 순서도입니다. 순서를 바꾸면 변경 요청을 거쳐 챗봇에 연결됩니다.',html:
+ '<div class="callout red"><b>시연용 임의 내용</b> 제조사 매뉴얼에 없는 경로(“안 됨” 이후 다음 단계, AS 연결 조건)는 시연을 위해 임의로 만든 것입니다.</div><div class="tabs">'+ts+'</div><div class="kv"><div class="k">순서도</div><div>'+esc(t.name)+' · 개정 R'+pad(t.rev||1)+'</div></div>'+starts+ord+'<div class="bar">노드 목록</div><div class="scroll"><table class="tbl"><thead><tr><th>번호</th><th>종류</th><th>내용</th><th>연결</th><th>수준</th></tr></thead><tbody>'+nodes+'</tbody></table></div>'};
+}
+function propText(p){var pl=p.payload;if(p.type==='order')return '점검 순서 변경 · '+pl.treeId+' · '+pl.order.map(nodeTitle).join(' → ');return '신규 조치 · 코드 '+pl.code+' ['+pl.comp+'] · '+pl.title;}
+function vApprovals(){
+ var rows=DB.proposals.slice().reverse().map(function(p){return '<tr data-row class="'+(UI.selProp===p.id?'sel':'')+'" data-act="sel-prop" data-id="'+p.id+'"><td>'+p.id+'</td><td>'+(p.type==='order'?'순서 변경':'신규 조치')+'</td><td>'+esc(propText(p))+'</td><td><span class="tag '+(p.status==='승인'?'dk':(p.status==='대기'?'red':''))+'">'+p.status+'</span></td></tr>';}).join('');
+ var det='',p=DB.proposals.filter(function(x){return x.id===UI.selProp;})[0];
+ if(p){var rv=p.review,ok=rv.name&&rv.safety&&rv.warn;var pl=p.payload;
+  det='<div class="bar">변경 요청 · '+p.id+' <small>출처 '+esc(p.source)+'</small></div><div class="kv"><div class="k">내용</div><div>'+esc(propText(p))+'</div>'+(p.type==='new-action'?'<div class="k">질문</div><div>'+esc(pl.question||'(자동 문구)')+'</div><div class="k">조치 단계</div><div>'+pl.steps.map(function(s,i){return (i+1)+'. '+esc(s);}).join('<br>')+'</div>':'')+'</div>'+
+  (p.status==='대기'?'<div class="bar">검수 체크 <small>3가지를 모두 확인해야 승인할 수 있음</small></div><div class="stack"><label class="chk"><input type="checkbox" data-act="rv" data-k="name"'+(rv.name?' checked':'')+'> 명칭 확인 — 용어와 부품 이름이 기준서와 같다</label><label class="chk"><input type="checkbox" data-act="rv" data-k="safety"'+(rv.safety?' checked':'')+'> 안전 확인 — 조치 수준이 고객 조치로 알맞다</label><label class="chk"><input type="checkbox" data-act="rv" data-k="warn"'+(rv.warn?' checked':'')+'> 경고 확인 — 필요한 경고·주의가 붙어 있다</label></div><div class="row"><button class="btn sm" data-act="approve"'+(ok?'':' disabled')+'>승인하고 챗봇에 반영</button><button class="btn ghost sm" data-act="reject">반려</button></div>':'<div class="callout">처리됨 · '+p.status+(p.at?' · '+fmtDT(p.at):'')+'</div>');}
+ return {ey:'CHANGE APPROVAL',title:'변경 승인',desc:'순서 변경과 AS 보고서 기반 신규 조치가 모입니다. 검수를 마친 것만 승인하면 챗봇에 반영됩니다.',html:'<div class="scroll"><table class="tbl"><thead><tr><th>번호</th><th>종류</th><th>내용</th><th>상태</th></tr></thead><tbody>'+(rows||'<tr><td colspan="4"><div class="empty">변경 요청이 없습니다. 기준 DB에서 순서를 바꾸거나 AS 처리에서 신규 조치를 제안해 보세요.</div></td></tr>')+'</tbody></table></div>'+det};
+}
+function vImages(){
+ var tab=UI.imgTab,body='';
+ if(tab==='node'){var items=allNodes().filter(function(n){return n.type==='A';});
+  body='<div class="callout">조치 노드마다 고객 화면에 나가는 그림입니다. 파일을 올리면 이 브라우저의 시연에서 그림이 바뀝니다. 이미지가 없는 신규 조치는 <b>미등록</b>으로 표시됩니다.</div><div class="gal">'+items.map(function(n){var has=!!mem.img[n.id],reg=n.n.img&&n.n.img!=='new';return '<div class="it"><div class="pv">'+imgHtml(n.n.img,n.id)+'</div><b>'+n.id+'</b><span>'+esc(n.text)+'</span><span>'+(has?'<span class="tag dk">새 이미지</span>':(reg?'<span class="tag">기본 그림</span>':'<span class="tag red">미등록</span>'))+'</span><label class="btn ghost sm" style="cursor:pointer;text-align:center">이미지 올리기<input type="file" accept="image/*" data-act="img-up" data-id="'+n.id+'" hidden></label></div>';}).join('')+'</div>';}
+ else{var keys=Object.keys(mem.photos).filter(function(k){return mem.photos[k].length;}),withMeta=DB.cases.filter(function(c){return c.photos;});
+  body='<div class="callout">고객이 상담 중에 보낸 사진입니다. 사진은 이 브라우저의 메모리에만 있어 새로 고침하면 미리보기가 사라집니다(건 정보는 남음).</div>'+(withMeta.length?'<div class="gal">'+withMeta.map(function(c){var ps=mem.photos[c.id]||[];return '<div class="it"><div class="pv">'+(ps.length?'<img alt="고객 사진" src="'+ps[0].url+'">':'<span class="s">미리보기 없음</span>')+'</div><b>'+c.id+'</b><span>'+c.photos+'장 · '+esc(c.model)+'</span><button class="btn ghost sm" data-act="open-case" data-id="'+c.id+'">상담 열기</button></div>';}).join('')+'</div>':'<div class="empty">첨부된 사진이 없습니다. 왼쪽 고객 화면의 “📷 사진” 버튼이나 끌어다 놓기로 보내 보세요.</div>');}
+ return {ey:'IMAGE CHECK',title:'이미지 확인',desc:'조치 이미지와 고객이 보낸 사진을 왼쪽 메뉴에서 바로 확인합니다.',html:'<div class="tabs"><button type="button" data-act="img-tab" data-id="node" aria-pressed="'+(tab==='node')+'">조치 이미지</button><button type="button" data-act="img-tab" data-id="cust" aria-pressed="'+(tab==='cust')+'">고객 첨부 사진</button></div>'+body};
+}
+function pathSvg(c){
+ var nodes=[{k:'접수',s:c.id.slice(-10)},{k:'장비',s:c.model},{k:c.code?'오류코드':'증상',s:c.code||c.symptom||'—'}];
+ c.steps.forEach(function(s){nodes.push({k:s.node,s:s.resp+' · '+s.t+'초',r:s.resp});});
+ nodes.push({k:'결과',s:c.result+(c.reason?' · '+c.reason:''),end:true,r:c.result});
+ var W=118,G=34,H=50,pt=12,tw=nodes.length*(W+G)-G+24,out='<svg width="'+tw+'" height="'+(H+pt*2+26)+'" viewBox="0 0 '+tw+' '+(H+pt*2+26)+'" role="img" aria-label="상담 경로 그래프">';
+ nodes.forEach(function(n,i){var x=12+i*(W+G),y=pt;var good=n.r==='해결',bad=n.r==='안 됨'||n.r==='AS'||n.r==='전화 연결';
+  var fill=n.end||good?'var(--strong)':'var(--surface)',tc=n.end||good?'var(--strong-ink)':'var(--ink)',st=bad?'var(--red)':'var(--ink-faint)';
+  if(i>0)out+='<path d="M'+(x-G+2)+' '+(y+H/2)+' H'+(x-2)+'" stroke="var(--ink-soft)" stroke-width="2"/><path d="M'+(x-8)+' '+(y+H/2-5)+' L'+(x-2)+' '+(y+H/2)+' L'+(x-8)+' '+(y+H/2+5)+'" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>';
+  out+='<rect x="'+x+'" y="'+y+'" width="'+W+'" height="'+H+'" rx="5" fill="'+fill+'" stroke="'+st+'" stroke-width="'+(bad?2.5:1.5)+'"/><text x="'+(x+W/2)+'" y="'+(y+21)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+tc+'">'+esc(n.k.length>12?n.k.slice(0,12)+'…':n.k)+'</text><text x="'+(x+W/2)+'" y="'+(y+39)+'" text-anchor="middle" font-size="11" fill="'+tc+'" opacity=".85">'+esc(n.s.length>16?n.s.slice(0,16)+'…':n.s)+'</text>';});
+ return out+'</svg>';
+}
+function vMetrics(){
+ var sel=UI.mCase&&caseById(UI.mCase),hi={};if(sel)sel.steps.forEach(function(s){hi[s.node]=1;});
+ var ids=Object.keys(DB.stats).sort(),mx=1;
+ var bars=ids.map(function(id){var s=DB.stats[id];return hbar(nodeTitle(id),s.r,Math.max(s.t,1),(s.t?s.r+'/'+s.t+' · '+rate(s)+'%':'시도 없음'),hi[id]);}).join('');
+ var opts='<option value="">— 건을 선택하세요 —</option>'+DB.cases.map(function(c){return '<option value="'+c.id+'"'+(UI.mCase===c.id?' selected':'')+'>'+c.id+' · '+esc(c.code||c.symptom||'—')+' · '+c.result+'</option>';}).join('');
+ var detail='<div class="empty">상담 건을 선택하면 그 건의 경로 그래프와 단계별 시간 그래프가 나옵니다.</div>';
+ if(sel){var tot=sel.steps.length?sel.steps[sel.steps.length-1].t:0,prev=0,tb=sel.steps.map(function(s){var d=s.t-prev;prev=s.t;return hbar(s.node+' '+s.resp,d,Math.max(tot,1),d+'초',false);}).join('');
+  detail='<div class="bar">경로 그래프 · '+sel.id+' <small>빨간 테두리 = 해결되지 않은 지점</small></div><div class="pathbox">'+pathSvg(sel)+'</div><div class="bar">단계별 소요 시간 <small>총 '+tot+'초</small></div><div class="stack">'+(tb||'<div class="empty">단계 기록이 없습니다.</div>')+'</div>';}
+ return {ey:'ROUTE & STEP METRICS',title:'경로·단계 지표',desc:'단계별 해결률과 건별 경로를 함께 봅니다. 건을 고르면 해당 단계가 아래 막대에서 강조됩니다.',html:'<div class="row"><label class="s" for="mSel">상담 건</label><select id="mSel" data-act="m-case" style="min-width:260px">'+opts+'</select></div>'+detail+'<div class="bar">단계별 해결률 <small>시연용 누적값 + 이 브라우저의 상담 · 막대 = 해결 ÷ 시도</small></div><div class="stack">'+bars+'</div>'};
+}
+function runDaily(){
+ var k=isoDay(new Date()),td=DB.cases.filter(function(c){return isoDay(new Date(c.startedAt))===k;}),c=counts(td);
+ var per=Object.keys(DB.stats).sort().map(function(id){var s=DB.stats[id];return {node:id,title:nodeTitle(id),tries:s.t,resolved:s.r,rate:s.t?+(s.r/s.t).toFixed(3):null};});
+ var pr={pending:pending(),approved:DB.proposals.filter(function(p){return p.status==='승인';}).length,rejected:DB.proposals.filter(function(p){return p.status==='반려';}).length};
+ var seq=DB.dailyReports.filter(function(r){return r.date===k;}).length+1;
+ var rep={id:'DR-'+k.replace(/-/g,'')+'-'+pad(seq),date:k,runAt:new Date().toISOString(),counts:{total:c.total,resolved:c.resolved,phone:c.phone,as:c.as,dropped:c.drop},resolveRate:c.total?+(c.resolved/c.total).toFixed(3):null,perStep:per,proposals:pr,treesVersion:DB.meta.treesVersion,caseIds:td.map(function(x){return x.id;})};
+ DB.dailyReports.unshift(rep);DB.meta.lastDailyRun=rep.id;UI.selDaily=rep.id;save();return rep;
+}
+function download(name,text,type){var b=new Blob([text],{type:type||'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);}
+function vDaily(){
+ var rows=DB.dailyReports.map(function(r){return '<tr data-row class="'+(UI.selDaily===r.id?'sel':'')+'" data-act="sel-daily" data-id="'+r.id+'"><td>'+r.id+'</td><td>'+r.date+'</td><td>'+fmtDT(r.runAt)+'</td><td>'+r.counts.total+'</td><td>'+(r.resolveRate==null?'—':Math.round(r.resolveRate*100)+'%')+'</td></tr>';}).join('');
+ var r=DB.dailyReports.filter(function(x){return x.id===UI.selDaily;})[0],det='';
+ if(r)det='<div class="bar">'+r.id+' <small>'+fmtDT(r.runAt)+' 집계</small></div><div class="kpis"><div class="kpi"><b>'+r.counts.total+'</b><span>상담</span></div><div class="kpi"><b>'+r.counts.resolved+'</b><span>해결</span></div><div class="kpi"><b>'+r.counts.phone+'</b><span>전화 연결</span></div><div class="kpi"><b>'+r.counts.as+'</b><span>AS</span></div><div class="kpi"><b>'+r.proposals.pending+'</b><span>승인 대기</span></div></div><pre class="json">'+esc(JSON.stringify(r,null,2))+'</pre><div class="row"><button class="btn sm" data-act="daily-json" data-id="'+r.id+'">JSON 내려받기</button><button class="btn ghost sm" data-act="daily-csv" data-id="'+r.id+'">단계별 CSV 내려받기</button></div>';
+ return {ey:'DAILY AGGREGATION',title:'일일 집계',desc:'집계를 실행하면 그날의 결과가 따로 저장됩니다. 보고서에 일일이 옮기지 않고, 저장된 집계를 그대로 꺼내 씁니다.',html:
+ '<div class="row"><button class="btn red" data-act="daily-run">오늘 집계 실행 · 저장</button><span class="s">같은 날 여러 번 실행하면 실행 순서대로 각각 남습니다.</span></div>'+
+ '<div class="box"><b>집계 결과는 어디에 저장되나요?</b><span class="s">① 이 시연: 이 브라우저 저장소의 <b>dailyReports</b> 목록(아래 표, DB 전체 조회에서도 확인). ② 실제 운영 설계: DB의 일일 집계 표에 날짜별로 한 줄씩 쌓이고, 보고서는 그 표에서 꺼내 씁니다.</span></div>'+
+ '<div class="scroll"><table class="tbl"><thead><tr><th>집계 번호</th><th>날짜</th><th>실행 시각</th><th>상담</th><th>해결률</th></tr></thead><tbody>'+(rows||'<tr><td colspan="5"><div class="empty">저장된 집계가 없습니다. 위 버튼으로 실행해 보세요.</div></td></tr>')+'</tbody></table></div>'+det};
+}
+var TBL={
+ cases:{label:'상담 (cases)',rows:function(){return DB.cases;},key:'id',cols:[['id','접수번호',0],['startedAt','시작',0,function(v){return fmtDT(v);}],['model','모델',0],['code','코드',1],['result','결과',1,null,['해결','AS','전화 연결','이탈']],['status','상태',1,null,['접수','조치 중','확인 대기','종결']]]},
+ ledger:{label:'장비대장 (equipment)',rows:function(){return DB.ledger;},key:'serial',cols:[['serial','시리얼',0],['qr','QR 식별번호',0],['model','모델',0],['voltage','출고전압',1],['customer','고객사',1],['line','설치 위치',1]]},
+ nodes:{label:'순서도 노드 (nodes)',rows:function(){return allNodes();},key:'id',cols:[['id','번호',0],['tree','순서도',0],['type','종류',0],['text','내용',1],['level','수준',1,null,['','고객 조치','AS']]]},
+ asJobs:{label:'AS 건 (as_job)',rows:function(){return Object.keys(DB.asJobs).map(function(k){return DB.asJobs[k];});},key:'caseId',cols:[['caseId','접수번호',0],['status','상태',1,null,['접수 필요','진행 중','완료']],['memo','메모',1]]},
+ proposals:{label:'변경 요청 (proposal)',rows:function(){return DB.proposals;},key:'id',cols:[['id','번호',0],['type','종류',0],['source','출처',0],['status','상태',0]]},
+ dailyReports:{label:'일일 집계 (daily_report)',rows:function(){return DB.dailyReports;},key:'id',cols:[['id','집계 번호',0],['date','날짜',0],['runAt','실행',0,function(v){return fmtDT(v);}]]},
+ audit:{label:'수정 이력 (audit)',rows:function(){return DB.audit;},key:'at',cols:[['at','시각',0,function(v){return fmtDT(v);}],['who','수정자',0],['table','표',0],['key','대상',0],['field','칸',0],['from','이전',0],['to','이후',0]]}
+};
+function vDbview(){
+ var tn=UI.dbTable,T=TBL[tn],tabs=Object.keys(TBL).map(function(k){return '<button type="button" data-act="db-table" data-id="'+k+'" aria-pressed="'+(tn===k)+'">'+TBL[k].label+'</button>';}).join('');
+ var rows=T.rows().slice(0,80).map(function(r,i){return '<tr>'+T.cols.map(function(c){var v=r[c[0]];var fv=c[3]?c[3](v):v;if(v==null)fv='';
+  if(c[2]){if(c[4])return '<td><select data-act="db-edit" data-t="'+tn+'" data-k="'+esc(r[T.key])+'" data-c="'+c[0]+'">'+c[4].map(function(o){return '<option'+(o===v?' selected':'')+'>'+o+'</option>';}).join('')+'</select></td>';return '<td><input data-act="db-edit" data-t="'+tn+'" data-k="'+esc(r[T.key])+'" data-c="'+c[0]+'" value="'+esc(fv)+'"></td>';}
+  return '<td class="lock">'+esc(fv)+'</td>';}).join('')+'</tr>';}).join('');
+ return {ey:'DATABASE',title:'DB 전체 조회',desc:'DB 내용을 표로 보고, 편집할 수 있는 칸은 바로 수정합니다. 수정은 수정 이력에 남고 고객 화면에도 곧바로 반영됩니다.',html:'<div class="tabs">'+tabs+'</div><div class="callout">흰 칸은 편집할 수 있고, 회색 글자는 고정값입니다. 수정하면 <b>수정 이력(audit)</b>에 누가·언제·무엇을 바꿨는지 기록됩니다. 최근 80행까지 보여 줍니다.</div><div class="scroll" style="max-height:420px"><table class="tbl"><thead><tr>'+T.cols.map(function(c){return '<th>'+c[1]+'</th>';}).join('')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+T.cols.length+'"><div class="empty">행이 없습니다.</div></td></tr>')+'</tbody></table></div>'};
+}
+function hostState(){return {schema:'acp-host-state/1',savedAt:new Date().toISOString(),ui:{tab:UI.tab,selectedCase:UI.selCase,filterResult:UI.filter,treeSelected:UI.treeSel,dbTable:UI.dbTable,metricsCase:UI.mCase||null},live:{treesVersion:DB.meta.treesVersion,lastEditAt:DB.meta.lastEditAt,lastDailyRun:DB.meta.lastDailyRun},counters:{cases:DB.cases.length,asOpen:openAs(),proposalsPending:pending(),dailyReports:DB.dailyReports.length}};}
+function vState(){
+ var js=JSON.stringify(hostState(),null,2);
+ var ex=[['schema','상태 JSON의 형식 이름과 버전입니다. 가져올 때 같은 형식인지 확인합니다.','—'],['savedAt','이 JSON을 만든 시각입니다.','—'],['ui.tab','마지막으로 보던 호스트 메뉴입니다.','화면 복원용'],['ui.selectedCase','상담 기록에서 열어 둔 접수번호입니다.','화면 복원용'],['ui.filterResult','상담 기록의 결과 필터입니다.','화면 복원용'],['ui.treeSelected / dbTable / metricsCase','기준 DB·DB 전체 조회·경로 지표에서 고른 대상입니다.','화면 복원용'],['live.treesVersion','승인된 순서도가 바뀔 때마다 1씩 올라가는 번호입니다. 챗봇이 읽는 버전과 맞는지 확인할 때 씁니다.','DB(meta)'],['live.lastEditAt','DB를 마지막으로 수정한 시각입니다.','DB(meta)'],['live.lastDailyRun','가장 최근에 실행한 일일 집계의 번호입니다.','DB(일일 집계)'],['counters.*','상담 수, 처리 대기 AS, 승인 대기, 저장된 집계 수의 요약입니다.','DB에서 계산']];
+ return {ey:'HOST STATE JSON',title:'호스트 상태 JSON',desc:'호스트 화면이 지금 어떤 상태인지 담은 요약입니다. DB 본체가 아니라 화면 상태와 DB 요약만 들어 있습니다.',html:
+ '<div class="grid2"><div class="box"><b>이 JSON은 무엇인가요?</b><span class="s">호스트 화면을 닫았다가 다시 열 때 보던 곳으로 돌아오게 하는 <b>화면 상태 파일</b>입니다. 상담 기록 같은 DB 내용은 들어 있지 않습니다.</span></div><div class="box dk"><b>어디에 저장되나요?</b><span class="s">이 시연에서는 아래에서 내려받아 보관합니다. DB 본체(상담·AS·집계)는 별도의 <b>DB 전체 내려받기</b>로 보관합니다.</span></div></div>'+
+ '<div class="bar">현재 상태 JSON</div><pre class="json" id="stateJson">'+esc(js)+'</pre><div class="row"><button class="btn sm" data-act="state-dl">상태 JSON 내려받기</button><button class="btn ghost sm" data-act="state-copy">복사</button><label class="btn ghost sm" for="stateFile" style="cursor:pointer">상태 JSON 가져오기</label><input type="file" id="stateFile" data-act="state-file" accept=".json,application/json" hidden><button class="btn ghost sm" data-act="db-dl">DB 전체 내려받기</button></div>'+
+ '<div class="bar">항목 설명</div><div class="scroll"><table class="tbl"><thead><tr><th>항목</th><th>의미</th><th>저장·사용 위치</th></tr></thead><tbody>'+ex.map(function(e){return '<tr><td>'+esc(e[0])+'</td><td>'+esc(e[1])+'</td><td>'+esc(e[2])+'</td></tr>';}).join('')+'</tbody></table></div>'};
+}
+var VIEWS={overview:vOverview,records:vRecords,as:vAs,trees:vTrees,approvals:vApprovals,images:vImages,metrics:vMetrics,daily:vDaily,dbview:vDbview,state:vState};
+function renderHost(){
+ if(!UI.hostOn)return;
+ var nav=$('#nav');nav.innerHTML=TABS.map(function(t){var n='';if(t[0]==='records')n='<span class="n">'+DB.cases.length+'</span>';if(t[0]==='as')n='<span class="n red">'+openAs()+'</span>';if(t[0]==='approvals')n='<span class="n'+(pending()?' red':'')+'">'+pending()+'</span>';return '<button type="button" data-tab="'+t[0]+'"'+(UI.tab===t[0]?' aria-current="page"':'')+'>'+t[1]+n+'</button>';}).join('');
+ var v=VIEWS[UI.tab](),m=$('#hostMain'),keep=m.scrollTop;
+ m.innerHTML='<div class="ph1"><div><div class="ey">'+v.ey+'</div><h2>'+v.title+'</h2><p>'+v.desc+'</p></div></div>'+v.html;m.scrollTop=keep;
+}
+function gotoTab(t,extra){UI.tab=t;if(extra)for(var k in extra)UI[k]=extra[k];renderHost();}
+function applyProposal(p){
+ var pl=p.payload;
+ if(p.type==='order'){var t=DB.trees[pl.treeId];audit('trees',pl.treeId,'order',t.order.join(','),pl.order.join(','),'host(승인)');t.order=pl.order.slice();t.rev=(t.rev||1)+1;}
+ else{var comp=pl.comp,tree=null;for(var k in DB.trees){if(DB.trees[k].kind==='code'&&DB.trees[k].comp===comp){tree=DB.trees[k];break;}}
+  if(!tree){tree={id:comp+'01',name:comp+' (오류코드)',kind:'code',comp:comp,rev:1,start:{},nodes:{}};DB.trees[tree.id]=tree;}
+  function nx(ty){var m=0,re=new RegExp('^'+comp+'-'+ty+'-(\\d+)$');for(var tk in DB.trees)for(var id in DB.trees[tk].nodes){var r=re.exec(id);if(r)m=Math.max(m,+r[1]);}return m+1;}
+  var cId=comp+'-C-'+pad(nx('C')),aId=comp+'-A-'+pad(nx('A'));
+  tree.nodes[cId]={type:'C',q:pl.question||('이 조치로 해결되나요? ('+pl.title+')'),yes:aId,no:'AS'};
+  tree.nodes[aId]={type:'A',title:pl.title,steps:pl.steps,img:'new',warn:pl.warnPower?['W-01']:[],next:'AS',level:'고객 조치',source:'AS 보고서'};
+  tree.start[String(pl.code)]=cId;DB.stats[aId]={t:0,r:0};tree.rev=(tree.rev||1)+1;audit('trees',tree.id,'start['+pl.code+']','',cId,'host(승인)');}
+ DB.meta.treesVersion++;
+}
+function hostClick(e){
+ var tbtn=e.target.closest('[data-tab]');if(tbtn){UI.tab=tbtn.dataset.tab;renderHost();return;}
+ var el=e.target.closest('[data-act]');if(!el)return;var a=el.dataset.act,id=el.dataset.id;
+ if(el.tagName==='SELECT'||el.tagName==='INPUT'&&el.type!=='checkbox'&&el.type!=='button')return;
+ switch(a){
+  case 'open-case':UI.selCase=id;UI.tab='records';renderHost();break;
+  case 'to-metrics':UI.mCase=id;UI.tab='metrics';renderHost();break;
+  case 'to-as':UI.selAs=id;UI.tab='as';renderHost();break;
+  case 'sel-as':UI.selAs=id;renderHost();break;
+  case 'as-save':var j=DB.asJobs[UI.selAs],ns=$('#asSt').value,nm=$('#asMemo').value;if(j.status!==ns)audit('asJobs',UI.selAs,'status',j.status,ns);if(j.memo!==nm)audit('asJobs',UI.selAs,'memo',j.memo,nm);j.status=ns;j.memo=nm;save();renderHost();toast('AS 상태와 메모를 저장했습니다.');break;
+  case 'att-del':var jj=DB.asJobs[UI.selAs];jj.attachments=jj.attachments.filter(function(x){return x.id!==id;});delete mem.att[id];save();renderHost();break;
+  case 'np-create':var code=$('#npCode').value.replace(/[^0-9]/g,''),title=$('#npTitle').value.trim(),steps=$('#npSteps').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+   if(!code||!title||!steps.length){toast('오류 코드, 조치 제목, 조치 단계를 모두 적어 주세요.');break;}
+   DB.meta.pr++;DB.proposals.push({id:'PR-'+pad(DB.meta.pr,3),type:'new-action',source:'AS 보고서 '+UI.selAs,createdAt:new Date().toISOString(),status:'대기',review:{name:false,safety:false,warn:false},payload:{code:code,comp:$('#npComp').value,question:$('#npQ').value.trim(),title:title,steps:steps,warnPower:$('#npPow').checked}});
+   save();UI.selProp='PR-'+pad(DB.meta.pr,3);UI.tab='approvals';renderHost();toast('변경 요청을 만들었습니다. 검수 후 승인하세요.');break;
+  case 'tree-sel':UI.treeSel=id;renderHost();break;
+  case 'ord-up':case 'ord-down':var d=orderDraft(),i=+el.dataset.i,k=a==='ord-up'?i-1:i+1;var tmp=d[i];d[i]=d[k];d[k]=tmp;renderHost();break;
+  case 'ord-reset':UI.draft=null;renderHost();break;
+  case 'ord-weight':var dd=orderDraft(),elig=dd.filter(function(x){return (DB.stats[x]||{t:0}).t>=10;}).sort(function(x,y){return rate(DB.stats[y])-rate(DB.stats[x]);}),q=0;UI.draft=dd.map(function(x){return (DB.stats[x]||{t:0}).t>=10?elig[q++]:x;});renderHost();toast('시도 10건 이상인 단계를 해결률 순으로 정렬했습니다.');break;
+  case 'ord-propose':var dr=orderDraft();DB.meta.pr++;DB.proposals.push({id:'PR-'+pad(DB.meta.pr,3),type:'order',source:'기준 DB 순서 편집',createdAt:new Date().toISOString(),status:'대기',review:{name:false,safety:false,warn:false},payload:{treeId:'SG01',order:dr.slice()}});save();UI.selProp='PR-'+pad(DB.meta.pr,3);UI.tab='approvals';renderHost();toast('변경 요청을 만들었습니다.');break;
+  case 'sel-prop':UI.selProp=id;renderHost();break;
+  case 'rv':var p0=DB.proposals.filter(function(x){return x.id===UI.selProp;})[0];p0.review[el.dataset.k]=el.checked;save();renderHost();break;
+  case 'approve':var p1=DB.proposals.filter(function(x){return x.id===UI.selProp;})[0];applyProposal(p1);p1.status='승인';p1.at=new Date().toISOString();save();UI.draft=null;renderHost();toast('승인했습니다. 고객 화면에 바로 반영됩니다.');break;
+  case 'reject':var p2=DB.proposals.filter(function(x){return x.id===UI.selProp;})[0];p2.status='반려';p2.at=new Date().toISOString();save();renderHost();break;
+  case 'img-tab':UI.imgTab=id;renderHost();break;
+  case 'daily-run':var r=runDaily();renderHost();toast(r.id+' 집계를 저장했습니다.');break;
+  case 'sel-daily':UI.selDaily=id;renderHost();break;
+  case 'daily-json':var rr=DB.dailyReports.filter(function(x){return x.id===id;})[0];download(rr.id+'.json',JSON.stringify(rr,null,2));break;
+  case 'daily-csv':var r2=DB.dailyReports.filter(function(x){return x.id===id;})[0];download(r2.id+'.csv','\ufeff단계,조치,시도,해결,해결률\n'+r2.perStep.map(function(s){return [s.node,s.title,s.tries,s.resolved,s.rate==null?'':s.rate].join(',');}).join('\n'),'text/csv');break;
+  case 'db-table':UI.dbTable=id;renderHost();break;
+  case 'state-dl':download('acp-host-state.json',JSON.stringify(hostState(),null,2));break;
+  case 'state-copy':try{navigator.clipboard.writeText(JSON.stringify(hostState(),null,2));toast('복사했습니다.');}catch(er){toast('복사할 수 없습니다.');}break;
+  case 'db-dl':download('acp-demo-db.json',JSON.stringify(DB,null,2));break;
+ }
+}
+function hostChange(e){
+ var el=e.target.closest('[data-act]');if(!el)return;var a=el.dataset.act;
+ if(a==='set-filter'){UI.filter=el.value;renderHost();}
+ else if(a==='m-case'){UI.mCase=el.value;renderHost();}
+ else if(a==='rv'){hostClick(e);}
+ else if(a==='as-file'){var j=DB.asJobs[UI.selAs];Array.prototype.forEach.call(el.files,function(f){var okT=/\.(pdf|png|jpe?g)$/i.test(f.name)||/^(application\/pdf|image\/(png|jpeg))$/.test(f.type);if(!okT){toast('PDF, PNG, JPG 파일만 첨부할 수 있습니다.');return;}DB.meta.att++;var aid='AT-'+pad(DB.meta.att,3);var type=f.type||(/\.pdf$/i.test(f.name)?'application/pdf':'image/'+(/png$/i.test(f.name)?'png':'jpeg'));j.attachments.push({id:aid,name:f.name,type:type,size:f.size,addedAt:new Date().toISOString()});mem.att[aid]=URL.createObjectURL(f);audit('asJobs',UI.selAs,'attachment','',f.name);});save();renderHost();toast('AS 보고서를 첨부했습니다.');}
+ else if(a==='img-up'){var f0=el.files[0];if(f0){if(!/^image\//.test(f0.type)){toast('이미지 파일만 올릴 수 있습니다.');return;}mem.img[el.dataset.id]=URL.createObjectURL(f0);audit('images',el.dataset.id,'image','',f0.name);save();renderHost();toast('조치 이미지를 바꿨습니다. 고객 화면에 바로 반영됩니다.');}}
+ else if(a==='db-edit'){var T=TBL[el.dataset.t],key=el.dataset.k,col=el.dataset.c,val=el.value,row=null;
+  if(el.dataset.t==='nodes'){var nn=allNodes().filter(function(n){return n.id===key;})[0];row=nn.n;var f=col==='text'?(row.type==='C'?'q':'title'):col;var old=row[f]||'';row[f]=val;audit('nodes',key,f,old,val);}
+  else{var rows=T.rows();for(var i=0;i<rows.length;i++){if(String(rows[i][T.key])===key){row=rows[i];break;}}if(row){var old2=row[col];if(col==='code'&&val==='')val=null;row[col]=val;audit(el.dataset.t,key,col,old2,val);}}
+  save();renderHost();toast('수정했습니다. 수정 이력에 기록되었습니다.');}
+ else if(a==='state-file'){var f1=el.files[0];if(!f1)return;var rd=new FileReader();rd.onload=function(){try{var o=JSON.parse(rd.result);if(o.schema!=='acp-host-state/1')throw 0;var u=o.ui||{};UI.tab=VIEWS[u.tab]?u.tab:UI.tab;UI.selCase=u.selectedCase||null;UI.filter=u.filterResult||'전체';UI.treeSel=u.treeSelected||UI.treeSel;UI.dbTable=TBL[u.dbTable]?u.dbTable:UI.dbTable;UI.mCase=u.metricsCase||'';renderHost();toast('상태를 가져왔습니다.');}catch(er){toast('호스트 상태 JSON 형식이 아닙니다.');}};rd.readAsText(f1);}
+}
+
+/* ===== 시작 ===== */
+function init(){
+ var root=document.documentElement;
+ try{if(window.top!==window.self)root.classList.add('embedded');}catch(e){root.classList.add('embedded');}
+ var btns=$$('[data-set]');
+ function current(){var t=root.getAttribute('data-theme');if(t)return t;return (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}
+ function mark(){var c=current();btns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.set===c?'true':'false');});}
+ try{var sv=localStorage.getItem('mx-theme');if(sv)root.setAttribute('data-theme',sv);}catch(e){}
+ btns.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.set);try{localStorage.setItem('mx-theme',b.dataset.set);}catch(e){}mark();});});
+ window.addEventListener('storage',function(e){if(e.key==='mx-theme'){if(e.newValue)root.setAttribute('data-theme',e.newValue);else root.removeAttribute('data-theme');mark();}});
+ mark();
+ DB=load();
+ // 호스트 토글
+ var sw=$('#hostSw');
+ function setHost(on,silent){UI.hostOn=on;sw.setAttribute('aria-checked',on?'true':'false');$('#app').classList.toggle('host-on',on);$('#hostSt').textContent=on?'ON · 호스트 화면 열림':'OFF · 고객 화면만';try{localStorage.setItem(HKEY,on?'on':'off');}catch(e){}if(on)renderHost();}
+ sw.addEventListener('click',function(){setHost(!UI.hostOn);});
+ var hs=null;try{hs=localStorage.getItem(HKEY);}catch(e){}
+ setHost(hs==='on');
+ // 챗봇 입력
+ $('#inpForm').addEventListener('submit',function(e){e.preventDefault();var i=$('#inpText'),v=i.value.trim();if(!v)return;i.value='';if(!CHAT){newChat();return;}if(CHAT.result){me(v);bot('상담이 끝났습니다. “새 상담 시작”을 눌러 주세요.');return;}me(v);if(inputHandler){var h=inputHandler;h(v);}else bot('아래 선택지에서 골라 주세요.');});
+ $('#photoBtn').addEventListener('click',function(){$('#photoIn').click();});
+ $('#photoIn').addEventListener('change',function(e){addPhotos(e.target.files);e.target.value='';});
+ var ph=$('#phone');
+ ['dragenter','dragover'].forEach(function(n){ph.addEventListener(n,function(e){e.preventDefault();ph.classList.add('drag');});});
+ ['dragleave','drop'].forEach(function(n){ph.addEventListener(n,function(e){e.preventDefault();ph.classList.remove('drag');});});
+ ph.addEventListener('drop',function(e){if(e.dataTransfer&&e.dataTransfer.files.length)addPhotos(e.dataTransfer.files);});
+ $('#quick').addEventListener('click',function(e){var b=e.target.closest('[data-q]');if(b)quickStart(b.dataset.q);});
+ $('#resetBtn').addEventListener('click',function(){if(!window.confirm('시연 데이터를 처음 상태로 되돌릴까요? (이 브라우저의 저장분이 지워집니다)'))return;try{localStorage.removeItem(KEY);}catch(e){}mem.att={};mem.photos={};mem.img={};DB=seedDB();save();UI.selCase=UI.selAs=UI.selProp=UI.selDaily=null;UI.mCase='';UI.draft=null;newChat();renderHost();toast('시연을 처음 상태로 되돌렸습니다.');});
+ var hm=$('#hostMain');hm.addEventListener('click',hostClick);hm.addEventListener('change',hostChange);$('#nav').addEventListener('click',hostClick);
+ newChat();
+}
+init();
+window.__acp={get db(){return DB;},get ui(){return UI;},get chat(){return CHAT;}};
+})();
+</script>
+</body>
+</html>
