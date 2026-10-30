@@ -382,7 +382,7 @@
     <div><b>01</b>현장 문제와 대응</div>
     <div><b>02</b>요구사항 · 챗봇 배부 방식</div>
     <div><b>03</b>예상 결과</div>
-    <div><b>04</b>시스템 구성 (구성도 · 운영 구조 · 연결과 파일 · 컨텍스트와 RAG · 학습 전환)</div>
+    <div><b>04</b>시스템 구성 (구성도 · 운영 구조 · 연결과 파일 · 컨텍스트와 RAG · 학습 전환 · DB 코드)</div>
     <div><b>05</b>해결 순서 (STEP 01~04 · 기준)</div>
     <div><b>06</b>구현 방안</div>
     <div><b>07</b>가중치 갱신 규칙</div>
@@ -429,6 +429,16 @@
   <div class="kick"><span>04 · 시스템 구성 · 학습 전환</span><span class="pg"></span></div>
   <h2>챗봇 갱신 → 학습 전환 <small>데이터가 쌓인 뒤</small></h2>
 <div class="cols2"><div class="box"><b>지금 · 챗봇 갱신</b><span>통계로 순서 변경(빈도율·해결률) · 컨텍스트 구축·RAG · 사람 승인 후 하루 한 번 반영 · 모델 학습은 하지 않음</span></div><div class="box dk"><b>이후 · 학습 전환</b><span>예측 모델(해결 확률·AS 필요 여부) · 비교 시험으로 효과 확인 · 승인된 뒤에만 전환 · 데이터가 충분히 쌓인 뒤</span></div></div><div class="bar">전환 5단계</div><div class="five"><div><i>01</i><b>데이터 쌓기</b>진행 중</div><div class="dk"><i>02</i><b>통계</b>현재 운영</div><div><i>03</i><b>예측 모델</b>데이터 필요</div><div><i>04</i><b>비교 시험</b>데이터 필요</div><div><i>05</i><b>전환 결정</b>승인 필요</div></div><div class="note">① 결과·원인·시도 값을 정해진 형식으로 · ② 단계별 빈도율·해결률로 순서 변경 · ③ 코드·증상으로 해결 확률 예측 · ④ 새 순서와 기존 순서를 나눠 비교 · ⑤ 더 좋을 때만 품질관리팀 승인</div><div class="bar">정답이 되는 기록</div><div class="cols3"><div class="box"><b>결과</b><span>해결 · 미해결 · 전화 연결</span></div><div class="box"><b>재발 여부</b><span>7일 안에 같은 장비·같은 트리 재접수</span></div><div class="box"><b>단계별 시도</b><span>어느 단계에서 해결됐는지</span></div></div><div class="bar red">지킬 원칙</div><div class="rk"><div><span><i>1</i>안전 판정·경고 문구는 AI가 정하지 않음</span></div><div><span><i>2</i>비교 시험에서 기존보다 좋을 때만 전환</span></div><div><span><i>3</i>승인 전 내용은 고객 화면에 나가지 않음</span></div><div><span><i>4</i>안내 문장을 만드는 AI는 재훈련하지 않음</span></div></div><div class="fnote"><b>회사가 정할 것</b> 전환 시점의 데이터 양 · 모델을 돌릴 위치 · 평가 기간과 합격 기준</div>
+</div></section>
+<section class="card" data-card><div class="ci">
+  <div class="kick"><span>04 · 시스템 구성 · DB 코드 ①</span><span class="pg"></span></div>
+  <h2>DB 코드 체계 ① 표 코드 <small>표마다 두 글자</small></h2>
+<p class="lede">DB의 <b>표마다 두 글자 코드</b>를 붙이고 <b>코드 사전</b> 하나로 관리한다. 방위사업청 체계지원분석 매뉴얼(GEIA-STD-0007 B 기반)의 방식을 참고해 이 DB에 맞게 줄였다.</p><div class="bar">계열 <small>첫 글자 = 계열, 둘째 글자 = 순번</small></div><div class="five" style="grid-template-columns:repeat(4,1fr)"><div><i>X</i><b>시스템·기준정보</b>기준 자료 14종</div><div><i>A</i><b>절차(작업본)</b>작업본 12종</div><div><i>B</i><b>AS 기록</b>4종</div><div><i>C</i><b>상담 이력</b>10종</div><div><i>E</i><b>변경·검토·승인</b>8종</div><div><i>F</i><b>집계·지표</b>6종</div><div><i>G</i><b>AI 보조</b>5종</div><div><i>H</i><b>운영·보안</b>5종</div></div><div class="bar">특별한 두 계열</div><div class="kv"><div class="k">승인본 P</div><div><span>A 계열 코드에서 <b>첫 글자만 P로</b> 바꾼다. 예: AB 순서도 노드 → <b>PB</b>. 챗봇은 P 계열만 읽는다.</span></div><div class="k">코드 사전 Z</div><div>ZA 표 사전 · ZB 항목 사전 · ZC 번호 대응표</div><div class="k">예시</div><div>XA 장비대장 · CA 상담 접수 · BA AS 건 · EA 변경 요청 · FC 일일 보고</div></div><div class="fnote red"><b>규칙</b> 혼동되는 글자 D(DB)·I(1)·O(0)는 쓰지 않아 AD, AI, AO 같은 결번이 생긴다. 한 번 쓴 코드는 다시 쓰지 않는다.</div><div class="fnote">표 코드 81종 · 전체 목록은 ACP-SYS-07 5.11 · 시연 화면의 DB 전체 조회에서 계열별 시트(33개)로 확인</div>
+</div></section>
+<section class="card" data-card><div class="ci">
+  <div class="kick"><span>04 · 시스템 구성 · DB 코드 ②</span><span class="pg"></span></div>
+  <h2>DB 코드 체계 ② 항목 번호와 대응표 <small>같은 뜻이면 같은 번호</small></h2>
+<p class="lede">항목(칸)마다 <b>네 자리 번호</b>를 붙인다. 같은 뜻의 항목은 어느 표에서나 같은 번호를 쓰고, 번호의 첫 자리는 <b>뜻의 구간</b>이다.</p><div class="bar">항목 번호의 구간 <small>항목 54개 · ZB 시트</small></div><div class="kv"><div class="k">1000대 식별·번호</div><div>1010 접수번호 · 1040 오류코드 · 1050 순서도 ID · 1060 노드 번호</div><div class="k">2000대 · 3000대</div><div>2010 모델 · 2030 고객사 / 3010 질문 문장 · 3030 조치 단계 문장</div><div class="k">4000대 · 5000대</div><div>4010 상담 결과 · 4030 응답 값 / 5010 AS 상태 · 5030 첨부 파일 이름</div><div class="k">6000대 · 7000대</div><div>6010 시도 수 · 6030 해결률 / 7020 조치 수준 · 7060 개정 번호</div><div class="k">8000대 · 9000대</div><div>8010 시작 일시 · 8030 작성자 / 9010 표 코드 · 9020 항목 번호</div></div><div class="bar">번호 대응표 <small>코드가 바뀌면 한 줄로 남긴다 (ZC)</small></div><div class="five" style="grid-template-columns:repeat(4,1fr)"><div><i>1:1</i><b>번호 이동</b>TH14 → TH17</div><div><i>1:N</i><b>나눔</b>하나가 여럿으로</div><div><i>N:1</i><b>합침</b>여럿이 하나로</div><div><i>삭제</i><b>폐기</b>코드는 다시 안 씀</div></div><div class="fnote">이름이 바뀌어도 번호는 그대로이고, 뜻이 바뀌면 새 번호를 쓴다. 트리 번호의 자동 변환도 같은 대응표를 쓴다.</div>
 </div></section>
 <section class="card" data-card><div class="ci">
   <div class="kick"><span>05 · 해결 순서</span><span class="pg"></span></div>

@@ -128,6 +128,33 @@
   .side nav .n.red{ background:var(--red); color:#fff; }
   .side .foot{ padding:.7em 1em; font-size:.72rem; opacity:.7; border-top:1px solid rgba(255,255,255,.14); }
   .main{ padding:1em 1.1em 1.2em; min-width:0; display:flex; flex-direction:column; gap:.8em; overflow:auto; max-height:min(80svh,780px); }
+  .main .s{ font-size:.8rem; color:var(--ink-soft); }
+  .fbar{ display:flex; align-items:center; gap:.5em; border:1px solid var(--line); border-radius:4px; background:var(--surface); padding:.2em .5em; }
+  .fbar .nb{ min-width:3.4em; text-align:center; font-weight:700; border-right:1px solid var(--line); padding-right:.5em; font-variant-numeric:tabular-nums; }
+  .fbar .fx{ color:var(--ink-faint); font-style:italic; font-weight:700; }
+  .fbar input{ flex:1; min-width:0; border:0; background:transparent; padding:.25em 0; }
+  .xl{ overflow:auto; max-height:380px; border:1px solid var(--ink-faint); background:var(--surface); outline:none; }
+  .xl:focus-visible{ outline:2px solid var(--red); outline-offset:1px; }
+  .xlt{ border-collapse:separate; border-spacing:0; font-size:.82rem; min-width:100%; }
+  .xlt th,.xlt td{ border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:.2em .55em; white-space:nowrap; max-width:280px; overflow:hidden; text-overflow:ellipsis; height:1.9em; }
+  .xlt .cl{ background:var(--panel-2); text-align:center; font-weight:700; color:var(--ink-soft); position:sticky; top:0; z-index:2; }
+  .xlt .corner{ background:var(--panel-2); position:sticky; top:0; left:0; z-index:4; }
+  .xlt .rn{ background:var(--panel-2); text-align:center; color:var(--ink-soft); position:sticky; left:0; z-index:1; min-width:2.6em; font-weight:400; }
+  .xlt .nm{ background:var(--head); color:var(--head-ink); font-weight:700; position:sticky; top:3.8em; z-index:2; cursor:pointer; }
+  .xlt .in{ background:var(--panel-2); color:var(--ink-faint); font-weight:400; font-size:.74rem; text-align:center; position:sticky; top:1.9em; z-index:2; font-variant-numeric:tabular-nums; }
+  .xlt .rn.in{ left:0; z-index:3; }
+  .xlt thead tr:nth-child(3) .rn{ top:3.8em; z-index:3; background:var(--panel-2); }
+  .xlt td{ background:var(--surface); cursor:cell; }
+  .xlt td.lock{ background:var(--panel); color:var(--ink-soft); }
+  .xlt td.sel{ outline:2px solid var(--red); outline-offset:-2px; background:var(--red-soft); }
+  .xlt td.edit{ padding:0; outline:2px solid var(--red); outline-offset:-2px; background:var(--surface); }
+  .xlt td.edit input,.xlt td.edit select{ width:100%; height:100%; border:0; background:transparent; padding:.2em .55em; font:inherit; outline:none; }
+  .stabs{ display:flex; gap:2px; flex-wrap:wrap; border-top:2px solid var(--ink-faint); margin-top:-.4em; }
+  .stabs button{ border:1px solid var(--line); border-top:0; background:var(--panel); padding:.3em .85em; font-size:.78rem; cursor:pointer; border-radius:0 0 6px 6px; }
+  .stabs button[aria-pressed="true"]{ background:var(--surface); font-weight:700; border-bottom:3px solid var(--red); }
+  .topbar{ position:sticky; top:-1.1em; z-index:4; display:flex; align-items:center; gap:.6em; background:var(--surface); padding:.5em 0 .45em; margin:-.5em 0 0; border-bottom:1px solid var(--line); }
+  .topbar .crumb{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.82rem; color:var(--ink-soft); }
+  .bar .btn.ghost{ color:inherit; border-color:rgba(255,255,255,.55); }
   .ph1{ display:flex; justify-content:space-between; align-items:flex-start; gap:1em; flex-wrap:wrap; }
   .ph1 .ey{ font-size:.72rem; font-weight:700; color:var(--red); letter-spacing:.08em; }
   .ph1 h2{ margin:0; font-size:1.35rem; line-height:1.25; }
@@ -270,6 +297,12 @@
 <script>
 (function(){
 'use strict';
+var CODE_FAM=[["X", "시스템·기준정보", "장비·고객·코드·정책값처럼 상담과 순서도가 기대는 기준 자료"], ["A", "절차(작업본)", "순서도, 노드, 조치 단계, 경고처럼 고객 안내의 재료. 승인 전 작업본"], ["B", "AS 기록", "AS 건, 사용 부품, 첨부 보고서, AS에서 나온 신규 조치 제안"], ["C", "상담 이력", "상담 한 건과 단계, 시간, 대화, 사진"], ["E", "변경·검토·승인", "변경 요청, 검수, 승인본 생성, 개정 이력"], ["F", "집계·지표", "가중치, 단계별 지표, 일일 보고"], ["G", "AI 보조", "AI 실행·제안·결정 기록, 비교 시험, 컨텍스트 설정"], ["H", "운영·보안", "사용자, 권한, 화면 상태, 수정 이력"], ["P", "승인본", "A 계열의 승인된 사본. 챗봇이 읽는 유일한 순서도. 코드는 A 계열과 둘째 글자가 같음"], ["R", "참고 자료", "가져온 참고 자료의 출처와 챗봇 기준본(제조사 자료 표는 공개용에서 생략)"], ["Z", "코드 사전", "표·항목·번호 변경을 관리하는 사전 자체"]];
+var CODE_TABLES=[["XA", "equipment_ledger", "장비대장", "출고 장비 1대당 1행. QR 식별번호·시리얼·모델", "시연"], ["XB", "equipment_part", "장비 구성품", "장비에 납품된 구성품(전원부, 토치 등)", "시연"], ["XC", "equipment_model", "장비 모델", "모델 목록(제품·모델 선택 화면)", "시연"], ["XE", "customer", "고객사", "고객사 코드와 이름", "시연"], ["XF", "customer_contact", "고객 연락처", "개인정보. 챗봇과 AI는 읽지 않음", "시연"], ["XG", "part_catalog", "부품 목록", "교체 부품 번호와 이름", "설계"], ["XH", "component_code", "구성품 코드", "PS, WF, TH, TP, CU, RI, SF", "시연"], ["XJ", "cause_code", "원인 구분 코드", "OP, PS, WF, TH, TP, CU, RI, SF, FA", "시연"], ["XK", "target_end", "순서도 끝 값", "완료, AS 두 가지", "시연"], ["XL", "id_failure", "장비 식별 실패 사유", "QR 미인식, 시리얼 모름 등", "설계"], ["XM", "policy_value", "정책값(기준값)", "상담 시간, 이탈 시간, 시도 10건 등 임의 값", "시연"], ["XN", "error_code_ref", "오류코드 참조", "제조사 오류코드와 설명", "시연"], ["XP", "error_code_ver", "오류코드 목록 버전", "목록이 바뀐 버전 기록", "설계"], ["XQ", "error_list_version", "에러리스트 가져오기 이력", "가져온 날짜·코드 수", "설계"], ["AA", "action_tree_def", "순서도 정의", "순서도 ID, 이름, 종류(오류코드·증상 그룹)", "시연"], ["AB", "action_tree", "순서도 노드", "질문·조치 노드와 예/아니오 연결", "시연"], ["AC", "action_code", "오류코드 시작 노드", "코드별로 어느 노드에서 시작하는지", "시연"], ["AE", "action_step", "조치 단계", "조치 노드 안의 절차 문장", "시연"], ["AF", "action_level", "조치 수준", "고객 조치, 현장 교체, 입고 정비", "시연"], ["AG", "action_warning", "경고·주의", "경고·주의 ID와 문구", "시연"], ["AH", "action_image", "조치 이미지", "노드별 그림과 부위 표시", "시연"], ["AJ", "action_symptom", "증상 그룹", "코드가 없을 때 고르는 증상", "시연"], ["AK", "action_falsealarm", "오경보 대상", "확인 질문을 먼저 하는 코드", "설계"], ["AL", "action_term", "용어", "고객 화면 용어 풀이", "설계"], ["AM", "action_revision", "순서도 개정 기록", "순서도 개정 번호와 이유", "시연"], ["AN", "tree_stage", "순서도 단계", "작업본·검수·승인 단계", "설계"], ["BA", "as_job", "AS 건", "AS가 필요한 상담 1건당 1행", "시연"], ["BB", "as_part_used", "AS 사용 부품", "AS에서 교체한 부품", "설계"], ["BC", "as_attachment", "AS 첨부 보고서", "PDF·PNG·JPG 보고서 첨부 기록", "신규"], ["BE", "as_action_proposal", "AS 기반 신규 조치 제안", "AS 보고서에서 나온 새 조치(변경 요청 EA로 이어짐)", "신규"], ["CA", "case_history", "상담 접수", "상담 1건당 1행. 접수번호·결과·상태", "시연"], ["CB", "case_step", "상담 단계", "상담 중 지나온 노드와 응답", "시연"], ["CC", "case_step_time", "단계 시간", "단계별 소요 시간", "시연"], ["CE", "case_message", "상담 대화", "고객 응답과 경고 확인 기록", "설계"], ["CF", "case_attachment", "상담 첨부 사진", "고객이 보낸 사진 기록", "시연"], ["CG", "case_change_log", "상담 수정 기록", "상담 기록의 사후 수정 이력", "설계"], ["CH", "case_number_issue", "접수번호 발급", "서버가 발급한 접수번호 대장", "시연"], ["CJ", "host_v280_case", "새 챗봇 상담(통합 시연본)", "통합 시연본의 새 상담 저장", "시연"], ["CK", "host_v280_case_audit", "새 챗봇 상담 저장 이력", "저장·되돌리기 이력", "시연"], ["CL", "case_check", "7일 해결 확인", "해결 7일 뒤 재접수 확인 결과", "설계"], ["EA", "tree_change_request", "변경 요청", "순서 변경·신규 조치·수정 요청", "시연"], ["EB", "tree_snapshot", "순서도 개정 사본", "승인 직전·직후 순서도 사본(되돌리기용)", "설계"], ["EC", "review_meeting", "검토 회의", "정기 검토 회의 기록", "시연"], ["EE", "proposal_review", "검수 체크", "명칭·안전·경고 확인 결과", "신규"], ["EF", "host_v280_export", "승인본 생성 기록", "하루 한 번 승인본을 만든 기록", "시연"], ["EG", "host_v280_legacy_batch", "기록 가져오기 묶음", "파일로 가져온 상담 기록 묶음", "시연"], ["EH", "host_v280_legacy_review", "가져오기 충돌 검토", "같은 접수번호 충돌 비교·선택", "시연"], ["EJ", "proposal_log", "변경 요청 처리 이력", "승인·반려 시각과 처리자", "신규"], ["FA", "weight_table", "가중치 표", "단계별 시도·해결·빈도·해결률", "시연"], ["FB", "weight_baseline", "가중치 기준", "시도 10건 이상 등 판단 기준", "설계"], ["FC", "daily_report", "일일 보고", "하루 결과를 집계해 저장한 1행", "신규"], ["FE", "daily_report_step", "일일 단계별 집계", "일일 보고 안의 단계별 시도·해결", "신규"], ["FF", "host_route_revision", "경로 개정", "경로 집계의 개정 번호", "시연"], ["FG", "host_route_step", "경로 단계 지표", "건별·단계별 경로 지표", "시연"], ["GA", "ai_run", "AI 실행 기록", "AI가 읽은 자료와 실행 시각", "설계"], ["GB", "ai_proposal", "AI 제안", "AI가 남긴 후보·초안(승인 전 반영 없음)", "설계"], ["GC", "ai_decision", "AI 제안 결정", "사람이 승인·반려한 결과", "설계"], ["GE", "ab_test", "비교 시험", "새 순서와 기존 순서의 해결률 비교", "설계"], ["GF", "app_context", "컨텍스트 설정", "컨텍스트 파일 버전과 검수 필요 표시", "설계"], ["HA", "app_user", "사용자", "호스트 사용자와 담당 구분", "시연"], ["HB", "app_role", "권한", "게스트·호스트·승인자 권한", "시연"], ["HC", "host_v280_state", "호스트 화면 상태", "호스트 화면의 마지막 상태", "시연"], ["HE", "host_v280_metadata", "시연 메타", "시연본 버전과 설정", "시연"], ["HF", "audit_log", "수정 이력", "DB 표에서 고친 값의 이전·이후와 시각", "신규"], ["PA", "live_action_tree_def", "순서도 정의(승인본)", "AA의 승인본", "시연"], ["PB", "live_action_tree", "순서도 노드(승인본)", "AB의 승인본", "시연"], ["PC", "live_action_code", "오류코드 시작 노드(승인본)", "AC의 승인본", "시연"], ["PE", "live_action_step", "조치 단계(승인본)", "AE의 승인본", "시연"], ["PF", "live_action_level", "조치 수준(승인본)", "AF의 승인본", "시연"], ["PG", "live_action_warning", "경고·주의(승인본)", "AG의 승인본", "시연"], ["PH", "live_action_image", "조치 이미지(승인본)", "AH의 승인본", "시연"], ["PJ", "live_action_symptom", "증상 그룹(승인본)", "AJ의 승인본", "시연"], ["PK", "live_action_falsealarm", "오경보 대상(승인본)", "AK의 승인본", "설계"], ["PL", "live_action_term", "용어(승인본)", "AL의 승인본", "설계"], ["PN", "live_tree_stage", "순서도 단계(승인본)", "AN의 승인본", "설계"], ["PQ", "live_seal", "승인본 봉인", "승인본이 바뀌지 않았는지 확인하는 서명", "설계"], ["RA", "ref_source", "참고 자료 출처", "가져온 자료의 이름과 날짜", "설계"], ["RB", "ref_chat_action", "챗봇 조치 기준본", "챗봇이 처음 읽던 기준본(승인 전 자료)", "설계"], ["ZA", "meta_tables", "표 사전", "이 표 코드 목록 자체(표마다 1행)", "시연"], ["ZB", "meta_columns", "항목 사전", "항목 번호 목록(항목마다 1행)", "시연"], ["ZC", "code_map", "번호 대응표", "이전 번호→새 번호(1:1, 1:N, N:1, 삭제)", "신규"]];
+var CODE_ITEMS=[["1010", "접수번호", "CA, CB, CC, CH, BA, BC", "문자 15", "ACP-YYMMDD-NNN. 서버가 발급"], ["1020", "시리얼 번호", "XA, CA", "문자 20", ""], ["1030", "QR 식별번호", "XA", "문자 20", "QR에는 이 번호만 담음"], ["1040", "오류코드", "XN, AC, CA", "숫자 6", "제조사 코드. 공개용은 가상 코드"], ["1050", "순서도 ID", "AA, AB, PA, CA", "문자 4", "CU01, SG01 등"], ["1060", "노드 번호", "AB, AE, CB, PB", "문자 8", "CU-C-01 형식"], ["1070", "순서 ID", "AM, CA", "문자 8", "순서도 ID + R + 개정 번호"], ["1080", "경고·주의 ID", "AG, PG", "문자 4", "W-01, C-01"], ["1090", "이미지 ID", "AH, PH", "문자 12", "IMG-노드 번호"], ["1100", "증상 그룹 ID", "AJ, PJ, CA", "문자 5", "SG-01"], ["2010", "모델", "XC, XA, CA", "문자 24", ""], ["2020", "출고전압", "XA", "문자 8", ""], ["2030", "고객사", "XE, XA, CA", "문자 24", "공개용은 예시 이름"], ["2040", "설치 위치", "XA, CA", "문자 24", ""], ["2050", "구성품 코드", "XH, XB, AA", "문자 2", "PS, WF, TH, TP, CU, RI, SF"], ["3010", "질문 문장", "AB, PB", "문자 80", "질문 노드"], ["3020", "조치 제목", "AB, PB, BE", "문자 40", "조치 노드"], ["3030", "조치 단계 문장", "AE, PE, BE", "문자 120", "한 줄에 한 단계"], ["3040", "예 연결 노드", "AB, PB", "문자 8", ""], ["3050", "아니오 연결 노드", "AB, PB", "문자 8", "AS도 가능"], ["3060", "안 됨 연결 노드", "AB, PB", "문자 8", "조치 노드의 다음"], ["3070", "점검 순서", "AA, PA", "문자 80", "증상 그룹의 노드 순서"], ["3080", "경고·주의 문구", "AG, PG", "문자 120", "평서형"], ["4010", "상담 결과", "CA", "문자 6", "해결, 미해결, 전화 연결, 중도 이탈"], ["4020", "결과 사유", "CA", "문자 40", ""], ["4030", "응답 값", "CB", "문자 8", "해결, 안 됨, 전화 연결, 이탈 등"], ["4040", "라인 정지 여부", "CA", "참/거짓", ""], ["4050", "원인 구분 코드", "XJ, CA", "문자 2", ""], ["4060", "확인 기한", "CA, CL", "날짜", "해결 7일 뒤"], ["5010", "AS 상태", "BA", "문자 6", "접수 필요, 진행 중, 완료"], ["5020", "AS 메모", "BA", "문자 200", ""], ["5030", "첨부 파일 이름", "BC, CF", "문자 80", "파일 자체는 저장하지 않음"], ["5040", "첨부 형식", "BC, CF", "문자 24", "PDF, PNG, JPG"], ["5050", "첨부 크기", "BC, CF", "숫자", "바이트"], ["6010", "시도 수", "FA, FE, FG", "숫자 6", "해결+미해결"], ["6020", "해결 수", "FA, FE, FG", "숫자 6", ""], ["6030", "해결률", "FA, FC, FE", "실수 5", "해결÷시도"], ["6040", "소요 시간(초)", "CC, CB", "숫자 6", ""], ["6050", "상담 건수", "FC", "숫자 6", ""], ["7010", "상태", "CA, EA", "문자 6", "접수, 조치 중, 확인 대기, 종결"], ["7020", "조치 수준", "AF, PF, AB", "문자 8", "고객 조치, 현장 교체, 입고 정비"], ["7030", "변경 요청 종류", "EA, BE", "문자 8", "순서 변경, 신규 조치, 문구 수정"], ["7040", "변경 요청 상태", "EA, EJ", "문자 4", "대기, 승인, 반려"], ["7050", "검수 체크", "EE", "참/거짓 3", "명칭·안전·경고"], ["7060", "개정 번호", "AA, AM, EB", "숫자 3", "순서도가 승인될 때마다 +1"], ["8010", "시작 일시", "CA", "일시", ""], ["8020", "종료 일시", "CA", "일시", ""], ["8030", "작성자", "EA, HF", "문자 12", "공개용 문서에는 표기하지 않음"], ["8040", "승인자", "EA, EJ", "문자 12", ""], ["8050", "수정 일시", "HF, EJ", "일시", ""], ["8060", "이전 값", "HF, ZC", "문자 120", ""], ["8070", "이후 값", "HF, ZC", "문자 120", ""], ["9010", "표 코드", "ZA, ZC", "문자 2", "이 사전의 표 코드"], ["9020", "항목 번호", "ZB, ZC", "숫자 4", "이 사전의 항목 번호"]];
+var CODE_RANGES=[["1000대", "식별·번호(접수번호, 시리얼, 순서도 ID, 노드 번호 등)"], ["2000대", "장비·고객(모델, 전압, 고객사, 구성품 코드)"], ["3000대", "순서도·조치(질문, 조치, 연결, 경고 문구)"], ["4000대", "상담·결과(결과, 응답, 원인, 확인 기한)"], ["5000대", "AS(상태, 메모, 첨부)"], ["6000대", "수치·집계(시도, 해결, 해결률, 시간)"], ["7000대", "상태·구분·수준(상태, 조치 수준, 변경 요청, 개정 번호)"], ["8000대", "일시·사람(일시, 작성자, 승인자, 수정 전후 값)"], ["9000대", "코드 사전 자체"]];
+var CODE_MAP_SEED=[["트리 번호", "TH14", "TH17", "1:1", "새 코드 169개를 넣어 순서가 밀림(시험값)"], ["노드 번호", "CU-A-01", "CU-A-01, CU-A-07", "1:N", "조치를 둘로 나눔(예시)"], ["항목 번호", "3060, 3061", "3060", "N:1", "같은 뜻의 항목을 합침(예시)"], ["표 코드", "XG", "—", "삭제", "쓰지 않는 표를 폐기. 코드는 다시 쓰지 않음(예시)"], ["표 코드", "AD", "(결번)", "결번", "D는 DB와 혼동되어 쓰지 않음"]];
+var CODE_RULES=["표 코드는 영문 두 글자이다. 첫 글자는 계열(X 기준정보, A 절차, B AS 기록, C 상담 이력, E 변경·승인, F 집계·지표, G AI 보조, H 운영·보안, P 승인본, R 참고 자료, Z 코드 사전)이고, 둘째 글자는 계열 안의 순번이다.", "혼동하기 쉬운 글자 D(DB), I(1), O(0)는 쓰지 않는다. 그래서 코드에는 AD, AI, AO 같은 결번이 생긴다.", "승인본(P 계열)의 코드는 작업본(A 계열)의 코드에서 첫 글자만 P로 바꾼 것이다(예: AB 순서도 노드 → PB 순서도 노드). 챗봇은 P 계열만 읽는다.", "항목은 네 자리 번호를 가진다. 같은 뜻의 항목은 어느 표에서나 같은 번호를 쓴다(예: 접수번호 1010은 CA, CB, BA에서 같다).", "항목 번호의 첫 자리는 뜻의 구간이다(1000대 식별·번호, 2000대 장비·고객, 3000대 순서도·조치, 4000대 상담·결과, 5000대 AS, 6000대 수치·집계, 7000대 상태·구분, 8000대 일시·사람, 9000대 코드 사전).", "한 번 부여한 표 코드와 항목 번호는 다시 쓰지 않는다. 이름이 바뀌어도 번호는 그대로이고, 뜻이 바뀌면 새 번호를 쓴다. 폐기한 코드는 “폐기”로 남긴다.", "코드가 바뀌면 이전 번호와 새 번호의 대응표(ZC)에 한 줄씩 남긴다. 관계는 1:1, 1:N, N:1, 삭제 네 가지이다. 트리 번호의 자동 변환도 같은 대응표를 쓴다.", "표와 항목의 정의는 코드 사전(ZA 표 사전, ZB 항목 사전)이 단 하나의 기준이다. 표나 항목을 새로 만들 때는 먼저 코드 사전에 등록한다."];
 var $=function(s,r){return (r||document).querySelector(s);};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -363,10 +396,10 @@ function seedDB(){
  // 일부 AS 건은 진행·완료 상태로
  var k=0;for(var id in asJobs){if(k===1)asJobs[id].status='진행 중';if(k===3){asJobs[id].status='완료';asJobs[id].memo='부품 교환 후 정상 확인(시연 예시)';}k++;}
  return {meta:{schema:'acp-demo/1',treesVersion:1,seededAt:now.toISOString(),counter:cnt,lastEditAt:null,lastDailyRun:null,pr:0,att:0},
-  ledger:ledger,trees:trees,stats:seedStats(),cases:cases,asJobs:asJobs,proposals:[],dailyReports:[],audit:[],imgOverride:{}};
+  ledger:ledger,trees:trees,stats:seedStats(),cases:cases,asJobs:asJobs,proposals:[],dailyReports:[],audit:[],imgOverride:{},warn:JSON.parse(JSON.stringify(WARN)),revisions:Object.keys(trees).map(function(k){return {tree:k,rev:1,at:now.toISOString(),reason:'최초 승인본'};}),codeMap:CODE_MAP_SEED.map(function(m){return {kind:m[0],old:m[1],nw:m[2],rel:m[3],why:m[4],example:true,at:now.toISOString()};})};
 }
 var DB=null;
-function load(){try{var s=localStorage.getItem(KEY);if(s){var o=JSON.parse(s);if(o&&o.meta&&o.meta.schema==='acp-demo/1')return o;}}catch(e){}return seedDB();}
+function load(){try{var s=localStorage.getItem(KEY);if(s){var o=JSON.parse(s);if(o&&o.meta&&o.meta.schema==='acp-demo/1'){if(!o.warn)o.warn=JSON.parse(JSON.stringify(WARN));if(!o.revisions)o.revisions=Object.keys(o.trees).map(function(k){return {tree:k,rev:o.trees[k].rev||1,at:o.meta.seededAt,reason:'최초 승인본'};});if(!o.codeMap)o.codeMap=CODE_MAP_SEED.map(function(m){return {kind:m[0],old:m[1],nw:m[2],rel:m[3],why:m[4],example:true,at:o.meta.seededAt};});return o;}}}catch(e){}return seedDB();}
 var saveT=null;
 function save(){clearTimeout(saveT);saveT=setTimeout(function(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}},120);}
 function audit(table,key,field,from,to,who){DB.audit.unshift({at:new Date().toISOString(),who:who||'host(시연)',table:table,key:key,field:field,from:String(from==null?'':from),to:String(to==null?'':to)});DB.audit=DB.audit.slice(0,200);DB.meta.lastEditAt=new Date().toISOString();}
@@ -434,7 +467,7 @@ function showAction(nodeId,nextFn){
  var ask=function(){bot('조치 후 문제가 <b>해결</b>되었나요?');choices([{label:'해결됐어요',cls:'dk',fn:function(){bump(nodeId,true);CHAT.steps.push({node:nodeId,kind:'A',resp:'해결',t:elapsed()});finish('해결','');}},{label:'안 됐어요',fn:function(){bump(nodeId,false);CHAT.steps.push({node:nodeId,kind:'A',resp:'안 됨',t:elapsed()});advance();}},{label:'전화 연결',cls:'red',fn:function(){CHAT.steps.push({node:nodeId,kind:'A',resp:'전화 연결',t:elapsed()});finish('전화 연결','급해요');}}]);};
  var advance=function(){var nx=nextFn();if(nx&&typeof nx==='object')enter(null,nx.sym);else enter(nx);};
  if(ws.length){
-  var html=ws.map(function(w){return '<div><b>'+WARN[w].lv+' '+w+'</b> '+esc(WARN[w].t)+'</div>';}).join('');
+  var html=ws.map(function(w){return '<div><b>'+(DB.warn||WARN)[w].lv+' '+w+'</b> '+esc((DB.warn||WARN)[w].t)+'</div>';}).join('');
   bot('<div class="warn">'+html+'<div class="s">내용을 확인해야 조치 절차가 표시됩니다.</div></div>');
   ws.forEach(function(w){if(CHAT.warnAck.indexOf(w)<0)CHAT.warnAck.push(w);});
   choices([{label:'확인했습니다',cls:'dk',fn:go},{label:'작업을 중단하고 AS',cls:'red',fn:function(){finish('AS','안전 확인 후 중단');}}]);
@@ -475,8 +508,8 @@ function quickStart(q){
 }
 
 /* ===== 호스트 화면 ===== */
-var UI={tab:'overview',selCase:null,filter:'전체',selAs:null,treeSel:'SG01',draft:null,selProp:null,imgTab:'node',dbTable:'cases',selDaily:null,hostOn:false,mCase:''};
-var TABS=[['overview','운영 현황'],['records','상담 기록'],['as','AS 처리·보고서'],['trees','기준 DB·순서'],['approvals','변경 승인'],['images','이미지 확인'],['metrics','경로·단계 지표'],['daily','일일 집계'],['dbview','DB 전체 조회'],['state','상태 JSON']];
+var UI={hist:[],last:null,noPush:false,asTab:'jobs',dbQ:'',dbSort:null,xsel:null,xfocus:false,dbFam:'C',tab:'overview',selCase:null,filter:'전체',selAs:null,treeSel:'SG01',draft:null,selProp:null,imgTab:'node',dbTable:'CA',selDaily:null,hostOn:false,mCase:''};
+var TABS=[['overview','운영 현황'],['records','상담 기록'],['as','AS 처리·보고서'],['trees','기준 DB·순서'],['approvals','변경 승인'],['images','관련 이미지'],['metrics','경로·단계 지표'],['dbview','DB 전체 조회']];
 function openAs(){return Object.keys(DB.asJobs).filter(function(k){return DB.asJobs[k].status!=='완료';}).length;}
 function pending(){return DB.proposals.filter(function(p){return p.status==='대기';}).length;}
 function caseById(id){return DB.cases.filter(function(c){return c.id===id;})[0];}
@@ -500,7 +533,7 @@ function vRecords(){
  var rows=list.map(function(x){return '<tr data-row class="'+(UI.selCase===x.id?'sel':'')+'" data-act="open-case" data-id="'+x.id+'"><td>'+x.id+'</td><td>'+fmtDT(x.startedAt)+'</td><td>'+esc(x.model)+'</td><td>'+esc(x.code||x.symptom||'—')+'</td><td>'+resTag(x.result)+'</td><td>'+esc(x.status)+'</td><td>'+x.steps.length+'</td></tr>';}).join('');
  var c=UI.selCase?caseById(UI.selCase):null,det='';
  if(c){var ph=(mem.photos[c.id]||[]).map(function(p){return '<a href="'+p.url+'" target="_blank" rel="noopener"><img alt="'+esc(p.name)+'" src="'+p.url+'" style="height:60px;border-radius:4px"></a>';}).join('');
-  det='<div class="bar">상담 상세 · '+c.id+' <small><button class="btn ghost sm" data-act="to-metrics" data-id="'+c.id+'" style="color:inherit;border-color:rgba(255,255,255,.5)">경로 그래프 보기</button></small></div><div class="kv"><div class="k">장비</div><div>'+esc(c.model)+' · '+esc(c.serial)+(c.verified?' <span class="tag dk">장비대장 대조</span>':' <span class="tag">대조 안 됨</span>')+'</div><div class="k">고객사</div><div>'+esc(c.customer)+' · '+esc(c.line)+'</div><div class="k">순서도</div><div>'+esc(c.treeId||'—')+(c.sequenceId?' · 순서 ID '+c.sequenceId:'')+'</div><div class="k">결과</div><div>'+esc(c.result)+(c.reason?' · '+esc(c.reason):'')+' · 상태 '+esc(c.status)+'</div><div class="k">첨부 사진</div><div>'+(ph||(c.photos?c.photos+'장 (새로 고침 후에는 미리보기 없음)':'없음'))+'</div></div>'+stepsHtml(c)+(c.asReq?'<div class="row"><button class="btn sm" data-act="to-as" data-id="'+c.id+'">AS 처리·보고서로 이동</button></div>':'');}
+  det='<div class="bar">상담 상세 · '+c.id+' <small><button class="btn ghost sm" data-act="to-metrics" data-id="'+c.id+'" style="color:inherit;border-color:rgba(255,255,255,.5)">경로 그래프 보기</button> <button class="btn ghost sm" data-act="close-detail">✕ 닫기</button></small></div><div class="kv"><div class="k">장비</div><div>'+esc(c.model)+' · '+esc(c.serial)+(c.verified?' <span class="tag dk">장비대장 대조</span>':' <span class="tag">대조 안 됨</span>')+'</div><div class="k">고객사</div><div>'+esc(c.customer)+' · '+esc(c.line)+'</div><div class="k">순서도</div><div>'+esc(c.treeId||'—')+(c.sequenceId?' · 순서 ID '+c.sequenceId:'')+'</div><div class="k">결과</div><div>'+esc(c.result)+(c.reason?' · '+esc(c.reason):'')+' · 상태 '+esc(c.status)+'</div><div class="k">첨부 사진</div><div>'+(ph||(c.photos?c.photos+'장 (새로 고침 후에는 미리보기 없음)':'없음'))+'</div></div>'+stepsHtml(c)+(c.asReq?'<div class="row"><button class="btn sm" data-act="to-as" data-id="'+c.id+'">AS 처리·보고서로 이동</button></div>':'');}
  return {ey:'CASE RECORDS',title:'상담 기록',desc:'고객 화면의 상담이 접수 이력으로 쌓입니다. 행을 누르면 단계별 기록을 봅니다.',html:'<div class="row"><label class="s" for="fres">결과</label><select id="fres" data-act="set-filter">'+['전체','해결','AS','전화 연결','이탈'].map(function(o){return '<option'+(o===f?' selected':'')+'>'+o+'</option>';}).join('')+'</select><span class="s">'+list.length+'건</span></div><div class="scroll"><table class="tbl"><thead><tr><th>접수번호</th><th>시작</th><th>모델</th><th>코드·증상</th><th>결과</th><th>상태</th><th>단계</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+det};
 }
 function attHtml(a){var u=mem.att[a.id];var pv=u?(/^image\//.test(a.type)?'<a href="'+u+'" target="_blank" rel="noopener"><img alt="'+esc(a.name)+'" src="'+u+'" style="height:44px;border-radius:4px"></a>':'<a class="btn ghost sm" href="'+u+'" target="_blank" rel="noopener">열기</a>'):'<span class="s">미리보기 없음(저장하지 않음)</span>';return '<div class="att"><span class="tag">'+esc((a.type.split('/')[1]||'파일').toUpperCase())+'</span><span class="nm" title="'+esc(a.name)+'">'+esc(a.name)+'</span><span class="s">'+fmtSz(a.size)+'</span>'+pv+'<button class="btn ghost sm" data-act="att-del" data-id="'+a.id+'">삭제</button></div>';}
@@ -509,14 +542,16 @@ function vAs(){
  var rows=ids.map(function(id){var j=DB.asJobs[id],c=caseById(id)||{};return '<tr data-row class="'+(UI.selAs===id?'sel':'')+'" data-act="sel-as" data-id="'+id+'"><td>'+id+'</td><td>'+esc(c.model||'')+'</td><td>'+esc(c.code||c.symptom||'—')+'</td><td>'+esc(c.reason||'')+'</td><td><span class="tag '+(j.status==='완료'?'dk':(j.status==='접수 필요'?'red':''))+'">'+esc(j.status)+'</span></td><td>'+j.attachments.length+'</td></tr>';}).join('');
  var det='';
  if(UI.selAs&&DB.asJobs[UI.selAs]){var j=DB.asJobs[UI.selAs],c=caseById(UI.selAs)||{};
-  det='<div class="bar">AS 처리 · '+UI.selAs+'</div><div class="kv"><div class="k">상담</div><div>'+esc(c.model||'')+' · '+esc(c.code||c.symptom||'—')+' · '+esc(c.result||'')+(c.reason?' ('+esc(c.reason)+')':'')+'</div></div>'+
+  det='<div class="bar">AS 처리 · '+UI.selAs+' <small><button class="btn ghost sm" data-act="close-detail">✕ 닫기</button></small></div><div class="kv"><div class="k">상담</div><div>'+esc(c.model||'')+' · '+esc(c.code||c.symptom||'—')+' · '+esc(c.result||'')+(c.reason?' ('+esc(c.reason)+')':'')+'</div></div>'+
   '<div class="grid2"><div class="field"><label for="asSt">AS 상태</label><select id="asSt">'+['접수 필요','진행 중','완료'].map(function(o){return '<option'+(o===j.status?' selected':'')+'>'+o+'</option>';}).join('')+'</select></div><div class="field"><label for="asMemo">담당자 메모</label><textarea id="asMemo" placeholder="조치 내용, 교체 부품 등">'+esc(j.memo)+'</textarea></div></div><div class="row"><button class="btn sm" data-act="as-save">상태·메모 저장</button></div>'+
   '<div class="bar">AS 보고서 첨부 <small>PDF · PNG · JPG</small></div><div class="stack">'+(j.attachments.map(attHtml).join('')||'<div class="empty">첨부된 보고서가 없습니다.</div>')+'</div><div class="row"><label class="btn sm" for="asFile" style="cursor:pointer">＋ 파일 첨부</label><input type="file" id="asFile" data-act="as-file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" multiple hidden><span class="s">이 건에 바로 붙습니다. 파일은 이 브라우저 안에서만 열립니다.</span></div>'+
   '<div class="bar red">신규 조치 제안 <small>AS 보고서의 노하우를 챗봇에 반영</small></div><div class="callout">AS 보고서에서 나온 새 조치를 등록하면 <b>변경 승인</b>에 들어가고, 승인되면 고객 화면에서 해당 코드를 입력했을 때 안내됩니다.</div>'+
   '<div class="grid3"><div class="field"><label for="npCode">오류 코드</label><input id="npCode" inputmode="numeric" placeholder="예: 22038" value="'+esc(c.code&&!findTreeByCode(DB.trees,c.code)?c.code:'')+'"></div><div class="field"><label for="npComp">구성품</label><select id="npComp"><option value="TH">TH · 토치·호스 팩</option><option value="CU">CU · 냉각장치</option><option value="RI">RI · 로봇 연동</option></select></div><div class="field"><label for="npTitle">조치 제목</label><input id="npTitle" placeholder="예: 호스 팩 잠금 레버 재체결"></div></div>'+
   '<div class="grid2"><div class="field"><label for="npQ">질문 (고객에게 묻는 문장)</label><input id="npQ" placeholder="예: 토치 호스 팩 잠금 레버가 풀려 있나요?"></div><div class="field"><label for="npSteps">조치 단계 (한 줄에 하나)</label><textarea id="npSteps" placeholder="전원을 끈다.&#10;잠금 레버를 끝까지 돌린다."></textarea></div></div>'+
   '<label class="chk"><input type="checkbox" id="npPow" checked> 작업 전 전원 차단 경고(W-01)를 붙인다</label><div class="row"><button class="btn red sm" data-act="np-create">신규 조치로 변경 요청 만들기</button></div>';}
- return {ey:'AFTER SERVICE',title:'AS 처리·보고서',desc:'AS가 필요한 건에 보고서를 바로 붙이고, 현장에서 쌓인 노하우를 신규 조치로 제안합니다.',html:'<div class="scroll"><table class="tbl"><thead><tr><th>접수번호</th><th>모델</th><th>코드·증상</th><th>사유</th><th>AS 상태</th><th>첨부</th></tr></thead><tbody>'+(rows||'<tr><td colspan="6"><div class="empty">AS 건이 없습니다. 고객 화면에서 “새 코드 22038”로 상담해 보세요.</div></td></tr>')+'</tbody></table></div>'+(det||'<div class="empty">위 표에서 건을 고르면 보고서 첨부와 신규 조치 제안 화면이 열립니다.</div>')};
+ var jobsHtml='<div class="scroll"><table class="tbl"><thead><tr><th>접수번호</th><th>모델</th><th>코드·증상</th><th>사유</th><th>AS 상태</th><th>첨부</th></tr></thead><tbody>'+(rows||'<tr><td colspan="6"><div class="empty">AS 건이 없습니다. 고객 화면에서 “새 코드 22038”로 상담해 보세요.</div></td></tr>')+'</tbody></table></div>'+(det||'<div class="empty">위 표에서 건을 고르면 보고서 첨부와 신규 조치 제안 화면이 열립니다.</div>');
+ var tabs='<div class="tabs"><button type="button" data-act="as-tab" data-id="jobs" aria-pressed="'+(UI.asTab!=='daily')+'">AS 건 · 보고서 첨부</button><button type="button" data-act="as-tab" data-id="daily" aria-pressed="'+(UI.asTab==='daily')+'">일일 보고 · 하루 결과 저장</button></div>';
+ return {ey:'AFTER SERVICE & DAILY REPORT',title:'AS 처리·보고서',desc:'AS가 필요한 건에 보고서를 바로 붙이고, 그날의 결과를 집계해 일일 보고로 저장합니다.',html:tabs+(UI.asTab==='daily'?dailyView().html:jobsHtml)};
 }
 function orderDraft(){var t=DB.trees.SG01;if(!UI.draft||UI.draftRev!==t.rev){UI.draft=t.order.slice();UI.draftRev=t.rev;}return UI.draft;}
 function vTrees(){
@@ -535,7 +570,7 @@ function vApprovals(){
  var rows=DB.proposals.slice().reverse().map(function(p){return '<tr data-row class="'+(UI.selProp===p.id?'sel':'')+'" data-act="sel-prop" data-id="'+p.id+'"><td>'+p.id+'</td><td>'+(p.type==='order'?'순서 변경':'신규 조치')+'</td><td>'+esc(propText(p))+'</td><td><span class="tag '+(p.status==='승인'?'dk':(p.status==='대기'?'red':''))+'">'+p.status+'</span></td></tr>';}).join('');
  var det='',p=DB.proposals.filter(function(x){return x.id===UI.selProp;})[0];
  if(p){var rv=p.review,ok=rv.name&&rv.safety&&rv.warn;var pl=p.payload;
-  det='<div class="bar">변경 요청 · '+p.id+' <small>출처 '+esc(p.source)+'</small></div><div class="kv"><div class="k">내용</div><div>'+esc(propText(p))+'</div>'+(p.type==='new-action'?'<div class="k">질문</div><div>'+esc(pl.question||'(자동 문구)')+'</div><div class="k">조치 단계</div><div>'+pl.steps.map(function(s,i){return (i+1)+'. '+esc(s);}).join('<br>')+'</div>':'')+'</div>'+
+  det='<div class="bar">변경 요청 · '+p.id+' <small>출처 '+esc(p.source)+' <button class="btn ghost sm" data-act="close-detail">✕ 닫기</button></small></div><div class="kv"><div class="k">내용</div><div>'+esc(propText(p))+'</div>'+(p.type==='new-action'?'<div class="k">질문</div><div>'+esc(pl.question||'(자동 문구)')+'</div><div class="k">조치 단계</div><div>'+pl.steps.map(function(s,i){return (i+1)+'. '+esc(s);}).join('<br>')+'</div>':'')+'</div>'+
   (p.status==='대기'?'<div class="bar">검수 체크 <small>3가지를 모두 확인해야 승인할 수 있음</small></div><div class="stack"><label class="chk"><input type="checkbox" data-act="rv" data-k="name"'+(rv.name?' checked':'')+'> 명칭 확인 — 용어와 부품 이름이 기준서와 같다</label><label class="chk"><input type="checkbox" data-act="rv" data-k="safety"'+(rv.safety?' checked':'')+'> 안전 확인 — 조치 수준이 고객 조치로 알맞다</label><label class="chk"><input type="checkbox" data-act="rv" data-k="warn"'+(rv.warn?' checked':'')+'> 경고 확인 — 필요한 경고·주의가 붙어 있다</label></div><div class="row"><button class="btn sm" data-act="approve"'+(ok?'':' disabled')+'>승인하고 챗봇에 반영</button><button class="btn ghost sm" data-act="reject">반려</button></div>':'<div class="callout">처리됨 · '+p.status+(p.at?' · '+fmtDT(p.at):'')+'</div>');}
  return {ey:'CHANGE APPROVAL',title:'변경 승인',desc:'순서 변경과 AS 보고서 기반 신규 조치가 모입니다. 검수를 마친 것만 승인하면 챗봇에 반영됩니다.',html:'<div class="scroll"><table class="tbl"><thead><tr><th>번호</th><th>종류</th><th>내용</th><th>상태</th></tr></thead><tbody>'+(rows||'<tr><td colspan="4"><div class="empty">변경 요청이 없습니다. 기준 DB에서 순서를 바꾸거나 AS 처리에서 신규 조치를 제안해 보세요.</div></td></tr>')+'</tbody></table></div>'+det};
 }
@@ -545,7 +580,7 @@ function vImages(){
   body='<div class="callout">조치 노드마다 고객 화면에 나가는 그림입니다. 파일을 올리면 이 브라우저의 시연에서 그림이 바뀝니다. 이미지가 없는 신규 조치는 <b>미등록</b>으로 표시됩니다.</div><div class="gal">'+items.map(function(n){var has=!!mem.img[n.id],reg=n.n.img&&n.n.img!=='new';return '<div class="it"><div class="pv">'+imgHtml(n.n.img,n.id)+'</div><b>'+n.id+'</b><span>'+esc(n.text)+'</span><span>'+(has?'<span class="tag dk">새 이미지</span>':(reg?'<span class="tag">기본 그림</span>':'<span class="tag red">미등록</span>'))+'</span><label class="btn ghost sm" style="cursor:pointer;text-align:center">이미지 올리기<input type="file" accept="image/*" data-act="img-up" data-id="'+n.id+'" hidden></label></div>';}).join('')+'</div>';}
  else{var keys=Object.keys(mem.photos).filter(function(k){return mem.photos[k].length;}),withMeta=DB.cases.filter(function(c){return c.photos;});
   body='<div class="callout">고객이 상담 중에 보낸 사진입니다. 사진은 이 브라우저의 메모리에만 있어 새로 고침하면 미리보기가 사라집니다(건 정보는 남음).</div>'+(withMeta.length?'<div class="gal">'+withMeta.map(function(c){var ps=mem.photos[c.id]||[];return '<div class="it"><div class="pv">'+(ps.length?'<img alt="고객 사진" src="'+ps[0].url+'">':'<span class="s">미리보기 없음</span>')+'</div><b>'+c.id+'</b><span>'+c.photos+'장 · '+esc(c.model)+'</span><button class="btn ghost sm" data-act="open-case" data-id="'+c.id+'">상담 열기</button></div>';}).join('')+'</div>':'<div class="empty">첨부된 사진이 없습니다. 왼쪽 고객 화면의 “📷 사진” 버튼이나 끌어다 놓기로 보내 보세요.</div>');}
- return {ey:'IMAGE CHECK',title:'이미지 확인',desc:'조치 이미지와 고객이 보낸 사진을 왼쪽 메뉴에서 바로 확인합니다.',html:'<div class="tabs"><button type="button" data-act="img-tab" data-id="node" aria-pressed="'+(tab==='node')+'">조치 이미지</button><button type="button" data-act="img-tab" data-id="cust" aria-pressed="'+(tab==='cust')+'">고객 첨부 사진</button></div>'+body};
+ return {ey:'RELATED IMAGES',title:'관련 이미지',desc:'고객에게 나가는 조치 이미지와 고객이 보낸 사진을 한곳에서 확인합니다.',html:'<div class="tabs"><button type="button" data-act="img-tab" data-id="node" aria-pressed="'+(tab==='node')+'">조치 이미지</button><button type="button" data-act="img-tab" data-id="cust" aria-pressed="'+(tab==='cust')+'">고객 첨부 사진</button></div>'+body};
 }
 function pathSvg(c){
  var nodes=[{k:'접수',s:c.id.slice(-10)},{k:'장비',s:c.model},{k:c.code?'오류코드':'증상',s:c.code||c.symptom||'—'}];
@@ -565,7 +600,7 @@ function vMetrics(){
  var opts='<option value="">— 건을 선택하세요 —</option>'+DB.cases.map(function(c){return '<option value="'+c.id+'"'+(UI.mCase===c.id?' selected':'')+'>'+c.id+' · '+esc(c.code||c.symptom||'—')+' · '+c.result+'</option>';}).join('');
  var detail='<div class="empty">상담 건을 선택하면 그 건의 경로 그래프와 단계별 시간 그래프가 나옵니다.</div>';
  if(sel){var tot=sel.steps.length?sel.steps[sel.steps.length-1].t:0,prev=0,tb=sel.steps.map(function(s){var d=s.t-prev;prev=s.t;return hbar(s.node+' '+s.resp,d,Math.max(tot,1),d+'초',false);}).join('');
-  detail='<div class="bar">경로 그래프 · '+sel.id+' <small>빨간 테두리 = 해결되지 않은 지점</small></div><div class="pathbox">'+pathSvg(sel)+'</div><div class="bar">단계별 소요 시간 <small>총 '+tot+'초</small></div><div class="stack">'+(tb||'<div class="empty">단계 기록이 없습니다.</div>')+'</div>';}
+  detail='<div class="bar">경로 그래프 · '+sel.id+' <small>빨간 테두리 = 해결되지 않은 지점 <button class="btn ghost sm" data-act="close-detail">✕ 닫기</button></small></div><div class="pathbox">'+pathSvg(sel)+'</div><div class="bar">단계별 소요 시간 <small>총 '+tot+'초</small></div><div class="stack">'+(tb||'<div class="empty">단계 기록이 없습니다.</div>')+'</div>';}
  return {ey:'ROUTE & STEP METRICS',title:'경로·단계 지표',desc:'단계별 해결률과 건별 경로를 함께 봅니다. 건을 고르면 해당 단계가 아래 막대에서 강조됩니다.',html:'<div class="row"><label class="s" for="mSel">상담 건</label><select id="mSel" data-act="m-case" style="min-width:260px">'+opts+'</select></div>'+detail+'<div class="bar">단계별 해결률 <small>시연용 누적값 + 이 브라우저의 상담 · 막대 = 해결 ÷ 시도</small></div><div class="stack">'+bars+'</div>'};
 }
 function runDaily(){
@@ -577,47 +612,166 @@ function runDaily(){
  DB.dailyReports.unshift(rep);DB.meta.lastDailyRun=rep.id;UI.selDaily=rep.id;save();return rep;
 }
 function download(name,text,type){var b=new Blob([text],{type:type||'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);}
-function vDaily(){
+function dailyView(){
  var rows=DB.dailyReports.map(function(r){return '<tr data-row class="'+(UI.selDaily===r.id?'sel':'')+'" data-act="sel-daily" data-id="'+r.id+'"><td>'+r.id+'</td><td>'+r.date+'</td><td>'+fmtDT(r.runAt)+'</td><td>'+r.counts.total+'</td><td>'+(r.resolveRate==null?'—':Math.round(r.resolveRate*100)+'%')+'</td></tr>';}).join('');
  var r=DB.dailyReports.filter(function(x){return x.id===UI.selDaily;})[0],det='';
- if(r)det='<div class="bar">'+r.id+' <small>'+fmtDT(r.runAt)+' 집계</small></div><div class="kpis"><div class="kpi"><b>'+r.counts.total+'</b><span>상담</span></div><div class="kpi"><b>'+r.counts.resolved+'</b><span>해결</span></div><div class="kpi"><b>'+r.counts.phone+'</b><span>전화 연결</span></div><div class="kpi"><b>'+r.counts.as+'</b><span>AS</span></div><div class="kpi"><b>'+r.proposals.pending+'</b><span>승인 대기</span></div></div><pre class="json">'+esc(JSON.stringify(r,null,2))+'</pre><div class="row"><button class="btn sm" data-act="daily-json" data-id="'+r.id+'">JSON 내려받기</button><button class="btn ghost sm" data-act="daily-csv" data-id="'+r.id+'">단계별 CSV 내려받기</button></div>';
+ if(r)det='<div class="bar">'+r.id+' <small>'+fmtDT(r.runAt)+' 집계 <button class="btn ghost sm" data-act="close-detail">✕ 닫기</button></small></div><div class="kpis"><div class="kpi"><b>'+r.counts.total+'</b><span>상담</span></div><div class="kpi"><b>'+r.counts.resolved+'</b><span>해결</span></div><div class="kpi"><b>'+r.counts.phone+'</b><span>전화 연결</span></div><div class="kpi"><b>'+r.counts.as+'</b><span>AS</span></div><div class="kpi"><b>'+r.proposals.pending+'</b><span>승인 대기</span></div></div><pre class="json">'+esc(JSON.stringify(r,null,2))+'</pre><div class="row"><button class="btn sm" data-act="daily-json" data-id="'+r.id+'">JSON 내려받기</button><button class="btn ghost sm" data-act="daily-csv" data-id="'+r.id+'">단계별 CSV 내려받기</button></div>';
  return {ey:'DAILY AGGREGATION',title:'일일 집계',desc:'집계를 실행하면 그날의 결과가 따로 저장됩니다. 보고서에 일일이 옮기지 않고, 저장된 집계를 그대로 꺼내 씁니다.',html:
  '<div class="row"><button class="btn red" data-act="daily-run">오늘 집계 실행 · 저장</button><span class="s">같은 날 여러 번 실행하면 실행 순서대로 각각 남습니다.</span></div>'+
  '<div class="box"><b>집계 결과는 어디에 저장되나요?</b><span class="s">① 이 시연: 이 브라우저 저장소의 <b>dailyReports</b> 목록(아래 표, DB 전체 조회에서도 확인). ② 실제 운영 설계: DB의 일일 집계 표에 날짜별로 한 줄씩 쌓이고, 보고서는 그 표에서 꺼내 씁니다.</span></div>'+
  '<div class="scroll"><table class="tbl"><thead><tr><th>집계 번호</th><th>날짜</th><th>실행 시각</th><th>상담</th><th>해결률</th></tr></thead><tbody>'+(rows||'<tr><td colspan="5"><div class="empty">저장된 집계가 없습니다. 위 버튼으로 실행해 보세요.</div></td></tr>')+'</tbody></table></div>'+det};
 }
-var TBL={
- cases:{label:'상담 (cases)',rows:function(){return DB.cases;},key:'id',cols:[['id','접수번호',0],['startedAt','시작',0,function(v){return fmtDT(v);}],['model','모델',0],['code','코드',1],['result','결과',1,null,['해결','AS','전화 연결','이탈']],['status','상태',1,null,['접수','조치 중','확인 대기','종결']]]},
- ledger:{label:'장비대장 (equipment)',rows:function(){return DB.ledger;},key:'serial',cols:[['serial','시리얼',0],['qr','QR 식별번호',0],['model','모델',0],['voltage','출고전압',1],['customer','고객사',1],['line','설치 위치',1]]},
- nodes:{label:'순서도 노드 (nodes)',rows:function(){return allNodes();},key:'id',cols:[['id','번호',0],['tree','순서도',0],['type','종류',0],['text','내용',1],['level','수준',1,null,['','고객 조치','AS']]]},
- asJobs:{label:'AS 건 (as_job)',rows:function(){return Object.keys(DB.asJobs).map(function(k){return DB.asJobs[k];});},key:'caseId',cols:[['caseId','접수번호',0],['status','상태',1,null,['접수 필요','진행 중','완료']],['memo','메모',1]]},
- proposals:{label:'변경 요청 (proposal)',rows:function(){return DB.proposals;},key:'id',cols:[['id','번호',0],['type','종류',0],['source','출처',0],['status','상태',0]]},
- dailyReports:{label:'일일 집계 (daily_report)',rows:function(){return DB.dailyReports;},key:'id',cols:[['id','집계 번호',0],['date','날짜',0],['runAt','실행',0,function(v){return fmtDT(v);}]]},
- audit:{label:'수정 이력 (audit)',rows:function(){return DB.audit;},key:'at',cols:[['at','시각',0,function(v){return fmtDT(v);}],['who','수정자',0],['table','표',0],['key','대상',0],['field','칸',0],['from','이전',0],['to','이후',0]]}
-};
+
+var COMPN={PS:'전원장치',WF:'와이어 피더',TH:'토치·호스 팩',TP:'토치 주변',CU:'냉각장치',RI:'로봇 연동',SF:'안전장치'};
+var POLICY=[['P-01','상담 시간 상한','30분','임의 값'],['P-02','미조작 이탈','20분','임의 값'],['P-03','순서 변경 기준(단계당 시도)','10건','기준서 5장'],['P-04','해결 확인 기한','7일','기준서 4장'],['P-05','일일 반영 시각','16:30 승인 · 익일 09:00 적용','임의 값']];
+var ITEMNO={};CODE_ITEMS.forEach(function(i){ITEMNO[i[1]]=i[0];});
+function C(f,l,n,e,opts,fmt){return {f:f,l:l,n:n||'—',e:!!e,o:opts||null,fmt:fmt||null};}
+var SH=[];
+function sheet(o){SH.push(o);}
+function sheetOf(code){return SH.filter(function(s){return s.c===code;})[0];}
+function tinfo(code){return CODE_TABLES.filter(function(t){return t[0]===code;})[0]||[code,'','','',''];}
+function mkSet(ref,key,table,pick){return function(f,v){var old=pick?pick.get(f):ref[f];if(String(old==null?'':old)===String(v==null?'':v))return false;if(pick)pick.set(f,v);else ref[f]=v;audit(table,key,f,old,v);save();return true;};}
+function yn(v){return v?'✔':'—';}
+// ---- X 시스템·기준정보
+sheet({c:'XA',rows:function(){return DB.ledger.map(function(r){return {_k:r.serial,_r:r,serial:r.serial,qr:r.qr,model:r.model,voltage:r.voltage,customer:r.customer,line:r.line};});},cols:[C('serial','시리얼 번호','1020'),C('qr','QR 식별번호','1030'),C('model','모델','2010'),C('voltage','출고전압','2020',1),C('customer','고객사','2030',1),C('line','설치 위치','2040',1)]});
+sheet({c:'XC',rows:function(){return MODELS.map(function(m){return {_k:m,model:m,n:DB.ledger.filter(function(l){return l.model===m;}).length};});},cols:[C('model','모델','2010'),C('n','장비대장 등록 대수','—')]});
+sheet({c:'XH',rows:function(){return Object.keys(COMPN).map(function(k){return {_k:k,code:k,name:COMPN[k],trees:Object.keys(DB.trees).filter(function(t){return DB.trees[t].comp===k;}).join(', ')||'—'};});},cols:[C('code','구성품 코드','2050'),C('name','구성품 이름','—'),C('trees','쓰이는 순서도','1050')]});
+sheet({c:'XJ',rows:function(){var a=[{code:'OP',name:'조작·설정'}];Object.keys(COMPN).forEach(function(k){a.push({code:k,name:COMPN[k]});});a.push({code:'FA',name:'오경보'});return a.map(function(x){x._k=x.code;return x;});},cols:[C('code','원인 구분 코드','4050'),C('name','뜻','—')]});
+sheet({c:'XK',rows:function(){return [{_k:'완료',end:'완료',mean:'순서도가 해결로 끝남'},{_k:'AS',end:'AS',mean:'고객 조치로 해결 불가 → AS 연결'}];},cols:[C('end','끝 값','3050'),C('mean','뜻','—')]});
+sheet({c:'XM',rows:function(){return POLICY.map(function(p){return {_k:p[0],id:p[0],name:p[1],val:p[2],note:p[3]};});},cols:[C('id','번호','—'),C('name','정책값','—'),C('val','값','—'),C('note','근거','—')]});
+// ---- A 절차(작업본의 개정 기록)
+sheet({c:'AM',rows:function(){return DB.revisions.map(function(r,i){return {_k:String(i),tree:r.tree,rev:r.rev,at:r.at,reason:r.reason};});},cols:[C('tree','순서도 ID','1050'),C('rev','개정 번호','7060'),C('at','승인 일시','8050',0,null,function(v){return fmtDT(v);}),C('reason','이유','—')]});
+// ---- B AS 기록
+sheet({c:'BA',rows:function(){return Object.keys(DB.asJobs).sort().reverse().map(function(k){var j=DB.asJobs[k];var o={_k:k,caseId:k,status:j.status,memo:j.memo,att:j.attachments.length};o._set=mkSet(j,k,'BA');return o;});},cols:[C('caseId','접수번호','1010'),C('status','AS 상태','5010',1,['접수 필요','진행 중','완료']),C('memo','AS 메모','5020',1),C('att','첨부 수','—')]});
+sheet({c:'BC',rows:function(){var a=[];Object.keys(DB.asJobs).forEach(function(k){DB.asJobs[k].attachments.forEach(function(x){a.push({_k:x.id,id:x.id,caseId:k,name:x.name,type:x.type,size:x.size,at:x.addedAt});});});return a;},cols:[C('id','첨부 번호','—'),C('caseId','접수번호','1010'),C('name','파일 이름','5030'),C('type','형식','5040'),C('size','크기(바이트)','5050'),C('at','첨부 일시','8050',0,null,function(v){return fmtDT(v);})]});
+sheet({c:'BE',rows:function(){return DB.proposals.filter(function(p){return p.type==='new-action';}).map(function(p){return {_k:p.id,id:p.id,source:p.source,code:p.payload.code,title:p.payload.title,status:p.status};});},cols:[C('id','제안 번호','—'),C('source','출처(AS 건)','—'),C('code','오류 코드','1040'),C('title','조치 제목','3020'),C('status','상태','7040')]});
+// ---- C 상담 이력
+sheet({c:'CA',rows:function(){return DB.cases.map(function(c){return {_k:c.id,_r:c,id:c.id,startedAt:c.startedAt,model:c.model,serial:c.serial,code:c.code,symptom:c.symptom||'',treeId:c.treeId||'',result:c.result,reason:c.reason,status:c.status};});},cols:[C('id','접수번호','1010'),C('startedAt','시작 일시','8010',0,null,function(v){return fmtDT(v);}),C('model','모델','2010'),C('serial','시리얼','1020'),C('code','오류코드','1040',1),C('symptom','증상 그룹','1100'),C('treeId','순서도','1050'),C('result','결과','4010',1,['해결','AS','전화 연결','이탈']),C('reason','사유','4020'),C('status','상태','7010',1,['접수','조치 중','확인 대기','종결'])]});
+sheet({c:'CB',rows:function(){var a=[];DB.cases.forEach(function(c){c.steps.forEach(function(s,i){a.push({_k:c.id+'#'+i,caseId:c.id,seq:i+1,node:s.node,resp:s.resp,t:s.t});});});return a;},cols:[C('caseId','접수번호','1010'),C('seq','순번','—'),C('node','노드 번호','1060'),C('resp','응답 값','4030'),C('t','누적 시간(초)','6040')]});
+sheet({c:'CC',rows:function(){var a=[];DB.cases.forEach(function(c){var prev=0;c.steps.forEach(function(s,i){a.push({_k:c.id+'#'+i,caseId:c.id,node:s.node,d:s.t-prev});prev=s.t;});});return a;},cols:[C('caseId','접수번호','1010'),C('node','노드 번호','1060'),C('d','단계 소요(초)','6040')]});
+sheet({c:'CF',rows:function(){return DB.cases.filter(function(c){return c.photos;}).map(function(c){return {_k:c.id,id:c.id,n:c.photos,model:c.model};});},cols:[C('id','접수번호','1010'),C('n','사진 수','—'),C('model','모델','2010')]});
+sheet({c:'CH',rows:function(){return Object.keys(DB.meta.counter).sort().reverse().map(function(k){return {_k:k,day:k,n:DB.meta.counter[k]};});},cols:[C('day','날짜(YYMMDD)','1010'),C('n','발급 수','—')]});
+// ---- E 변경·검토·승인
+sheet({c:'EA',rows:function(){return DB.proposals.slice().reverse().map(function(p){return {_k:p.id,id:p.id,type:p.type==='order'?'순서 변경':'신규 조치',source:p.source,status:p.status,text:propText(p)};});},cols:[C('id','요청 번호','—'),C('type','종류','7030'),C('source','출처','—'),C('status','상태','7040'),C('text','내용','—')]});
+sheet({c:'EE',rows:function(){return DB.proposals.map(function(p){return {_k:p.id,id:p.id,name:yn(p.review.name),safety:yn(p.review.safety),warn:yn(p.review.warn)};});},cols:[C('id','요청 번호','—'),C('name','명칭 확인','7050'),C('safety','안전 확인','7050'),C('warn','경고 확인','7050')]});
+sheet({c:'EJ',rows:function(){return DB.proposals.filter(function(p){return p.status!=='대기';}).map(function(p){return {_k:p.id,id:p.id,status:p.status,at:p.at};});},cols:[C('id','요청 번호','—'),C('status','처리 결과','7040'),C('at','처리 일시','8050',0,null,function(v){return v?fmtDT(v):'';})]});
+// ---- F 집계·지표
+sheet({c:'FA',rows:function(){return Object.keys(DB.stats).sort().map(function(k){var s=DB.stats[k];return {_k:k,node:k,title:nodeTitle(k),t:s.t,r:s.r,rate:s.t?Math.round(s.r*100/s.t)+'%':'—'};});},cols:[C('node','노드 번호','1060'),C('title','조치','3020'),C('t','시도 수','6010'),C('r','해결 수','6020'),C('rate','해결률','6030')]});
+sheet({c:'FC',rows:function(){return DB.dailyReports.map(function(r){return {_k:r.id,id:r.id,date:r.date,runAt:r.runAt,total:r.counts.total,rate:r.resolveRate==null?'—':Math.round(r.resolveRate*100)+'%'};});},cols:[C('id','집계 번호','—'),C('date','날짜','—'),C('runAt','실행 일시','8050',0,null,function(v){return fmtDT(v);}),C('total','상담 건수','6050'),C('rate','해결률','6030')]});
+sheet({c:'FE',rows:function(){var a=[];DB.dailyReports.forEach(function(r){r.perStep.forEach(function(s,i){a.push({_k:r.id+'#'+i,id:r.id,node:s.node,tries:s.tries,res:s.resolved,rate:s.rate==null?'—':Math.round(s.rate*100)+'%'});});});return a;},cols:[C('id','집계 번호','—'),C('node','노드 번호','1060'),C('tries','시도 수','6010'),C('res','해결 수','6020'),C('rate','해결률','6030')]});
+// ---- H 운영·보안
+sheet({c:'HF',rows:function(){return DB.audit.map(function(a,i){return {_k:String(i),at:a.at,who:a.who,table:a.table,key:a.key,field:a.field,from:a.from,to:a.to};});},cols:[C('at','수정 일시','8050',0,null,function(v){return fmtDT(v);}),C('who','수정자','8030'),C('table','표 코드','9010'),C('key','대상','—'),C('field','칸','—'),C('from','이전 값','8060'),C('to','이후 값','8070')]});
+// ---- P 승인본(챗봇이 읽는 순서도)
+sheet({c:'PA',rows:function(){return Object.keys(DB.trees).map(function(k){var t=DB.trees[k];var o={_k:k,id:k,name:t.name,kind:t.kind==='code'?'오류코드':'증상 그룹',comp:t.comp,rev:t.rev||1};o._set=mkSet(t,k,'PA');return o;});},cols:[C('id','순서도 ID','1050'),C('name','이름','—',1),C('kind','종류','—'),C('comp','구성품 코드','2050'),C('rev','개정 번호','7060')]});
+function nodeRef(id){return allNodes().filter(function(n){return n.id===id;})[0];}
+sheet({c:'PB',rows:function(){return allNodes().map(function(n){var o={_k:n.id,id:n.id,tree:n.tree,type:n.type==='C'?'질문':'조치',text:n.text,yes:n.n.yes||'',no:n.n.no||'',next:n.n.next||'',level:n.level};o._set=function(f,v){var nd=n.n,fld=f==='text'?(nd.type==='C'?'q':'title'):f,old=nd[fld]||'';if(String(old)===String(v))return false;nd[fld]=v;audit('PB',n.id,fld,old,v);save();return true;};return o;});},cols:[C('id','노드 번호','1060'),C('tree','순서도','1050'),C('type','종류','—'),C('text','내용(질문·조치 제목)','3010',1),C('yes','예 연결','3040'),C('no','아니오 연결','3050'),C('next','안 됨 연결','3060'),C('level','조치 수준','7020',1,['','고객 조치','AS'])]});
+sheet({c:'PC',rows:function(){var a=[];Object.keys(DB.trees).forEach(function(k){var t=DB.trees[k];if(t.kind==='code')Object.keys(t.start).forEach(function(c){a.push({_k:c,code:c,tree:k,start:t.start[c]});});});return a;},cols:[C('code','오류코드','1040'),C('tree','순서도','1050'),C('start','시작 노드','1060')]});
+sheet({c:'PE',rows:function(){var a=[];allNodes().forEach(function(n){if(n.type!=='A')return;n.n.steps.forEach(function(s,i){var o={_k:n.id+'#'+i,node:n.id,seq:i+1,text:s};o._set=function(f,v){var old=n.n.steps[i];if(old===v)return false;n.n.steps[i]=v;audit('PE',n.id+'#'+(i+1),'text',old,v);save();return true;};a.push(o);});});return a;},cols:[C('node','노드 번호','1060'),C('seq','순번','—'),C('text','조치 단계 문장','3030',1)]});
+sheet({c:'PF',rows:function(){var m={};allNodes().forEach(function(n){var l=n.level||'(질문 노드)';m[l]=(m[l]||0)+1;});return Object.keys(m).map(function(k){return {_k:k,level:k,n:m[k]};});},cols:[C('level','조치 수준','7020'),C('n','노드 수','—')]});
+sheet({c:'PG',rows:function(){return Object.keys(DB.warn).map(function(k){var w=DB.warn[k];var o={_k:k,id:k,lv:w.lv,t:w.t};o._set=function(f,v){var old=w.t;if(old===v)return false;w.t=v;audit('PG',k,'text',old,v);save();return true;};return o;});},cols:[C('id','경고·주의 ID','1080'),C('lv','구분','—'),C('t','문구','3080',1)]});
+sheet({c:'PH',rows:function(){return allNodes().filter(function(n){return n.type==='A';}).map(function(n){return {_k:n.id,id:n.id,img:IMGNAME[n.n.img]||n.n.img,st:mem.img[n.id]?'새 이미지':(n.n.img==='new'?'미등록':'기본 그림')};});},cols:[C('id','노드 번호','1060'),C('img','이미지','1090'),C('st','상태','—')]});
+sheet({c:'PJ',rows:function(){return SYMS.map(function(s){return {_k:s.label,id:s.id||'—',label:s.label,tree:s.id||'승인된 순서도 없음'};});},cols:[C('id','증상 그룹 ID','1100'),C('label','증상','—'),C('tree','순서도','1050')]});
+// ---- Z 코드 사전
+sheet({c:'ZA',rows:function(){return CODE_TABLES.map(function(t){var s=sheetOf(t[0]);return {_k:t[0],code:t[0],db:t[1],ko:t[2],desc:t[3],phase:t[4],has:s?'있음':'—',n:s?(t[0]==='ZA'?CODE_TABLES.length:s.rows().length):''};});},cols:[C('code','표 코드','9010'),C('db','DB 표 이름','—'),C('ko','한글 이름','—'),C('desc','설명','—'),C('phase','단계','—'),C('has','이 시연의 시트','—'),C('n','행 수','—')]});
+sheet({c:'ZB',rows:function(){return CODE_ITEMS.map(function(i){return {_k:i[0],num:i[0],name:i[1],tables:i[2],fmt:i[3],desc:i[4]};});},cols:[C('num','항목 번호','9020'),C('name','항목 이름','—'),C('tables','쓰이는 표','9010'),C('fmt','형식','—'),C('desc','설명','—')]});
+sheet({c:'ZC',rows:function(){return DB.codeMap.map(function(m,i){return {_k:String(i),kind:m.kind,old:m.old,nw:m.nw,rel:m.rel,why:m.why+(m.example?' (예시)':'')};});},cols:[C('kind','종류','—'),C('old','이전 번호','8060'),C('nw','새 번호','8070'),C('rel','관계','—'),C('why','사유','—')]});
+SH.forEach(function(s){var t=tinfo(s.c);s.db=t[1];s.lab=t[2];s.desc=t[3];s.phase=t[4];});
+function famOf(code){return CODE_FAM.filter(function(f){return f[0]===code[0];})[0];}
+function dbApply2(s,row,c,val){
+ if(row._set)return row._set(c.f,val);
+ var ref=row._r;if(!ref)return false;var old=ref[c.f];if(c.f==='code'&&val==='')val=null;
+ if(String(old==null?'':old)===String(val==null?'':val))return false;
+ ref[c.f]=val;audit(s.c,row._k,c.f,old,val);save();return true;
+}
+function curSheet(){var s=sheetOf(UI.dbTable);if(!s){UI.dbTable='CA';s=sheetOf('CA');}return s;}
+function dbRows(){
+ var s=curSheet(),rows=s.rows();
+ var q=(UI.dbQ||'').trim().toLowerCase();
+ if(q)rows=rows.filter(function(r){return s.cols.some(function(c){var v=r[c.f];if(c.fmt)v=c.fmt(v);return String(v==null?'':v).toLowerCase().indexOf(q)>=0;});});
+ var so=UI.dbSort;
+ if(so&&so.t===UI.dbTable){rows=rows.slice().sort(function(a,b){var va=a[so.c],vb=b[so.c];if(va==null)va='';if(vb==null)vb='';var na=+va,nb=+vb,cmp=(va!==''&&vb!==''&&!isNaN(na)&&!isNaN(nb))?na-nb:String(va).localeCompare(String(vb),'ko');return so.d*cmp;});}
+ return {S:s,rows:rows.slice(0,200),total:rows.length};
+}
+function cellVal(c,row){var v=row[c.f];return c.fmt?c.fmt(v):(v==null?'':v);}
+function letter(i){return String.fromCharCode(65+i);}
 function vDbview(){
- var tn=UI.dbTable,T=TBL[tn],tabs=Object.keys(TBL).map(function(k){return '<button type="button" data-act="db-table" data-id="'+k+'" aria-pressed="'+(tn===k)+'">'+TBL[k].label+'</button>';}).join('');
- var rows=T.rows().slice(0,80).map(function(r,i){return '<tr>'+T.cols.map(function(c){var v=r[c[0]];var fv=c[3]?c[3](v):v;if(v==null)fv='';
-  if(c[2]){if(c[4])return '<td><select data-act="db-edit" data-t="'+tn+'" data-k="'+esc(r[T.key])+'" data-c="'+c[0]+'">'+c[4].map(function(o){return '<option'+(o===v?' selected':'')+'>'+o+'</option>';}).join('')+'</select></td>';return '<td><input data-act="db-edit" data-t="'+tn+'" data-k="'+esc(r[T.key])+'" data-c="'+c[0]+'" value="'+esc(fv)+'"></td>';}
-  return '<td class="lock">'+esc(fv)+'</td>';}).join('')+'</tr>';}).join('');
- return {ey:'DATABASE',title:'DB 전체 조회',desc:'DB 내용을 표로 보고, 편집할 수 있는 칸은 바로 수정합니다. 수정은 수정 이력에 남고 고객 화면에도 곧바로 반영됩니다.',html:'<div class="tabs">'+tabs+'</div><div class="callout">흰 칸은 편집할 수 있고, 회색 글자는 고정값입니다. 수정하면 <b>수정 이력(audit)</b>에 누가·언제·무엇을 바꿨는지 기록됩니다. 최근 80행까지 보여 줍니다.</div><div class="scroll" style="max-height:420px"><table class="tbl"><thead><tr>'+T.cols.map(function(c){return '<th>'+c[1]+'</th>';}).join('')+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+T.cols.length+'"><div class="empty">행이 없습니다.</div></td></tr>')+'</tbody></table></div>'};
+ var d=dbRows(),S=d.S,cols=S.cols;UI.dbFam=S.c[0];
+ var sl=UI.xsel&&UI.xsel.t===UI.dbTable?UI.xsel:{t:UI.dbTable,r:0,c:0};
+ sl.r=Math.max(0,Math.min(sl.r,d.rows.length-1));sl.c=Math.max(0,Math.min(sl.c,cols.length-1));UI.xsel=sl;
+ var h1='<tr><th class="corner"></th>'+cols.map(function(c,i){return '<th class="cl">'+letter(i)+'</th>';}).join('')+'</tr>';
+ var hn='<tr><th class="rn in">번호</th>'+cols.map(function(c){return '<th class="in" title="항목 번호(코드 사전 ZB)">'+c.n+'</th>';}).join('')+'</tr>';
+ var h2='<tr><th class="rn">1</th>'+cols.map(function(c){var s=UI.dbSort&&UI.dbSort.t===UI.dbTable&&UI.dbSort.c===c.f;return '<th class="nm" data-act="db-sort" data-c="'+c.f+'" title="누르면 정렬">'+c.l+(s?(UI.dbSort.d>0?' ▲':' ▼'):'')+'</th>';}).join('')+'</tr>';
+ var body=d.rows.map(function(x,ri){return '<tr><th class="rn">'+(ri+2)+'</th>'+cols.map(function(c,ci){return '<td class="'+(c.e?'':'lock ')+(sl.r===ri&&sl.c===ci?'sel':'')+'" data-r="'+ri+'" data-ci="'+ci+'">'+esc(cellVal(c,x))+'</td>';}).join('')+'</tr>';}).join('');
+ var cur=d.rows[sl.r],cc=cols[sl.c],fx=cur?cellVal(cc,cur):'';
+ var fams=CODE_FAM.filter(function(f){return SH.some(function(s){return s.c[0]===f[0];});});
+ var famBtns=fams.map(function(f){var n=SH.filter(function(s){return s.c[0]===f[0];}).length;return '<button type="button" data-act="db-fam" data-id="'+f[0]+'" aria-pressed="'+(UI.dbFam===f[0])+'">'+f[0]+' '+f[1]+' <span class="s">'+n+'</span></button>';}).join('');
+ var tabs=SH.filter(function(s){return s.c[0]===UI.dbFam;}).map(function(s){return '<button type="button" data-act="db-table" data-id="'+s.c+'" aria-pressed="'+(UI.dbTable===s.c)+'">'+s.c+' '+s.lab+'</button>';}).join('');
+ var f0=famOf(S.c);
+ var zc=S.c==='ZC'?'<div class="bar">번호 대응표에 한 줄 추가 <small>코드가 바뀐 기록을 남깁니다</small></div><div class="grid3"><div class="field"><label for="zcK">종류</label><select id="zcK"><option>트리 번호</option><option>노드 번호</option><option>항목 번호</option><option>표 코드</option></select></div><div class="field"><label for="zcO">이전 번호</label><input id="zcO" placeholder="예: TH14"></div><div class="field"><label for="zcN">새 번호</label><input id="zcN" placeholder="예: TH17 (삭제는 —)"></div></div><div class="grid2"><div class="field"><label for="zcR">관계</label><select id="zcR"><option>1:1</option><option>1:N</option><option>N:1</option><option>삭제</option></select></div><div class="field"><label for="zcW">사유</label><input id="zcW" placeholder="바뀐 이유"></div></div><div class="row"><button class="btn sm" data-act="zc-add">대응표에 추가</button></div>':'';
+ return {ey:'DATABASE · CODE DICTIONARY',title:'DB 전체 조회',desc:'엑셀처럼 칸을 골라 보고 고칩니다. 시트는 표 코드 계열별로 묶여 있고, 각 열에는 코드 사전의 항목 번호가 붙어 있습니다.',html:
+ '<div class="tabs" role="group" aria-label="표 코드 계열">'+famBtns+'</div>'+
+ '<div class="callout"><b>'+S.c+'</b> · '+esc(S.db)+' · '+esc(S.lab)+' <span class="tag">'+esc(f0?f0[1]:'')+'</span> <span class="tag '+(S.phase==='신규'?'red':'')+'">'+esc(S.phase)+'</span><br><span class="s">'+esc(S.desc)+' · '+(S.cols.some(function(c){return c.e;})?'흰 칸은 고칠 수 있습니다.':'이 시트는 읽기 전용(다른 표에서 계산한 값)입니다.')+'</span></div>'+
+ '<div class="row"><input id="dbQ" data-act="db-q" type="search" placeholder="이 시트에서 찾기" value="'+esc(UI.dbQ||'')+'" style="border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:.3em .6em;min-width:200px"><span class="s">'+d.total+'행 · '+cols.length+'열'+(d.total>200?' (200행까지 표시)':'')+'</span><button class="btn ghost sm" data-act="db-csv">이 시트 CSV로 내려받기</button><button class="btn ghost sm" data-act="db-dl">DB 전체 내려받기(백업)</button></div>'+
+ '<div class="fbar"><span class="nb" id="xNb">'+letter(sl.c)+(sl.r+2)+'</span><span class="fx">fx</span><input id="xFx" value="'+esc(fx)+'"'+(cc.e?'':' readonly')+' aria-label="수식 입력줄(선택한 칸의 값)"></div>'+
+ '<div class="xl" id="xl" tabindex="0" aria-label="DB 시트(엑셀형)"><table class="xlt"><thead>'+h1+hn+h2+'</thead><tbody>'+(body||'<tr><td colspan="'+(cols.length+1)+'" class="lock">행이 없습니다.</td></tr>')+'</tbody></table></div>'+
+ '<div class="stabs" role="group" aria-label="시트 선택">'+tabs+'</div>'+zc+
+ '<div class="s">칸을 누르면 선택, <b>Enter · 두 번 누르기 · 글자 입력</b>으로 고칩니다. 방향키·Tab으로 이동, 제목 칸을 누르면 정렬. 회색 칸은 고정값입니다. 둘째 줄의 번호는 항목 번호(ZB 시트)입니다.</div>'};
 }
-function hostState(){return {schema:'acp-host-state/1',savedAt:new Date().toISOString(),ui:{tab:UI.tab,selectedCase:UI.selCase,filterResult:UI.filter,treeSelected:UI.treeSel,dbTable:UI.dbTable,metricsCase:UI.mCase||null},live:{treesVersion:DB.meta.treesVersion,lastEditAt:DB.meta.lastEditAt,lastDailyRun:DB.meta.lastDailyRun},counters:{cases:DB.cases.length,asOpen:openAs(),proposalsPending:pending(),dailyReports:DB.dailyReports.length}};}
-function vState(){
- var js=JSON.stringify(hostState(),null,2);
- var ex=[['schema','상태 JSON의 형식 이름과 버전입니다. 가져올 때 같은 형식인지 확인합니다.','—'],['savedAt','이 JSON을 만든 시각입니다.','—'],['ui.tab','마지막으로 보던 호스트 메뉴입니다.','화면 복원용'],['ui.selectedCase','상담 기록에서 열어 둔 접수번호입니다.','화면 복원용'],['ui.filterResult','상담 기록의 결과 필터입니다.','화면 복원용'],['ui.treeSelected / dbTable / metricsCase','기준 DB·DB 전체 조회·경로 지표에서 고른 대상입니다.','화면 복원용'],['live.treesVersion','승인된 순서도가 바뀔 때마다 1씩 올라가는 번호입니다. 챗봇이 읽는 버전과 맞는지 확인할 때 씁니다.','DB(meta)'],['live.lastEditAt','DB를 마지막으로 수정한 시각입니다.','DB(meta)'],['live.lastDailyRun','가장 최근에 실행한 일일 집계의 번호입니다.','DB(일일 집계)'],['counters.*','상담 수, 처리 대기 AS, 승인 대기, 저장된 집계 수의 요약입니다.','DB에서 계산']];
- return {ey:'HOST STATE JSON',title:'호스트 상태 JSON',desc:'호스트 화면이 지금 어떤 상태인지 담은 요약입니다. DB 본체가 아니라 화면 상태와 DB 요약만 들어 있습니다.',html:
- '<div class="grid2"><div class="box"><b>이 JSON은 무엇인가요?</b><span class="s">호스트 화면을 닫았다가 다시 열 때 보던 곳으로 돌아오게 하는 <b>화면 상태 파일</b>입니다. 상담 기록 같은 DB 내용은 들어 있지 않습니다.</span></div><div class="box dk"><b>어디에 저장되나요?</b><span class="s">이 시연에서는 아래에서 내려받아 보관합니다. DB 본체(상담·AS·집계)는 별도의 <b>DB 전체 내려받기</b>로 보관합니다.</span></div></div>'+
- '<div class="bar">현재 상태 JSON</div><pre class="json" id="stateJson">'+esc(js)+'</pre><div class="row"><button class="btn sm" data-act="state-dl">상태 JSON 내려받기</button><button class="btn ghost sm" data-act="state-copy">복사</button><label class="btn ghost sm" for="stateFile" style="cursor:pointer">상태 JSON 가져오기</label><input type="file" id="stateFile" data-act="state-file" accept=".json,application/json" hidden><button class="btn ghost sm" data-act="db-dl">DB 전체 내려받기</button></div>'+
- '<div class="bar">항목 설명</div><div class="scroll"><table class="tbl"><thead><tr><th>항목</th><th>의미</th><th>저장·사용 위치</th></tr></thead><tbody>'+ex.map(function(e){return '<tr><td>'+esc(e[0])+'</td><td>'+esc(e[1])+'</td><td>'+esc(e[2])+'</td></tr>';}).join('')+'</tbody></table></div>'};
+function xlSelect(r,c){
+ var d=dbRows();UI.xsel={t:UI.dbTable,r:r,c:c};
+ $$('#xl td.sel').forEach(function(t){t.classList.remove('sel');});
+ var td=$('#xl td[data-r="'+r+'"][data-ci="'+c+'"]');if(td){td.classList.add('sel');td.scrollIntoView({block:'nearest',inline:'nearest'});}
+ var row=d.rows[r],col=d.S.cols[c];$('#xNb').textContent=letter(c)+(r+2);var fx=$('#xFx');fx.value=row?cellVal(col,row):'';fx.readOnly=!col.e;
+ UI.xfocus=true;var g=$('#xl');if(g)g.focus({preventScroll:true});
 }
-var VIEWS={overview:vOverview,records:vRecords,as:vAs,trees:vTrees,approvals:vApprovals,images:vImages,metrics:vMetrics,daily:vDaily,dbview:vDbview,state:vState};
+function xlCommit(r,c,val,move){
+ var d=dbRows(),row=d.rows[r],col=d.S.cols[c];if(!row||!col||!col.e)return;
+ var changed=dbApply2(d.S,row,col,val);
+ var nr=r,nc=c;if(move==='down')nr=Math.min(d.rows.length-1,r+1);if(move==='right')nc=Math.min(d.S.cols.length-1,c+1);
+ UI.xsel={t:UI.dbTable,r:nr,c:nc};UI.xfocus=true;renderHost();if(changed)toast('수정했습니다. 수정 이력(HF)에 기록되었습니다.');
+}
+function xlEdit(r,c,init){
+ var d=dbRows(),row=d.rows[r],col=d.S.cols[c];if(!row)return;
+ if(!col.e){toast('고정값 칸입니다. 수정할 수 없습니다.');return;}
+ var td=$('#xl td[data-r="'+r+'"][data-ci="'+c+'"]');if(!td||td.classList.contains('edit'))return;
+ var raw=row[col.f];raw=raw==null?'':raw;var el;
+ if(col.o){el=document.createElement('select');col.o.forEach(function(o){var op=document.createElement('option');op.textContent=o;if(o===raw)op.selected=true;el.appendChild(op);});}
+ else{el=document.createElement('input');el.type='text';el.value=init!==undefined?init:String(raw);}
+ td.classList.add('edit');td.textContent='';td.appendChild(el);el.focus();if(el.select&&init===undefined)el.select();
+ var done=false;
+ function fin(move,cancel){if(done)return;done=true;if(cancel){UI.xfocus=true;renderHost();return;}xlCommit(r,c,el.value,move);}
+ el.addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();fin('down');}else if(e.key==='Tab'){e.preventDefault();fin('right');}else if(e.key==='Escape'){e.preventDefault();fin(null,true);}});
+ el.addEventListener('blur',function(){fin(null);});
+}
+function hostKey(e){
+ if(UI.tab!=='dbview')return;var t=e.target;
+ if(t.id==='xFx'){if(e.key==='Enter'){e.preventDefault();var s=UI.xsel;xlCommit(s.r,s.c,t.value,'down');}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();xlSelect(UI.xsel.r,UI.xsel.c);}return;}
+ if(t.id!=='xl')return;
+ var d=dbRows(),sl=UI.xsel,R=d.rows.length,Cn=d.S.cols.length;if(!R)return;
+ var mv={ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]}[e.key];
+ if(mv){e.preventDefault();xlSelect(Math.max(0,Math.min(R-1,sl.r+mv[0])),Math.max(0,Math.min(Cn-1,sl.c+mv[1])));return;}
+ if(e.key==='Tab'){e.preventDefault();xlSelect(sl.r,Math.max(0,Math.min(Cn-1,sl.c+(e.shiftKey?-1:1))));return;}
+ if(e.key==='Enter'||e.key==='F2'){e.preventDefault();xlEdit(sl.r,sl.c);return;}
+ if(e.key==='Escape'){e.stopPropagation();return;}
+ if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();xlEdit(sl.r,sl.c,e.key);}
+}
+function hostDbl(e){var td=e.target.closest('td[data-ci]');if(td&&UI.tab==='dbview')xlEdit(+td.dataset.r,+td.dataset.ci);}
+var VIEWS={overview:vOverview,records:vRecords,as:vAs,trees:vTrees,approvals:vApprovals,images:vImages,metrics:vMetrics,dbview:vDbview};
+var NAVK=['tab','asTab','selCase','selAs','selProp','mCase','treeSel','dbTable','imgTab','selDaily','filter'];
+function navSnap(){var o={};NAVK.forEach(function(k){o[k]=UI[k];});return o;}
+function crumbText(){var t=TABS.filter(function(x){return x[0]===UI.tab;})[0][1],d={records:UI.selCase,as:UI.selAs,approvals:UI.selProp,metrics:UI.mCase,trees:UI.treeSel,dbview:(sheetOf(UI.dbTable)?UI.dbTable+' '+sheetOf(UI.dbTable).lab:'')}[UI.tab];if(UI.tab==='as'&&UI.asTab==='daily')return t+' › 일일 보고'+(UI.selDaily?' › '+UI.selDaily:'');if(UI.tab==='as')d=UI.selAs;return t+(d?' › '+d:'');}
 function renderHost(){
  if(!UI.hostOn)return;
+ var snap=navSnap(),key=JSON.stringify(snap);
+ if(UI.last&&UI.last.key!==key&&!UI.noPush){UI.hist.push(UI.last.snap);if(UI.hist.length>40)UI.hist.shift();}
+ UI.noPush=false;UI.last={key:key,snap:snap};
  var nav=$('#nav');nav.innerHTML=TABS.map(function(t){var n='';if(t[0]==='records')n='<span class="n">'+DB.cases.length+'</span>';if(t[0]==='as')n='<span class="n red">'+openAs()+'</span>';if(t[0]==='approvals')n='<span class="n'+(pending()?' red':'')+'">'+pending()+'</span>';return '<button type="button" data-tab="'+t[0]+'"'+(UI.tab===t[0]?' aria-current="page"':'')+'>'+t[1]+n+'</button>';}).join('');
  var v=VIEWS[UI.tab](),m=$('#hostMain'),keep=m.scrollTop;
- m.innerHTML='<div class="ph1"><div><div class="ey">'+v.ey+'</div><h2>'+v.title+'</h2><p>'+v.desc+'</p></div></div>'+v.html;m.scrollTop=keep;
+ m.innerHTML='<div class="topbar"><button type="button" class="btn ghost sm" data-act="h-back"'+(UI.hist.length?'':' disabled')+' title="이전에 보던 화면으로 (Esc)">← 뒤로</button><span class="crumb">'+esc(crumbText())+'</span><button type="button" class="btn ghost sm" data-act="h-close" title="호스트 화면 닫기 (Host OFF)" aria-label="호스트 화면 닫기">✕ 닫기</button></div><div class="ph1"><div><div class="ey">'+v.ey+'</div><h2>'+v.title+'</h2><p>'+v.desc+'</p></div></div>'+v.html;m.scrollTop=keep;
+ if(UI.tab==='dbview'&&UI.xfocus){var g=$('#xl');if(g){g.focus({preventScroll:true});var sc=$('#xl td.sel');if(sc)sc.scrollIntoView({block:'nearest',inline:'nearest'});}}
 }
+function hostBack(){if(!UI.hist.length)return;var s=UI.hist.pop();UI.noPush=true;NAVK.forEach(function(k){UI[k]=s[k];});renderHost();}
+function closeDetail(){var k=UI.tab==='records'?'selCase':UI.tab==='as'?(UI.asTab==='daily'?'selDaily':'selAs'):UI.tab==='approvals'?'selProp':UI.tab==='metrics'?'mCase':null;if(k&&UI[k]){UI[k]=k==='mCase'?'':null;renderHost();return true;}return false;}
 function gotoTab(t,extra){UI.tab=t;if(extra)for(var k in extra)UI[k]=extra[k];renderHost();}
 function applyProposal(p){
  var pl=p.payload;
@@ -629,16 +783,23 @@ function applyProposal(p){
   tree.nodes[cId]={type:'C',q:pl.question||('이 조치로 해결되나요? ('+pl.title+')'),yes:aId,no:'AS'};
   tree.nodes[aId]={type:'A',title:pl.title,steps:pl.steps,img:'new',warn:pl.warnPower?['W-01']:[],next:'AS',level:'고객 조치',source:'AS 보고서'};
   tree.start[String(pl.code)]=cId;DB.stats[aId]={t:0,r:0};tree.rev=(tree.rev||1)+1;audit('trees',tree.id,'start['+pl.code+']','',cId,'host(승인)');}
+
  DB.meta.treesVersion++;
+ var tid=(p.type==='order')?pl.treeId:(tree&&tree.id);if(tid&&DB.trees[tid])DB.revisions.push({tree:tid,rev:DB.trees[tid].rev,at:new Date().toISOString(),reason:p.id+' '+(p.type==='order'?'점검 순서 변경':'신규 조치 '+pl.title)});
 }
 function hostClick(e){
  var tbtn=e.target.closest('[data-tab]');if(tbtn){UI.tab=tbtn.dataset.tab;renderHost();return;}
+ var tdc=e.target.closest('td[data-ci]');if(tdc&&UI.tab==='dbview'&&!tdc.classList.contains('edit')){xlSelect(+tdc.dataset.r,+tdc.dataset.ci);return;}
  var el=e.target.closest('[data-act]');if(!el)return;var a=el.dataset.act,id=el.dataset.id;
  if(el.tagName==='SELECT'||el.tagName==='INPUT'&&el.type!=='checkbox'&&el.type!=='button')return;
  switch(a){
+  case 'h-back':hostBack();break;
+  case 'h-close':if(UI.setHost)UI.setHost(false);break;
+  case 'close-detail':closeDetail();break;
   case 'open-case':UI.selCase=id;UI.tab='records';renderHost();break;
   case 'to-metrics':UI.mCase=id;UI.tab='metrics';renderHost();break;
-  case 'to-as':UI.selAs=id;UI.tab='as';renderHost();break;
+  case 'to-as':UI.selAs=id;UI.tab='as';UI.asTab='jobs';renderHost();break;
+  case 'as-tab':UI.asTab=id;renderHost();break;
   case 'sel-as':UI.selAs=id;renderHost();break;
   case 'as-save':var j=DB.asJobs[UI.selAs],ns=$('#asSt').value,nm=$('#asMemo').value;if(j.status!==ns)audit('asJobs',UI.selAs,'status',j.status,ns);if(j.memo!==nm)audit('asJobs',UI.selAs,'memo',j.memo,nm);j.status=ns;j.memo=nm;save();renderHost();toast('AS 상태와 메모를 저장했습니다.');break;
   case 'att-del':var jj=DB.asJobs[UI.selAs];jj.attachments=jj.attachments.filter(function(x){return x.id!==id;});delete mem.att[id];save();renderHost();break;
@@ -660,9 +821,11 @@ function hostClick(e){
   case 'sel-daily':UI.selDaily=id;renderHost();break;
   case 'daily-json':var rr=DB.dailyReports.filter(function(x){return x.id===id;})[0];download(rr.id+'.json',JSON.stringify(rr,null,2));break;
   case 'daily-csv':var r2=DB.dailyReports.filter(function(x){return x.id===id;})[0];download(r2.id+'.csv','\ufeff단계,조치,시도,해결,해결률\n'+r2.perStep.map(function(s){return [s.node,s.title,s.tries,s.resolved,s.rate==null?'':s.rate].join(',');}).join('\n'),'text/csv');break;
-  case 'db-table':UI.dbTable=id;renderHost();break;
-  case 'state-dl':download('acp-host-state.json',JSON.stringify(hostState(),null,2));break;
-  case 'state-copy':try{navigator.clipboard.writeText(JSON.stringify(hostState(),null,2));toast('복사했습니다.');}catch(er){toast('복사할 수 없습니다.');}break;
+  case 'db-table':UI.dbTable=id;UI.dbQ='';UI.dbSort=null;UI.xsel=null;renderHost();break;
+  case 'db-fam':UI.dbTable=SH.filter(function(s){return s.c[0]===id;})[0].c;UI.dbQ='';UI.dbSort=null;UI.xsel=null;renderHost();break;
+  case 'zc-add':var zo=$('#zcO').value.trim(),zn=$('#zcN').value.trim();if(!zo||!zn){toast('이전 번호와 새 번호를 적어 주세요.');break;}DB.codeMap.push({kind:$('#zcK').value,old:zo,nw:zn,rel:$('#zcR').value,why:$('#zcW').value.trim()||'—',at:new Date().toISOString()});audit('ZC',zo+'→'+zn,'row','',$('#zcR').value);save();UI.xsel=null;renderHost();toast('번호 대응표에 추가했습니다.');break;
+  case 'db-sort':var cc0=el.dataset.c;UI.dbSort={t:UI.dbTable,c:cc0,d:(UI.dbSort&&UI.dbSort.t===UI.dbTable&&UI.dbSort.c===cc0)?-UI.dbSort.d:1};renderHost();break;
+  case 'db-csv':var dd=dbRows();download(UI.dbTable+'.csv','\ufeff'+dd.S.cols.map(function(c){return c.l;}).join(',')+'\n'+dd.rows.map(function(x){return dd.S.cols.map(function(c){return '"'+String(cellVal(c,x)).replace(/"/g,'""')+'"';}).join(',');}).join('\n'),'text/csv');break;
   case 'db-dl':download('acp-demo-db.json',JSON.stringify(DB,null,2));break;
  }
 }
@@ -673,11 +836,8 @@ function hostChange(e){
  else if(a==='rv'){hostClick(e);}
  else if(a==='as-file'){var j=DB.asJobs[UI.selAs];Array.prototype.forEach.call(el.files,function(f){var okT=/\.(pdf|png|jpe?g)$/i.test(f.name)||/^(application\/pdf|image\/(png|jpeg))$/.test(f.type);if(!okT){toast('PDF, PNG, JPG 파일만 첨부할 수 있습니다.');return;}DB.meta.att++;var aid='AT-'+pad(DB.meta.att,3);var type=f.type||(/\.pdf$/i.test(f.name)?'application/pdf':'image/'+(/png$/i.test(f.name)?'png':'jpeg'));j.attachments.push({id:aid,name:f.name,type:type,size:f.size,addedAt:new Date().toISOString()});mem.att[aid]=URL.createObjectURL(f);audit('asJobs',UI.selAs,'attachment','',f.name);});save();renderHost();toast('AS 보고서를 첨부했습니다.');}
  else if(a==='img-up'){var f0=el.files[0];if(f0){if(!/^image\//.test(f0.type)){toast('이미지 파일만 올릴 수 있습니다.');return;}mem.img[el.dataset.id]=URL.createObjectURL(f0);audit('images',el.dataset.id,'image','',f0.name);save();renderHost();toast('조치 이미지를 바꿨습니다. 고객 화면에 바로 반영됩니다.');}}
- else if(a==='db-edit'){var T=TBL[el.dataset.t],key=el.dataset.k,col=el.dataset.c,val=el.value,row=null;
-  if(el.dataset.t==='nodes'){var nn=allNodes().filter(function(n){return n.id===key;})[0];row=nn.n;var f=col==='text'?(row.type==='C'?'q':'title'):col;var old=row[f]||'';row[f]=val;audit('nodes',key,f,old,val);}
-  else{var rows=T.rows();for(var i=0;i<rows.length;i++){if(String(rows[i][T.key])===key){row=rows[i];break;}}if(row){var old2=row[col];if(col==='code'&&val==='')val=null;row[col]=val;audit(el.dataset.t,key,col,old2,val);}}
-  save();renderHost();toast('수정했습니다. 수정 이력에 기록되었습니다.');}
- else if(a==='state-file'){var f1=el.files[0];if(!f1)return;var rd=new FileReader();rd.onload=function(){try{var o=JSON.parse(rd.result);if(o.schema!=='acp-host-state/1')throw 0;var u=o.ui||{};UI.tab=VIEWS[u.tab]?u.tab:UI.tab;UI.selCase=u.selectedCase||null;UI.filter=u.filterResult||'전체';UI.treeSel=u.treeSelected||UI.treeSel;UI.dbTable=TBL[u.dbTable]?u.dbTable:UI.dbTable;UI.mCase=u.metricsCase||'';renderHost();toast('상태를 가져왔습니다.');}catch(er){toast('호스트 상태 JSON 형식이 아닙니다.');}};rd.readAsText(f1);}
+ else if(a==='db-q'){UI.dbQ=el.value;UI.xsel=null;renderHost();}
+
 }
 
 /* ===== 시작 ===== */
@@ -696,6 +856,8 @@ function init(){
  var sw=$('#hostSw');
  function setHost(on,silent){UI.hostOn=on;sw.setAttribute('aria-checked',on?'true':'false');$('#app').classList.toggle('host-on',on);$('#hostSt').textContent=on?'ON · 호스트 화면 열림':'OFF · 고객 화면만';try{localStorage.setItem(HKEY,on?'on':'off');}catch(e){}if(on)renderHost();}
  sw.addEventListener('click',function(){setHost(!UI.hostOn);});
+ UI.setHost=setHost;
+ document.addEventListener('keydown',function(e){if(e.key!=='Escape'||!UI.hostOn)return;var t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;if(!closeDetail())hostBack();});
  var hs=null;try{hs=localStorage.getItem(HKEY);}catch(e){}
  setHost(hs==='on');
  // 챗봇 입력
@@ -708,7 +870,7 @@ function init(){
  ph.addEventListener('drop',function(e){if(e.dataTransfer&&e.dataTransfer.files.length)addPhotos(e.dataTransfer.files);});
  $('#quick').addEventListener('click',function(e){var b=e.target.closest('[data-q]');if(b)quickStart(b.dataset.q);});
  $('#resetBtn').addEventListener('click',function(){if(!window.confirm('시연 데이터를 처음 상태로 되돌릴까요? (이 브라우저의 저장분이 지워집니다)'))return;try{localStorage.removeItem(KEY);}catch(e){}mem.att={};mem.photos={};mem.img={};DB=seedDB();save();UI.selCase=UI.selAs=UI.selProp=UI.selDaily=null;UI.mCase='';UI.draft=null;newChat();renderHost();toast('시연을 처음 상태로 되돌렸습니다.');});
- var hm=$('#hostMain');hm.addEventListener('click',hostClick);hm.addEventListener('change',hostChange);$('#nav').addEventListener('click',hostClick);
+ var hm=$('#hostMain');hm.addEventListener('click',hostClick);hm.addEventListener('change',hostChange);hm.addEventListener('keydown',hostKey);hm.addEventListener('dblclick',hostDbl);$('#nav').addEventListener('click',hostClick);
  newChat();
 }
 init();
