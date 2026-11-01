@@ -151,7 +151,16 @@
   .xlt td.edit input,.xlt td.edit select{ width:100%; height:100%; border:0; background:transparent; padding:.2em .55em; font:inherit; outline:none; }
   .stabs{ display:flex; gap:2px; flex-wrap:wrap; border-top:2px solid var(--ink-faint); margin-top:-.4em; }
   .stabs button{ border:1px solid var(--line); border-top:0; background:var(--panel); padding:.3em .85em; font-size:.78rem; cursor:pointer; border-radius:0 0 6px 6px; }
+  .stabs button.dim{ opacity:.6; font-style:italic; }
   .stabs button[aria-pressed="true"]{ background:var(--surface); font-weight:700; border-bottom:3px solid var(--red); }
+  .codeline{ display:flex; flex-wrap:wrap; align-items:center; gap:.2em .35em; background:var(--panel); border-radius:6px; padding:.45em .7em; font-size:.84rem; }
+  .codeline b{ margin-right:.4em; }
+  .codeline .cd{ font:inherit; font-weight:700; border:1px solid var(--ink-faint); background:var(--surface); border-radius:4px; padding:.05em .45em; cursor:pointer; letter-spacing:.03em; }
+  .codeline .cd.off{ border-style:dashed; color:var(--ink-faint); font-weight:400; }
+  .codeline .cd.on{ background:var(--head); color:var(--head-ink); border-color:var(--head); }
+  .codeline .sep{ color:var(--ink-faint); }
+  .main > *{ flex-shrink:0; }
+  .tabs button[aria-pressed="true"] .s{ color:inherit; opacity:.8; }
   .topbar{ position:sticky; top:-1.1em; z-index:4; display:flex; align-items:center; gap:.6em; background:var(--surface); padding:.5em 0 .45em; margin:-.5em 0 0; border-bottom:1px solid var(--line); }
   .topbar .crumb{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.82rem; color:var(--ink-soft); }
   .bar .btn.ghost{ color:inherit; border-color:rgba(255,255,255,.55); }
@@ -676,6 +685,14 @@ sheet({c:'ZA',rows:function(){return CODE_TABLES.map(function(t){var s=sheetOf(t
 sheet({c:'ZB',rows:function(){return CODE_ITEMS.map(function(i){return {_k:i[0],num:i[0],name:i[1],tables:i[2],fmt:i[3],desc:i[4]};});},cols:[C('num','항목 번호','9020'),C('name','항목 이름','—'),C('tables','쓰이는 표','9010'),C('fmt','형식','—'),C('desc','설명','—')]});
 sheet({c:'ZC',rows:function(){return DB.codeMap.map(function(m,i){return {_k:String(i),kind:m.kind,old:m.old,nw:m.nw,rel:m.rel,why:m.why+(m.example?' (예시)':'')};});},cols:[C('kind','종류','—'),C('old','이전 번호','8060'),C('nw','새 번호','8070'),C('rel','관계','—'),C('why','사유','—')]});
 SH.forEach(function(s){var t=tinfo(s.c);s.db=t[1];s.lab=t[2];s.desc=t[3];s.phase=t[4];});
+var PH={};
+function getSheet(code){
+ var s=sheetOf(code);if(s)return s;if(PH[code])return PH[code];
+ var t=CODE_TABLES.filter(function(x){return x[0]===code;})[0];if(!t)return null;
+ var cols=CODE_ITEMS.filter(function(i){return i[2].split(/,\s*/).indexOf(code)>=0;}).map(function(i){return C('i'+i[0],i[1],i[0]);});
+ if(!cols.length)cols=[C('x','(항목 미등록)','—')];
+ PH[code]={c:code,db:t[1],lab:t[2],desc:t[3],phase:t[4],ph:true,rows:function(){return [];},cols:cols};return PH[code];
+}
 function famOf(code){return CODE_FAM.filter(function(f){return f[0]===code[0];})[0];}
 function dbApply2(s,row,c,val){
  if(row._set)return row._set(c.f,val);
@@ -683,7 +700,7 @@ function dbApply2(s,row,c,val){
  if(String(old==null?'':old)===String(val==null?'':val))return false;
  ref[c.f]=val;audit(s.c,row._k,c.f,old,val);save();return true;
 }
-function curSheet(){var s=sheetOf(UI.dbTable);if(!s){UI.dbTable='CA';s=sheetOf('CA');}return s;}
+function curSheet(){var s=getSheet(UI.dbTable);if(!s){UI.dbTable='CA';s=getSheet('CA');}return s;}
 function dbRows(){
  var s=curSheet(),rows=s.rows();
  var q=(UI.dbQ||'').trim().toLowerCase();
@@ -694,6 +711,10 @@ function dbRows(){
 }
 function cellVal(c,row){var v=row[c.f];return c.fmt?c.fmt(v):(v==null?'':v);}
 function letter(i){return String.fromCharCode(65+i);}
+function codeLine(cur){
+ var list=CODE_TABLES.filter(function(t){return t[0][0]===cur[0];});
+ return '<div class="codeline"><b>'+cur[0]+' 계열</b> '+list.map(function(t){var has=!!sheetOf(t[0]);return '<button type="button" class="cd'+(has?'':' off')+(t[0]===cur?' on':'')+'" data-act="db-table" data-id="'+t[0]+'" title="'+esc(t[2])+(has?'':' · 이 시연에는 데이터가 없는 표')+'">'+t[0]+'</button>';}).join('<span class="sep">,</span> ')+'<span class="s"> … 둘째 글자 순서(D·I·O는 쓰지 않아 건너뜀)</span></div>';
+}
 function vDbview(){
  var d=dbRows(),S=d.S,cols=S.cols;UI.dbFam=S.c[0];
  var sl=UI.xsel&&UI.xsel.t===UI.dbTable?UI.xsel:{t:UI.dbTable,r:0,c:0};
@@ -703,14 +724,15 @@ function vDbview(){
  var h2='<tr><th class="rn">1</th>'+cols.map(function(c){var s=UI.dbSort&&UI.dbSort.t===UI.dbTable&&UI.dbSort.c===c.f;return '<th class="nm" data-act="db-sort" data-c="'+c.f+'" title="누르면 정렬">'+c.l+(s?(UI.dbSort.d>0?' ▲':' ▼'):'')+'</th>';}).join('')+'</tr>';
  var body=d.rows.map(function(x,ri){return '<tr><th class="rn">'+(ri+2)+'</th>'+cols.map(function(c,ci){return '<td class="'+(c.e?'':'lock ')+(sl.r===ri&&sl.c===ci?'sel':'')+'" data-r="'+ri+'" data-ci="'+ci+'">'+esc(cellVal(c,x))+'</td>';}).join('')+'</tr>';}).join('');
  var cur=d.rows[sl.r],cc=cols[sl.c],fx=cur?cellVal(cc,cur):'';
- var fams=CODE_FAM.filter(function(f){return SH.some(function(s){return s.c[0]===f[0];});});
- var famBtns=fams.map(function(f){var n=SH.filter(function(s){return s.c[0]===f[0];}).length;return '<button type="button" data-act="db-fam" data-id="'+f[0]+'" aria-pressed="'+(UI.dbFam===f[0])+'">'+f[0]+' '+f[1]+' <span class="s">'+n+'</span></button>';}).join('');
- var tabs=SH.filter(function(s){return s.c[0]===UI.dbFam;}).map(function(s){return '<button type="button" data-act="db-table" data-id="'+s.c+'" aria-pressed="'+(UI.dbTable===s.c)+'">'+s.c+' '+s.lab+'</button>';}).join('');
+ var fams=CODE_FAM;
+ var famBtns=fams.map(function(f){var n=CODE_TABLES.filter(function(t){return t[0][0]===f[0];}).length;return '<button type="button" data-act="db-fam" data-id="'+f[0]+'" aria-pressed="'+(UI.dbFam===f[0])+'">'+f[0]+' '+f[1]+' <span class="s">'+n+'</span></button>';}).join('');
+ var famT=CODE_TABLES.filter(function(t){return t[0][0]===UI.dbFam;}),nData=famT.filter(function(t){return !!sheetOf(t[0]);}).length;
+ var tabs=famT.map(function(t){return '<button type="button" class="'+(sheetOf(t[0])?'':'dim')+'" data-act="db-table" data-id="'+t[0]+'" aria-pressed="'+(UI.dbTable===t[0])+'"'+(sheetOf(t[0])?'':' title="이 시연에는 데이터가 없는 표"')+'>'+t[0]+' '+t[2]+'</button>';}).join('');
  var f0=famOf(S.c);
  var zc=S.c==='ZC'?'<div class="bar">번호 대응표에 한 줄 추가 <small>코드가 바뀐 기록을 남깁니다</small></div><div class="grid3"><div class="field"><label for="zcK">종류</label><select id="zcK"><option>트리 번호</option><option>노드 번호</option><option>항목 번호</option><option>표 코드</option></select></div><div class="field"><label for="zcO">이전 번호</label><input id="zcO" placeholder="예: TH14"></div><div class="field"><label for="zcN">새 번호</label><input id="zcN" placeholder="예: TH17 (삭제는 —)"></div></div><div class="grid2"><div class="field"><label for="zcR">관계</label><select id="zcR"><option>1:1</option><option>1:N</option><option>N:1</option><option>삭제</option></select></div><div class="field"><label for="zcW">사유</label><input id="zcW" placeholder="바뀐 이유"></div></div><div class="row"><button class="btn sm" data-act="zc-add">대응표에 추가</button></div>':'';
  return {ey:'DATABASE · CODE DICTIONARY',title:'DB 전체 조회',desc:'엑셀처럼 칸을 골라 보고 고칩니다. 시트는 표 코드 계열별로 묶여 있고, 각 열에는 코드 사전의 항목 번호가 붙어 있습니다.',html:
- '<div class="tabs" role="group" aria-label="표 코드 계열">'+famBtns+'</div>'+
- '<div class="callout"><b>'+S.c+'</b> · '+esc(S.db)+' · '+esc(S.lab)+' <span class="tag">'+esc(f0?f0[1]:'')+'</span> <span class="tag '+(S.phase==='신규'?'red':'')+'">'+esc(S.phase)+'</span><br><span class="s">'+esc(S.desc)+' · '+(S.cols.some(function(c){return c.e;})?'흰 칸은 고칠 수 있습니다.':'이 시트는 읽기 전용(다른 표에서 계산한 값)입니다.')+'</span></div>'+
+ '<div class="tabs" role="group" aria-label="표 코드 계열">'+famBtns+'</div>'+codeLine(S.c)+
+ '<div class="callout"><b>'+S.c+'</b> · '+esc(S.db)+' · '+esc(S.lab)+' <span class="tag">'+esc(f0?f0[1]:'')+'</span> <span class="tag '+(S.phase==='신규'?'red':'')+'">'+esc(S.phase)+'</span><br><span class="s">'+esc(S.desc)+' · '+(S.ph?'이 시연에는 데이터가 없는 표입니다. 열 머리는 코드 사전(ZB)에서 이 표에 쓰이는 항목으로 만들었습니다.':(S.cols.some(function(c){return c.e;})?'흰 칸은 고칠 수 있습니다.':'이 시트는 읽기 전용(다른 표에서 계산한 값)입니다.'))+'</span><br><span class="s">'+esc(f0?f0[0]+' 계열 '+famT.length+'개 표 · 이 시연의 데이터 시트 '+nData+'개 (흐린 탭은 데이터 없음)':'')+'</span></div>'+
  '<div class="row"><input id="dbQ" data-act="db-q" type="search" placeholder="이 시트에서 찾기" value="'+esc(UI.dbQ||'')+'" style="border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:.3em .6em;min-width:200px"><span class="s">'+d.total+'행 · '+cols.length+'열'+(d.total>200?' (200행까지 표시)':'')+'</span><button class="btn ghost sm" data-act="db-csv">이 시트 CSV로 내려받기</button><button class="btn ghost sm" data-act="db-dl">DB 전체 내려받기(백업)</button></div>'+
  '<div class="fbar"><span class="nb" id="xNb">'+letter(sl.c)+(sl.r+2)+'</span><span class="fx">fx</span><input id="xFx" value="'+esc(fx)+'"'+(cc.e?'':' readonly')+' aria-label="수식 입력줄(선택한 칸의 값)"></div>'+
  '<div class="xl" id="xl" tabindex="0" aria-label="DB 시트(엑셀형)"><table class="xlt"><thead>'+h1+hn+h2+'</thead><tbody>'+(body||'<tr><td colspan="'+(cols.length+1)+'" class="lock">행이 없습니다.</td></tr>')+'</tbody></table></div>'+
@@ -759,7 +781,7 @@ function hostDbl(e){var td=e.target.closest('td[data-ci]');if(td&&UI.tab==='dbvi
 var VIEWS={overview:vOverview,records:vRecords,as:vAs,trees:vTrees,approvals:vApprovals,images:vImages,metrics:vMetrics,dbview:vDbview};
 var NAVK=['tab','asTab','selCase','selAs','selProp','mCase','treeSel','dbTable','imgTab','selDaily','filter'];
 function navSnap(){var o={};NAVK.forEach(function(k){o[k]=UI[k];});return o;}
-function crumbText(){var t=TABS.filter(function(x){return x[0]===UI.tab;})[0][1],d={records:UI.selCase,as:UI.selAs,approvals:UI.selProp,metrics:UI.mCase,trees:UI.treeSel,dbview:(sheetOf(UI.dbTable)?UI.dbTable+' '+sheetOf(UI.dbTable).lab:'')}[UI.tab];if(UI.tab==='as'&&UI.asTab==='daily')return t+' › 일일 보고'+(UI.selDaily?' › '+UI.selDaily:'');if(UI.tab==='as')d=UI.selAs;return t+(d?' › '+d:'');}
+function crumbText(){var t=TABS.filter(function(x){return x[0]===UI.tab;})[0][1],d={records:UI.selCase,as:UI.selAs,approvals:UI.selProp,metrics:UI.mCase,trees:UI.treeSel,dbview:UI.dbTable+' '+tinfo(UI.dbTable)[2]}[UI.tab];if(UI.tab==='as'&&UI.asTab==='daily')return t+' › 일일 보고'+(UI.selDaily?' › '+UI.selDaily:'');if(UI.tab==='as')d=UI.selAs;return t+(d?' › '+d:'');}
 function renderHost(){
  if(!UI.hostOn)return;
  var snap=navSnap(),key=JSON.stringify(snap);
@@ -822,7 +844,7 @@ function hostClick(e){
   case 'daily-json':var rr=DB.dailyReports.filter(function(x){return x.id===id;})[0];download(rr.id+'.json',JSON.stringify(rr,null,2));break;
   case 'daily-csv':var r2=DB.dailyReports.filter(function(x){return x.id===id;})[0];download(r2.id+'.csv','\ufeff단계,조치,시도,해결,해결률\n'+r2.perStep.map(function(s){return [s.node,s.title,s.tries,s.resolved,s.rate==null?'':s.rate].join(',');}).join('\n'),'text/csv');break;
   case 'db-table':UI.dbTable=id;UI.dbQ='';UI.dbSort=null;UI.xsel=null;renderHost();break;
-  case 'db-fam':UI.dbTable=SH.filter(function(s){return s.c[0]===id;})[0].c;UI.dbQ='';UI.dbSort=null;UI.xsel=null;renderHost();break;
+  case 'db-fam':UI.dbTable=CODE_TABLES.filter(function(t){return t[0][0]===id;})[0][0];UI.dbQ='';UI.dbSort=null;UI.xsel=null;renderHost();break;
   case 'zc-add':var zo=$('#zcO').value.trim(),zn=$('#zcN').value.trim();if(!zo||!zn){toast('이전 번호와 새 번호를 적어 주세요.');break;}DB.codeMap.push({kind:$('#zcK').value,old:zo,nw:zn,rel:$('#zcR').value,why:$('#zcW').value.trim()||'—',at:new Date().toISOString()});audit('ZC',zo+'→'+zn,'row','',$('#zcR').value);save();UI.xsel=null;renderHost();toast('번호 대응표에 추가했습니다.');break;
   case 'db-sort':var cc0=el.dataset.c;UI.dbSort={t:UI.dbTable,c:cc0,d:(UI.dbSort&&UI.dbSort.t===UI.dbTable&&UI.dbSort.c===cc0)?-UI.dbSort.d:1};renderHost();break;
   case 'db-csv':var dd=dbRows();download(UI.dbTable+'.csv','\ufeff'+dd.S.cols.map(function(c){return c.l;}).join(',')+'\n'+dd.rows.map(function(x){return dd.S.cols.map(function(c){return '"'+String(cellVal(c,x)).replace(/"/g,'""')+'"';}).join(',');}).join('\n'),'text/csv');break;
